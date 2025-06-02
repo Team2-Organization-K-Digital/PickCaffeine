@@ -175,6 +175,7 @@ CREATE TABLE `menu_option` (
   `option_title` varchar(45) DEFAULT NULL,
   `option_name` varchar(45) DEFAULT NULL,
   `option_price` int DEFAULT NULL,
+  `option_division` int DEFAULT NULL,
   PRIMARY KEY (`option_num`,`menu_num`),
   UNIQUE KEY `option_num_UNIQUE` (`option_num`),
   KEY `fk_menu_option_menu1_idx` (`menu_num`),
@@ -230,16 +231,12 @@ CREATE TABLE `purchase_list` (
   `purchase_num` int NOT NULL,
   `user_id` varchar(15) NOT NULL,
   `store_id` varchar(45) NOT NULL,
-  `selected_num` int NOT NULL,
   `purchase_date` datetime DEFAULT NULL,
-  `purchase_quantity` int DEFAULT NULL,
   `purchase_request` varchar(80) DEFAULT NULL,
   `purchase_state` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`purchase_num`,`user_id`,`store_id`,`selected_num`),
+  PRIMARY KEY (`purchase_num`,`user_id`,`store_id`),
   KEY `fk_users_has_store_store2_idx` (`store_id`),
   KEY `fk_users_has_store_users1_idx` (`user_id`),
-  KEY `fk_purchase_list_selected_menu1_idx` (`selected_num`),
-  CONSTRAINT `fk_purchase_list_selected_menu1` FOREIGN KEY (`selected_num`) REFERENCES `selected_menu` (`selected_num`),
   CONSTRAINT `fk_users_has_store_store2` FOREIGN KEY (`store_id`) REFERENCES `store` (`store_id`),
   CONSTRAINT `fk_users_has_store_users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -296,6 +293,8 @@ CREATE TABLE `selected_menu` (
   `menu_num` int NOT NULL,
   `selected_options` json DEFAULT NULL,
   `total_price` int DEFAULT NULL,
+  `purchase_num` varchar(45) DEFAULT NULL,
+  `selected_quantity` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`selected_num`,`menu_num`),
   UNIQUE KEY `selected_num_UNIQUE` (`selected_num`),
   KEY `fk_menu_has_menu_option_menu1_idx` (`menu_num`),
@@ -416,4 +415,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-01 12:17:14
+-- Dump completed on 2025-06-02 17:40:19
