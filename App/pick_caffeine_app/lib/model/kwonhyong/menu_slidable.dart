@@ -2,8 +2,7 @@
 import 'package:flutter/material.dart' hide MenuController;
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-
-import 'package:pick_caffeine_app/kwonhyoung_controller.dart';
+import 'package:pick_caffeine_app/model/kwonhyong/kwonhyoung_controller.dart';
 
 // 메뉴 모델
 class MenuItem {

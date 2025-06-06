@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:test_menu_update/model/menu.dart';
-import 'package:test_menu_update/model/options.dart';
-import 'package:test_menu_update/vm/menu.dart';
+import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
+import 'package:pick_caffeine_app/model/Eunjun/options.dart';
+import 'package:pick_caffeine_app/vm/Eunjun/menu.dart';
 
 class VmHandlerInsertMenu extends StoreController {
   final baseUrl = "http://127.0.0.1:8000";

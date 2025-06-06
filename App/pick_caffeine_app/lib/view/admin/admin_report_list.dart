@@ -18,9 +18,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/admin_model.dart';
 
-import 'package:pick_caffeine_app/kwonhyoung_controller.dart';
+import 'package:pick_caffeine_app/model/kwonhyong/admin_model.dart';
+
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
 
 // 관리자 첫페이지(유저 신고관리)
