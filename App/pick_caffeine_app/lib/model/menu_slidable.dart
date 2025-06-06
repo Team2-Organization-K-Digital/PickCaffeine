@@ -1,9 +1,14 @@
 // 은준님 필요한 메뉴 슬라이더블 기능 관련 코드
+import 'package:flutter/material.dart' hide MenuController;
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 
-// 메뉴 모델 
+import 'package:pick_caffeine_app/kwonhyoung_controller.dart';
+
+// 메뉴 모델
 class MenuItem {
   final int menuNum;
-  final int categoryNum; 
+  final int categoryNum;
   final String menuName;
   final String menuContent;
   final int menuPrice;
@@ -50,12 +55,6 @@ class MenuItem {
 
 //--------------------------------------------------------------------------------
 // 메뉴 슬라이더블 기능 페이지
-
-import 'package:flutter/material.dart' hide MenuController;
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:get/get.dart';
-import 'package:pick_caffein/model/menu_model.dart';
-import 'package:pick_caffein/vm/getx_controller.dart';
 
 // 메뉴 리스트에서 슬라이더블 화면
 class MenuListScreen extends StatelessWidget {
@@ -107,10 +106,11 @@ class MenuListScreen extends StatelessWidget {
             itemCount: controller.menuItems.length,
             itemBuilder: (context, index) {
               final item = controller.menuItems[index];
-              return Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: MenuItemCard(item: item, controller: controller),
-              );
+              return;
+              // Padding(
+              //   padding: EdgeInsets.only(bottom: 8),
+              //   child: MenuItemCard(item: item, controller: controller),
+              // );
             },
           ),
         );
@@ -124,33 +124,37 @@ class MenuItemCard extends StatelessWidget {
   final MenuItem item;
   final MenuController controller;
 
-  const MenuItemCard({
-    Key? key,
-    required this.item,
-    required this.controller,
-  }) : super(key: key);
+  const MenuItemCard({Key? key, required this.item, required this.controller})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
       key: ValueKey(item.menuNum),
       endActionPane: ActionPane(
-        motion: DrawerMotion(), 
+        motion: DrawerMotion(),
         children: [
           SlidableAction(
             onPressed: (context) async {
               final confirm = await showDialog<bool>(
                 context: context,
-                builder: (_) => AlertDialog(
-                  title: Text('삭제 확인'),
-                  content: Text('정말로 이 메뉴를 삭제하시겠습니까?'),
-                  actions: [
-                    TextButton(onPressed: () => Get.back(result: false), child: Text('취소')),
-                    TextButton(onPressed: () => Get.back(result: true), child: Text('삭제')),
-                  ],
-                ),
+                builder:
+                    (_) => AlertDialog(
+                      title: Text('삭제 확인'),
+                      content: Text('정말로 이 메뉴를 삭제하시겠습니까?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Get.back(result: false),
+                          child: Text('취소'),
+                        ),
+                        TextButton(
+                          onPressed: () => Get.back(result: true),
+                          child: Text('삭제'),
+                        ),
+                      ],
+                    ),
               );
-      
+
               if (confirm == true) {
                 controller.deleteMenu(item.menuNum); // 실제 삭제 실행
               }
@@ -160,9 +164,9 @@ class MenuItemCard extends StatelessWidget {
             icon: Icons.delete,
             label: '삭제',
             borderRadius: BorderRadius.circular(10),
-            )
-        ]
-        ),
+          ),
+        ],
+      ),
       startActionPane: ActionPane(
         motion: ScrollMotion(),
         children: [
@@ -178,9 +182,7 @@ class MenuItemCard extends StatelessWidget {
       ),
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
@@ -218,16 +220,23 @@ class MenuItemCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: item.isAvailable ? Colors.black : Colors.grey,
-                                decoration: item.isAvailable 
-                                    ? TextDecoration.none 
-                                    : TextDecoration.lineThrough,
+                                color:
+                                    item.isAvailable
+                                        ? Colors.black
+                                        : Colors.grey,
+                                decoration:
+                                    item.isAvailable
+                                        ? TextDecoration.none
+                                        : TextDecoration.lineThrough,
                               ),
                             ),
                           ),
                           if (!item.isAvailable)
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.red,
                                 borderRadius: BorderRadius.circular(12),
@@ -248,7 +257,10 @@ class MenuItemCard extends StatelessWidget {
                         item.menuContent,
                         style: TextStyle(
                           fontSize: 14,
-                          color: item.isAvailable ? Colors.grey[600] : Colors.grey[400],
+                          color:
+                              item.isAvailable
+                                  ? Colors.grey[600]
+                                  : Colors.grey[400],
                         ),
                       ),
                       SizedBox(height: 8),
@@ -257,18 +269,17 @@ class MenuItemCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: item.isAvailable ? Colors.brown[700] : Colors.grey,
+                          color:
+                              item.isAvailable
+                                  ? Colors.brown[700]
+                                  : Colors.grey,
                         ),
                       ),
                     ],
                   ),
                 ),
                 // 화살표 힌트
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.grey[400],
-                  size: 16,
-                ),
+                Icon(Icons.arrow_back_ios, color: Colors.grey[400], size: 16),
               ],
             ),
           ),
