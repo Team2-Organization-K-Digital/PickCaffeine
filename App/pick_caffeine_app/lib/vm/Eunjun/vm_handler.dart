@@ -5,13 +5,11 @@ import 'package:get/get.dart';
 import 'package:pick_caffeine_app/model/Eunjun/categories.dart';
 import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler1.dart';
+import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_insertmenu.dart';
 
 import 'package:http/http.dart' as http;
 
-class VmHandlerMenu extends VmHandlerInsertMenu
-    with GetSingleTickerProviderStateMixin {
-  final baseUrl = "http://127.0.0.1:8000";
+class VmHandlerMenu extends VmHandlerInsertMenu {
   var lastMenuNum = 0.obs;
   var categoryNum = 0.obs;
   final RxList<Menu> menus = <Menu>[].obs;
@@ -207,6 +205,17 @@ class VmHandlerMenu extends VmHandlerInsertMenu
   Future<void> updateMenuCategory(int originNum, int selectNum) async {
     final response = await http.post(
       Uri.parse('$baseUrl/update/menuCategory'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({"originNum": originNum, "selectNum": selectNum}),
+    );
+    final result = json.decode(utf8.decode(response.bodyBytes))['result'];
+
+    return result;
+  }
+
+  Future<void> updateMenuState(int originNum, int selectNum) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/update/menuState'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({"originNum": originNum, "selectNum": selectNum}),
     );

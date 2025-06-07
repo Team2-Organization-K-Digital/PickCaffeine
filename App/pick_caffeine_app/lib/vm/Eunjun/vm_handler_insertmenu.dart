@@ -8,7 +8,6 @@ import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/menu.dart';
 
 class VmHandlerInsertMenu extends StoreController {
-  final baseUrl = "http://127.0.0.1:8000";
   var lastMenuNum = 0.obs;
   var categoryNum = 0.obs;
 

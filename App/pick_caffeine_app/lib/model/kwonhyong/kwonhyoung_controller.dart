@@ -6,19 +6,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:pick_caffein/model/cart_model.dart';
-import 'package:pick_caffein/model/declaration_model.dart';
-import 'package:pick_caffein/model/inquiry_model.dart';
-import 'package:pick_caffein/model/menu_model.dart';
+
+import 'package:pick_caffeine_app/model/kwonhyong/admin_model.dart';
 
 // 신고 관리 컨트롤러-------------------------------------------------------------
-class DeclarationController extends GetxController with GetSingleTickerProviderStateMixin {
+class DeclarationController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   // 기본 설정
-  static const String baseUrl = 'http://192.168.50.236:8000'; // 백엔드 서버 주소
-  
+  static const String baseUrl = 'http://127.0.0.1:8000'; // 백엔드 서버 주소
+
   // 탭 컨트롤러
   late TabController tabController;
-  
+
   // 반응형 변수들
   var isLoading = false.obs;
   var declarations = <Declaration>[].obs;
@@ -26,7 +25,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   var userCount = 0.obs;
   var storeCount = 0.obs;
   var sanctionedUserCount = 0.obs;
-  
+
   // 선택된 신고 및 제재 옵션
   var selectedDeclaration = Rxn<Declaration>();
   var selectedSanctionType = '1차 제재'.obs;
@@ -35,7 +34,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 3, vsync: this); 
+    tabController = TabController(length: 3, vsync: this);
     fetchDeclarations();
     fetchSanctionedUsers();
     fetchStats();
@@ -80,7 +79,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes));
         List<Declaration> declarationList = [];
-        
+
         if (data['declarations'] != null) {
           for (var item in data['declarations']) {
             try {
@@ -90,7 +89,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
             }
           }
         }
-        
+
         declarations.value = declarationList;
       } else {
         Get.snackbar(
@@ -123,7 +122,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes));
         List<Declaration> sanctionedList = [];
-        
+
         if (data['sanctioned_users'] != null) {
           for (var item in data['sanctioned_users']) {
             try {
@@ -133,7 +132,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
             }
           }
         }
-        
+
         sanctionedUsers.value = sanctionedList;
       }
     } catch (e) {
@@ -153,7 +152,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   }) async {
     try {
       isLoading.value = true;
-      
+
       final response = await http.put(
         Uri.parse('$baseUrl/declarations/$reviewNum'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -201,52 +200,54 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
 
   // 제재 해제
   Future<void> releaseSanction(String userId) async {
-  try {
-    isLoading.value = true;
-    
-    final response = await http.put(
-      Uri.parse('$baseUrl/release_sanction/$userId'),
-      headers: {'Content-Type': 'application/json'},
-    );
+    try {
+      isLoading.value = true;
 
-    if (response.statusCode == 200) {
-      final data = json.decode(utf8.decode(response.bodyBytes));
-      if (data['status'] == 'success') {
-        // 로컬 데이터에서 즉시 제거 (UI에서 바로 사라지게 함)
-        declarations.removeWhere((d) => d.userId == userId && d.sanctionContent != null);
-        declarations.refresh();
-        
-        Get.snackbar(
-          '성공',
-          '제재가 해제되었습니다.',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-        
-        await Future.wait([
-          fetchDeclarations(),
-          fetchSanctionedUsers(),
-          fetchStats(),
-        ]);
+      final response = await http.put(
+        Uri.parse('$baseUrl/release_sanction/$userId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(utf8.decode(response.bodyBytes));
+        if (data['status'] == 'success') {
+          // 로컬 데이터에서 즉시 제거 (UI에서 바로 사라지게 함)
+          declarations.removeWhere(
+            (d) => d.userId == userId && d.sanctionContent != null,
+          );
+          declarations.refresh();
+
+          Get.snackbar(
+            '성공',
+            '제재가 해제되었습니다.',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+
+          await Future.wait([
+            fetchDeclarations(),
+            fetchSanctionedUsers(),
+            fetchStats(),
+          ]);
+        }
       }
+    } catch (e) {
+      Get.snackbar(
+        '오류',
+        '제재 해제 중 오류가 발생했습니다.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    Get.snackbar(
-      '오류',
-      '제재 해제 중 오류가 발생했습니다.',
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  } finally {
-    isLoading.value = false;
   }
-}
 
   // 신고 삭제
   Future<void> deleteDeclaration(int reviewNum) async {
     try {
       isLoading.value = true;
-      
+
       final response = await http.delete(
         Uri.parse('$baseUrl/declarations_delete/$reviewNum'),
         headers: {'Content-Type': 'application/json'},
@@ -292,7 +293,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   }) async {
     try {
       isLoading.value = true;
-      
+
       final response = await http.post(
         Uri.parse('$baseUrl/declaration_insert'),
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -377,15 +378,13 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   }
 }
 
-
-
 // --------문의 하기 컨트롤러 -----------------------------------------------------
 class InquiryController extends GetxController {
   var inquiryList = <Inquiry>[].obs;
   var isLoading = true.obs;
   var errorMessage = ''.obs;
   RxnInt selectedInquiryNum = RxnInt();
-  
+
   final String baseUrl = 'http://192.168.50.236:8000';
 
   @override
@@ -500,7 +499,7 @@ class InquiryController extends GetxController {
       if (httpResponse.statusCode == 200) {
         var result = json.decode(httpResponse.body);
         if (result['result'] == '문의 수정 완료') {
-          fetchInquiries(); 
+          fetchInquiries();
           return true;
         }
       }
@@ -511,12 +510,16 @@ class InquiryController extends GetxController {
     }
   }
 
-  // 문의 답변 등록 
-  Future<void> updateResponse(int inquiryNum, String responseText, DateTime? responseDate) async {
+  // 문의 답변 등록
+  Future<void> updateResponse(
+    int inquiryNum,
+    String responseText,
+    DateTime? responseDate,
+  ) async {
     int index = inquiryList.indexWhere((i) => i.inquiryNum == inquiryNum);
     if (index != -1) {
       final old = inquiryList[index];
-      
+
       // 서버에 업데이트 요청
       bool success = await updateInquiry(
         inquiryNum: inquiryNum,
@@ -558,19 +561,15 @@ class InquiryController extends GetxController {
 
   // 선택된 문의 객체 가져오기
   Inquiry? get selectedInquiry {
-    return inquiryList.firstWhereOrNull((i) => i.inquiryNum == selectedInquiryNum.value);
+    return inquiryList.firstWhereOrNull(
+      (i) => i.inquiryNum == selectedInquiryNum.value,
+    );
   }
 }
 
-
-
 // ------------구매 장바구니 드롭다운 옵션 컨트롤러 ----------------------------------
 class RequestController extends GetxController {
-  final List<String> requestOptions = [
-    '연하게 해주세요',
-    '얼음 많이 넣어주세요',
-    '직접 입력',
-  ];
+  final List<String> requestOptions = ['연하게 해주세요', '얼음 많이 넣어주세요', '직접 입력'];
 
   final selectedRequest = ''.obs;
   final tempSelectedRequest = ''.obs;
@@ -612,9 +611,10 @@ class RequestController extends GetxController {
     required int menuPrice,
     required int quantity,
   }) {
-    final options = selectedRequest.value.isEmpty ? '없음' : selectedRequest.value;
+    final options =
+        selectedRequest.value.isEmpty ? '없음' : selectedRequest.value;
     final totalPrice = menuPrice * quantity;
-    
+
     final cartItem = CartItem(
       menuNum: menuNum,
       menuName: menuName,
@@ -623,7 +623,7 @@ class RequestController extends GetxController {
       selectedOptions: options,
       totalPrice: totalPrice,
     );
-    
+
     cartItems.add(cartItem);
     successMessage.value = '장바구니에 추가되었습니다!';
     Future.delayed(Duration(seconds: 2), () {
@@ -660,7 +660,7 @@ class RequestController extends GetxController {
       // 각 장바구니 아이템을 데이터베이스에 저장
       for (CartItem item in cartItems) {
         final url = Uri.parse('http://192.168.50.236:8000/order/select_menu');
-        
+
         final response = await http.post(
           url,
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -686,23 +686,17 @@ class RequestController extends GetxController {
       selectedRequest.value = '';
       tempSelectedRequest.value = '';
       directInputText.value = '';
-      
+
       successMessage.value = '주문이 성공적으로 저장되었습니다!';
-      
+
       // 성공 다이얼로그 표시
       Get.dialog(
         AlertDialog(
           title: Text('주문 완료'),
           content: Text('주문번호: $purchaseNum\n주문이 성공적으로 접수되었습니다.'),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text('확인'),
-            ),
-          ],
+          actions: [TextButton(onPressed: () => Get.back(), child: Text('확인'))],
         ),
       );
-
     } catch (e) {
       errorMessage.value = '주문 저장 중 오류가 발생했습니다: ${e.toString()}';
     } finally {
@@ -736,7 +730,7 @@ class MenuController extends GetxController {
       isLoading.value = true;
       // 로딩 시뮬레이션
       await Future.delayed(Duration(milliseconds: 500));
-      
+
       menuItems.clear();
       _loadDummyData();
     } catch (e) {
@@ -754,12 +748,12 @@ class MenuController extends GetxController {
 
       final item = menuItems[itemIndex];
       final newStatus = item.menuState == '판매중' ? '품절' : '판매중';
-      
+
       // 로컬 상태 업데이트
       item.menuState = newStatus;
       menuItems[itemIndex] = item;
       menuItems.refresh();
-      
+
       Get.snackbar(
         '상태 변경',
         '${item.menuName}이 ${newStatus} 상태로 변경되었습니다.',
@@ -770,7 +764,7 @@ class MenuController extends GetxController {
     }
   }
 
-  // 상품 목록 삭제 
+  // 상품 목록 삭제
   Future<bool> deleteMenu(int menuNum) async {
     try {
       isDeleting.value = true;
@@ -783,10 +777,11 @@ class MenuController extends GetxController {
           menuItems.removeWhere((item) => item.menuNum == menuNum);
 
           Get.snackbar(
-            '삭제완료', '메뉴가 삭제 되었습니다.',
+            '삭제완료',
+            '메뉴가 삭제 되었습니다.',
             backgroundColor: Colors.amber,
             colorText: Colors.white,
-            duration: Duration(seconds: 2)
+            duration: Duration(seconds: 2),
           );
 
           return true;
@@ -795,10 +790,11 @@ class MenuController extends GetxController {
       throw Exception('서버 오류: ${response.statusCode}');
     } catch (e) {
       Get.snackbar(
-        '삭제실패', '메뉴 삭제를 실패 했습니다.',
+        '삭제실패',
+        '메뉴 삭제를 실패 했습니다.',
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        duration: Duration(seconds: 2)
+        duration: Duration(seconds: 2),
       );
       return false;
     } finally {

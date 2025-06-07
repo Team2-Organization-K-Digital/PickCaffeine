@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pick_caffeine_app/vm/Eunjun/store_info_review_tabbar.dart';
 
-class ImageModel extends GetxController {
+class ImageModel extends StoreInfoReviewTabbar {
   final imageFile = Rx<XFile?>(null);
   final ImagePicker picker = ImagePicker();
 

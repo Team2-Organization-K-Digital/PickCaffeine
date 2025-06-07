@@ -1,3 +1,3 @@
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler.dart';
+import 'package:pick_caffeine_app/vm/Eunjun/vm_hander_store.dart';
 
-class VmHandlerTemp extends VmHandlerMenu {}
+class VmHandlerTemp extends VmHanderStore {}

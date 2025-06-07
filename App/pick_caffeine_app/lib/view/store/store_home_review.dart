@@ -13,3 +13,14 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
+import 'package:flutter/widgets.dart';
+
+class StoreHomeReview extends StatelessWidget {
+  const StoreHomeReview({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}

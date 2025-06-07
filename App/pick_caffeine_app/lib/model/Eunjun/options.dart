@@ -26,3 +26,11 @@ class Options {
     };
   }
 }
+
+class OptionTitle {
+  final String option_title;
+  OptionTitle({required this.option_title});
+  factory OptionTitle.fromJson(List<dynamic> json) {
+    return OptionTitle(option_title: json[0]);
+  }
+}

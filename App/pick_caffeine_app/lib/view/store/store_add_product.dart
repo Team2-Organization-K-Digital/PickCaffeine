@@ -24,8 +24,8 @@ import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
 
-class OptionPage extends StatelessWidget {
-  OptionPage({super.key});
+class StoreAddProduct extends StatelessWidget {
+  StoreAddProduct({super.key});
   final menunamecontroller = TextEditingController();
   final menupricecontroller = TextEditingController();
   final menucontentcontroller = TextEditingController();

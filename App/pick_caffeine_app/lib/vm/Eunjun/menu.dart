@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/image_provider.dart';
+import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_selectoption.dart';
 
-class StoreController extends ImageModel {
+class StoreController extends VmHandlerSelectoption {
   final RxList<TextEditingController> titleControllers =
       <TextEditingController>[].obs;
   RxList<RxList<TextEditingController>> optionControllers =
@@ -11,7 +12,6 @@ class StoreController extends ImageModel {
       <RxList<TextEditingController>>[].obs;
   RxMap<String, bool> optionValue = <String, bool>{}.obs;
   var titles = <String>[].obs;
-  var options = <List<String>>[].obs;
   var selected = <bool>[].obs;
   var updateSelected = <bool>[].obs;
   var editIndex = "".obs;
@@ -30,7 +30,6 @@ class StoreController extends ImageModel {
 
   void clearAll() {
     titles.clear();
-    options.clear();
     titleControllers.clear();
     optionControllers.clear();
     optPriceControllers.clear();
