@@ -7,7 +7,7 @@ import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/menu.dart';
 
-class VmHandlerInsertMenu extends MenuConstlloer {
+class VmHandlerInsertMenu extends MenuController {
   var lastMenuNum = 0.obs;
   var categoryNum = 0.obs;
 
