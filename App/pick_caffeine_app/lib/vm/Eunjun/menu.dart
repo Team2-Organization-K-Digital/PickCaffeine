@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/image_provider.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_selectoption.dart';
 
-class StoreController extends VmHandlerSelectoption {
+class MenuController extends VmHandlerSelectoption {
   final RxList<TextEditingController> titleControllers =
       <TextEditingController>[].obs;
   RxList<RxList<TextEditingController>> optionControllers =
