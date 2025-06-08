@@ -20,6 +20,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/kwonhyong/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/view/store/store_add_product.dart';
@@ -31,10 +32,13 @@ import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 class StoreProductsList extends StatelessWidget {
   StoreProductsList({super.key});
   final vmHandler = Get.find<VmHandlerTemp>();
-  final storeId = 111.toString();
+
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
+    final storeId = box.read("storeId");
+    final storeName = box.read("storeName");
     vmHandler.fetchMenuInCategory(storeId);
     vmHandler.fetchCategory(storeId);
     return Scaffold(
@@ -54,7 +58,7 @@ class StoreProductsList extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 30),
                 child: Text(
-                  '강남 스타벅스',
+                  storeName,
                   style: TextStyle(color: AppColors.black, fontSize: 25),
                 ),
               ),

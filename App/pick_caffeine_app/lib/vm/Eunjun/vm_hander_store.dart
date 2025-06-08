@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/model/Eunjun/store.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/vm_handler.dart';
@@ -7,6 +8,9 @@ import 'package:http/http.dart' as http;
 
 class VmHanderStore extends VmHandlerMenu {
   final RxList<Store> loginStore = <Store>[].obs;
+  final RxList<MyStores> myStores = <MyStores>[].obs;
+  final RxList<Widget> storeImages = <Widget>[].obs;
+  var activeIndex = 0.obs;
 
   Future<void> fetchLoginStore(String storeid) async {
     final res = await http.get(Uri.parse('$baseUrl/select/store/${storeid}'));
@@ -33,5 +37,71 @@ class VmHanderStore extends VmHandlerMenu {
           );
         }).toList();
     loginStore.value = returnResult;
+  }
+
+  Future<void> fetchStoreImage(String storeId) async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/select/storeImage/${storeId}'),
+    );
+    final datas = json.decode(utf8.decode(res.bodyBytes));
+
+    final List results = datas['results'];
+
+    for (int i = 1; i < results.length; i++) {
+      if (results[i] == null) {
+        return;
+      }
+      storeImages.add(
+        Image.memory(base64Decode(results[i]), fit: BoxFit.cover),
+      );
+    }
+    print(storeImages);
+  }
+
+  fetchStore(String storeId) async {
+    await fetchStoreImage(storeId);
+    await fetchLoginStore(storeId);
+  }
+
+  Future<void> fetchMyStores(String user_id) async {
+    lastMenuNum.value = 0;
+    final res = await http.get(
+      Uri.parse('$baseUrl/select/mystores/${user_id}'),
+    );
+    final datas = json.decode(utf8.decode(res.bodyBytes));
+    final List results = datas['results'];
+    final List<MyStores> returnResults =
+        results
+            .map(
+              (data) => MyStores(
+                user_id: data[0],
+                store_id: data[1],
+                selected_date: data[2],
+              ),
+            )
+            .toList();
+
+    myStores.value = returnResults;
+  }
+
+  Future<void> insertMyStores(MyStores myStores) async {
+    final url = Uri.parse("$baseUrl/insert/mystores");
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(myStores.toMap()),
+    );
+    final result = json.decode(utf8.decode(response.bodyBytes))['result'];
+
+    return result;
+  }
+
+  Future<void> deleteMyStores(String store_id) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/delete/mystores/${store_id}'),
+    );
+    final result = json.decode(utf8.decode(response.bodyBytes))['result'];
+
+    return result;
   }
 }

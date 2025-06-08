@@ -37,6 +37,7 @@ dependencies:
 
   # State 관리
   get: ^4.7.2
+  get_storage: ^2.1.1
 
   # Database 연결
   http: ^1.4.0
@@ -54,6 +55,11 @@ dependencies:
   geolocator: ^14.0.0
   flutter_map: ^8.1.1
   latlong2: ^0.9.1
+
+  # Image Slider
+  carousel_slider: ^5.1.1
+  smooth_page_indicator: ^1.2.1
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

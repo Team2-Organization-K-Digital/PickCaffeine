@@ -53,3 +53,23 @@ class Store {
     };
   }
 }
+
+class MyStores {
+  final String user_id;
+  final String store_id;
+  final String selected_date;
+
+  MyStores({
+    required this.user_id,
+    required this.store_id,
+    required this.selected_date,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'user_id': user_id,
+      'store_id': store_id,
+      'selected_date': selected_date,
+    };
+  }
+}

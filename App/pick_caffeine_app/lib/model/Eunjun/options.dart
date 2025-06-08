@@ -29,8 +29,9 @@ class Options {
 
 class OptionTitle {
   final String option_title;
-  OptionTitle({required this.option_title});
+  final int option_division;
+  OptionTitle({required this.option_title, required this.option_division});
   factory OptionTitle.fromJson(List<dynamic> json) {
-    return OptionTitle(option_title: json[0]);
+    return OptionTitle(option_title: json[0], option_division: json[1]);
   }
 }

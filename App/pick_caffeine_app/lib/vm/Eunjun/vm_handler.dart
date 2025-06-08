@@ -8,8 +8,9 @@ import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_insertmenu.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_purchase.dart';
 
-class VmHandlerMenu extends VmHandlerInsertMenu {
+class VmHandlerMenu extends VmHandlerPurchase {
   var lastMenuNum = 0.obs;
   var categoryNum = 0.obs;
   final RxList<Menu> menus = <Menu>[].obs;
