@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:pick_caffeine_app/model/Eunjun/categories.dart';
 import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_insertmenu.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_purchase.dart';
@@ -51,6 +50,16 @@ class VmHandlerMenu extends VmHandlerPurchase {
     final data = json.decode(utf8.decode(res.bodyBytes));
     final List results = data['results'];
     lastMenuNum.value = results[0]['max'];
+  }
+
+  Future<void> fetchCategoryNum(String name, String storeid) async {
+    categoryNum.value = 0;
+    final res = await http.get(
+      Uri.parse('$baseUrl/select/categoryNum/name=${name}store=${storeid}'),
+    );
+    final data = json.decode(utf8.decode(res.bodyBytes));
+    final List results = data['results'];
+    categoryNum.value = results[0]['num'];
   }
 
   Future<void> fetchCategory(String store) async {

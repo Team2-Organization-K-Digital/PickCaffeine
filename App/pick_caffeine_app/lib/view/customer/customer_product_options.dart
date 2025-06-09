@@ -573,18 +573,6 @@ class CustomerProductOptions extends StatelessWidget {
                                                                         .value;
                                                               }
                                                             }
-
-                                                            print(
-                                                              vmHandler
-                                                                  .selectedOptions,
-                                                            );
-                                                            print(
-                                                              vmHandler
-                                                                  .selectedOptionsValue,
-                                                            );
-                                                            print(
-                                                              vmHandler.total,
-                                                            );
                                                           },
                                                         ),
                                                       ],

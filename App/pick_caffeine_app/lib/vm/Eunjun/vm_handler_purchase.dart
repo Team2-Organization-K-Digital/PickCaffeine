@@ -4,10 +4,11 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pick_caffeine_app/model/Eunjun/purchase.dart';
 import 'package:pick_caffeine_app/model/Eunjun/selected_menu.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_insertmenu.dart';
+import 'package:pick_caffeine_app/vm/Eunjun/menu.dart';
+
 import 'package:http/http.dart' as http;
 
-class VmHandlerPurchase extends VmHandlerInsertMenu {
+class VmHandlerPurchase extends MenuController {
   var purchaseNum = 0.obs;
   final RxList<SelectedMenu> shoppingMenus = <SelectedMenu>[].obs;
   final RxInt finalPrice = 0.obs;
