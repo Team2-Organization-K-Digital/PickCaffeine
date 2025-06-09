@@ -13,3 +13,16 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
+import 'package:flutter/material.dart';
+
+class StoreHomeReview extends StatelessWidget {
+  const StoreHomeReview({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("리뷰보기"),),
+    );
+  }
+}
