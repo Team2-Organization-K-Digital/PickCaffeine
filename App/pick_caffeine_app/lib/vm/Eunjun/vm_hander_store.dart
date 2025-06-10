@@ -55,7 +55,6 @@ class VmHanderStore extends VmHandlerMenu {
         Image.memory(base64Decode(results[i]), fit: BoxFit.cover),
       );
     }
-    print(storeImages);
   }
 
   fetchStore(String storeId) async {
