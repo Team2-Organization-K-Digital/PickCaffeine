@@ -1,18 +1,16 @@
-// 매장 상세 페이지 (정보)
+// 홈 페이지 (매장, tabbar)
 /*
 // ----------------------------------------------------------------- //
-  - title         : Store Detail Page (Information)
-  - Description   :
-  - Author        : Kim EunJun
+  - title         : Information Home Page (Store)
+  - Description   : 매장 홈페이지 화면구성 (tabbar)
+  - Author        : Kim Eunjun
   - Created Date  : 2025.06.05
-  - Last Modified : 2025.06.08
-  - package       : 
+  - Last Modified : 2025.06.05
+  - package       : Getx, GetStorage
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.05 v1.0.0  : 1차 화면 구성 (기능 넣기)
-  - 2025.06.08 v1.0.0  : 2차 화면 구성 (디자인 추가)
-
+  - 2025.06.05 v1.0.0  : 사진과 리뷰 제외 화면 구성 완료, 버튼 연결 스위치 연결
 // ----------------------------------------------------------------- //
 */
 
@@ -20,30 +18,26 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:http/retry.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
-import 'package:pick_caffeine_app/model/Eunjun/store.dart';
-import 'package:pick_caffeine_app/view/customer/customer_products_list.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
-
+import 'package:pick_caffeine_app/view/store/store_products_list.dart';
 import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class CustomerStoreDetail extends StatelessWidget {
-  CustomerStoreDetail({super.key});
+class StoreHomeBodyTabbar extends StatelessWidget {
+  StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
   final storeId = "111";
-  final user_id = "11";
   final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
     handler.fetchStore(storeId);
-    handler.fetchMyStores(user_id);
 
     return DefaultTabController(
       length: 2,
@@ -68,7 +62,7 @@ class CustomerStoreDetail extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      height: 360,
+                                      height: 350,
                                       child:
                                           handler.storeImages.isEmpty
                                               ? Center(
@@ -146,6 +140,7 @@ class CustomerStoreDetail extends StatelessWidget {
                                                   ],
                                                 ),
                                               ),
+
                                       // : ListView.builder(
                                       //   scrollDirection:
                                       //       Axis.horizontal,
@@ -158,36 +153,56 @@ class CustomerStoreDetail extends StatelessWidget {
                                       //     );
                                       //     return SizedBox(
                                       //       height: 350,
-                                      //       child:
+                                      //       child: Image.memory(
+                                      //         base64Decode(
                                       //           handler
                                       //               .storeImages[index],
+                                      //         ),
+                                      //         fit: BoxFit.cover,
+                                      //       ),
                                       //     );
                                       //   },
                                       // ),
                                     ),
 
-                                    // 가게 이름 + 수정 버튼
-                                    // Row(
-                                    //   mainAxisAlignment:
-                                    //       MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     Text(
-                                    //       handler.loginStore.first.store_name,
-                                    //       style: TextStyle(fontSize: 30),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    // SizedBox(height: 20),
-                                    // // TabBar
-                                    // TabBar(
-                                    //   controller: handler.storeInfoController,
-                                    //   tabs: [Tab(text: '정보'), Tab(text: '리뷰')],
-                                    //   onTap: (value) {
-                                    //     handler.infoReivewTabIndex.value =
-                                    //         value;
-                                    //   },
-                                    // ),
-                                    // SizedBox(height: 10),
+                                    Obx(
+                                      () => Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Switch(
+                                            value: handler.openCloseValue.value,
+                                            onChanged: (value) {
+                                              handler.openCloseValue.value =
+                                                  value;
+                                            },
+                                          ),
+                                          Text(
+                                            handler.openCloseValue.value
+                                                ? "판매 중"
+                                                : "준비 중",
+                                          ),
+                                          Switch(
+                                            value:
+                                                handler.closeForeverValue.value,
+                                            onChanged: (value) {
+                                              handler.closeForeverValue.value =
+                                                  value;
+                                            },
+                                          ),
+                                          Text(
+                                            handler.closeForeverValue.value
+                                                ? "영업 중   "
+                                                : "영업 종료",
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {},
+                                            child: Text('회원정보 수정'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
                                   ],
                                 ),
                               ),
@@ -199,43 +214,9 @@ class CustomerStoreDetail extends StatelessWidget {
                             ),
                           ];
                         },
-
-                        body: TabBarView(
-                          controller: handler.storeInfoController,
+                        body: IndexedStack(
+                          index: handler.infoReivewTabIndex.value,
                           children: [StoreHomeInfo(), StoreHomeReview()],
-                        ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: MediaQuery.of(context).size.width * 0.05,
-                        child: IconButton(
-                          onPressed: () async {
-                            final myStore = handler.myStores.where(
-                              (ms) => ms.store_id == storeId,
-                            );
-                            if (myStore.isEmpty) {
-                              final myStores = MyStores(
-                                user_id: user_id,
-                                store_id: storeId,
-                                selected_date: DateTime.now().toString(),
-                              );
-                              await handler.insertMyStores(myStores);
-                              await handler.fetchMyStores(user_id);
-                            } else {
-                              await handler.deleteMyStores(storeId);
-                              await handler.fetchMyStores(user_id);
-                            }
-                          },
-                          icon: Icon(
-                            Icons.favorite_outline,
-                            color:
-                                handler.myStores
-                                        .where((ms) => ms.store_id == storeId)
-                                        .isEmpty
-                                    ? AppColors.grey
-                                    : AppColors.lightpick,
-                            size: 50,
-                          ),
                         ),
                       ),
                       Positioned(
@@ -256,28 +237,23 @@ class CustomerStoreDetail extends StatelessWidget {
 
                                   fixedSize: Size(300, 50),
                                 ),
-                                onPressed: () async {
-                                  await handler.fetchLastPurchase();
+                                onPressed: () {
                                   box.write("storeId", '111');
                                   box.write(
                                     "storeName",
                                     handler.loginStore.first.store_name,
                                   );
-                                  box.write(
-                                    'purchaseNum',
-                                    handler.purchaseNum.value,
-                                  );
-                                  Get.to(() => CustomerProductsList());
+                                  Get.to(() => StoreProductsList());
                                 },
                                 child: Text(
-                                  '주문 하기',
+                                  '메뉴 보기',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 25),
+                              SizedBox(height: 15),
                             ],
                           ),
                         ),
@@ -313,17 +289,23 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
-                  child: Text(
+            Padding(
+              padding: const EdgeInsets.only(top: 3, left: 15, right: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
                     handler.loginStore.first.store_name,
                     style: TextStyle(fontSize: 30),
                   ),
-                ),
-              ],
+                  ElevatedButton(
+                    onPressed: () {
+                      //
+                    },
+                    child: Text("가게 정보 수정"),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 10),
             // TabBar
