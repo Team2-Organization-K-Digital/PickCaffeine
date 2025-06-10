@@ -49,7 +49,7 @@ dependencies:
   # Utility
   flutter_slidable: ^4.0.0
   syncfusion_flutter_charts: ^29.2.7
-  get_storage: ^2.1.1
+
 
   # Map
   geocoding: ^3.0.0
