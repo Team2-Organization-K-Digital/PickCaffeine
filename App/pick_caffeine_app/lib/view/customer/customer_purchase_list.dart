@@ -17,10 +17,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pick_caffeine_app/model/purchase.dart';
+import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_detail.dart';
-import 'package:pick_caffeine_app/vm/oder_list.dart';
-import 'package:pick_caffeine_app/vm/vm_image_handler.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_image_handler.dart';
 
 class CustomerPurchaseList extends StatelessWidget {
   CustomerPurchaseList({super.key});
@@ -31,11 +31,10 @@ class CustomerPurchaseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-
     order.fetchPurchase('11');
+    order.fetchStore('11');
     order.fetchReview('11');
-    order.fetchStore('11', '111');
-    order.fetchMenu('11', '13');
+    order.fetchMenu('11');
       
     return Scaffold(
       appBar: AppBar(title: Text('주문내역')),
@@ -46,14 +45,17 @@ class CustomerPurchaseList extends StatelessWidget {
               child: 
               order.index.value < 0
               ? CircularProgressIndicator()
-              :ListView.builder(
+              : ListView.builder(
                 itemCount: order.purchase.length,
                 itemBuilder: (context, index) {
-                  final Purchase purchaseList = order.purchase[index];
+                final Purchase purchaseList = order.purchase[index];
                   final state = int.parse(purchaseList.purchase_state);
                   final purchaseNum = purchaseList.purchase_num;
-                  // order.fetchStore(purchaseList.user_id, purchaseList.store_id);
-
+                  // 매 카드마다 해당 주문번호에 맞는 매장 정보를 가져옴
+                  final storeInfo = order.storeMap[index]; 
+                  final List menu = order.menu.where((m) => m[1] == purchaseNum).toList();
+                  // print(menu);
+              
                   return Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Container(
@@ -82,19 +84,17 @@ class CustomerPurchaseList extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      order.storeName.toString(),
+                                      storeInfo != null
+                                      ? "${storeInfo[0]} "
+                                      : "매장 정보 불러오는 중...",
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    // Text(
-                                    //   order.menu[0]['name'],
-                                    //   style: const TextStyle(fontSize: 15),
-                                    // ),
                                     Text(
                                       order.menu.isNotEmpty
-                                          ? order.menu[0]['name'].toString()
+                                          ? menu[0][0].toString()
                                           : '메뉴 정보 없음',
                                       style: TextStyle(fontSize: 15),
                                     ),
@@ -105,8 +105,10 @@ class CustomerPurchaseList extends StatelessWidget {
                                           arguments: [
                                             purchaseList.purchase_num,
                                             purchaseList.purchase_date,
+                                            storeInfo[0],
+                                            storeInfo[1],
                                             purchaseList.purchase_request,
-                                            order.menu[0]['total'],
+                                            menu[0][3],
                                           ],
                                         );
                                       },
@@ -118,16 +120,9 @@ class CustomerPurchaseList extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    // Text(
-                                    //   '${order.menu[0]['total'].toString()}원',
-                                    //   style: TextStyle(
-                                    //     fontSize: 17,
-                                    //     fontWeight: FontWeight.bold,
-                                    //   ),
-                                    // ),
                                     Text(
                                       order.menu.isNotEmpty
-                                          ? order.menu[0]['total'].toString()
+                                          ? menu[0][3].toString()
                                           : '메뉴 정보 없음',
                                       style: TextStyle(
                                         fontSize: 17,
@@ -168,21 +163,6 @@ class CustomerPurchaseList extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              // ElevatedButton(
-                              //   onPressed: () {
-                              //     // 재주문 하기
-                              //   },
-                              //   style: ElevatedButton.styleFrom(
-                              //     backgroundColor: Colors.brown,
-                              //   ),
-                              //   child: Text(
-                              //     '재주문 하기',
-                              //     style: TextStyle(
-                              //       color: Colors.white,
-                              //       fontWeight: FontWeight.bold,
-                              //     ),
-                              //   ),
-                              // ),
                               order.review.contains(purchaseNum)
                                   ? ElevatedButton(
                                     onPressed: () {
