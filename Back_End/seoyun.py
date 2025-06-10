@@ -1,5 +1,5 @@
 """
-author      : Gam Seong
+author      : Jung SeoYun
 description : 
 date        : 2025.06.05
 version     : 1
