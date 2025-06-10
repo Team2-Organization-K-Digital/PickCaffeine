@@ -14,7 +14,7 @@ class StoreMainTabbar extends GetxController with GetTickerProviderStateMixin {
   void onInit() {
     super.onInit();
     storeInfoController = TabController(length: 2, vsync: this);
-    storeMainController = TabController(length: 2, vsync: this);
+    storeMainController = TabController(length: 3, vsync: this);
   }
 
   @override
