@@ -118,8 +118,9 @@ class StoreUpdate extends StatelessWidget {
               child: Obx(() => FlutterMap(
                     mapController: mapController,
                     options: MapOptions(
-                      initialCenter: vm.targetLocation.value ??
-                          LatLng(store.store_latitude, store.store_longitude),
+                      initialCenter: (vm.targetLocation.value != null)
+                      ? vm.targetLocation.value!
+                      : LatLng(37.4979, 127.0276),
                       initialZoom: 15,
                     ),
                     children: [
@@ -161,13 +162,6 @@ class StoreUpdate extends StatelessWidget {
                   },
                   child: Text("주소 검색"),
                 ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.snackbar("위치 반영", "해당 위치가 등록에 반영됩니다");
-                  },
-                  child: Text("지도 반영"),
-                ),
               ],
             ),
 
@@ -188,44 +182,50 @@ class StoreUpdate extends StatelessWidget {
 
             // 정보 수정 버튼
             Center(
-              child: ElevatedButton(
-  onPressed: () async {
-    print('👉 수정 버튼 눌림');
-
-    final updated = StoreHome(
-      store_id: store.store_id,
-      store_password: store.store_password,
-      store_name: store.store_name,
-      store_phone: phoneController.text,
-      store_business_num: store.store_business_num,
-      store_address: addressController.text,
-      store_address_detail: addressDetailController.text,
-      store_latitude: vm.targetLocation.value?.latitude ?? store.store_latitude,
-      store_longitude: vm.targetLocation.value?.longitude ?? store.store_longitude,
-      store_content: contentController.text,
-      store_state: store.store_state,
-      store_regular_holiday: regularController.text,
-      store_temporary_holiday: tempController.text,
-      store_business_hour: businessnumController.text,
-    );
-
-    try {
-      final result = await vm.updateStorelist(updated);
-      print("👉 결과: $result");
-
-      if (result == 'OK') {
-        vm.setStore(updated);
-        Get.snackbar("완료", "정보가 수정되었습니다");
-        Get.back();
-      } else {
-        Get.snackbar("오류", result);
-      }
-    } catch (e) {
-      print(" 예외 발생: $e");
-    }
-  },
-  child: Text("정보 수정"),
-),
+              child:Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      print('👉 수정 버튼 눌림');
+                  
+                      final updated = StoreHome(
+                        store_id: store.store_id,
+                        store_password: store.store_password,
+                        store_name: store.store_name,
+                        store_phone: phoneController.text,
+                        store_business_num: store.store_business_num,
+                        store_address: addressController.text,
+                        store_address_detail: addressDetailController.text,
+                        store_latitude: vm.targetLocation.value?.latitude ?? store.store_latitude,
+                        store_longitude: vm.targetLocation.value?.longitude ?? store.store_longitude,
+                        store_content: contentController.text,
+                        store_state: store.store_state,
+                        store_regular_holiday: regularController.text,
+                        store_temporary_holiday: tempController.text,
+                        store_business_hour: businessnumController.text,
+                      );
+                  
+                      try {
+                        final result = await vm.updateStorelist(updated);
+                        print("👉 결과: $result");
+                  
+                        if (result == 'OK') {
+                          vm.setStore(updated);
+                          Get.snackbar("완료", "정보가 수정되었습니다");
+                        } else {
+                          Get.snackbar("오류", result);
+                        }
+                      } catch (e) {
+                        print(" 예외 발생: $e");
+                      }
+                    },
+                    child: Text("정보 수정"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Get.back(), 
+                    child: Text("매장으로 돌아가기"))
+                ],
+              ),
 
             )
           ],
