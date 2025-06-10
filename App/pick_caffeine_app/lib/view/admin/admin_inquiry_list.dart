@@ -17,8 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
-import 'package:pick_caffeine_app/kwonhyoung_controller.dart';
+import 'package:pick_caffeine_app/model/kwonhyong/kwonhyoung_controller.dart';
 
 class InquiryReport extends StatelessWidget {
   InquiryReport({super.key});

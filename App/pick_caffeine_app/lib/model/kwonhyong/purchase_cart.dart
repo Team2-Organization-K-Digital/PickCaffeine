@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:pick_caffeine_app/kwonhyoung_controller.dart';
-import 'package:pick_caffeine_app/menu_slidable.dart';
-
 // 장바구니 관련 모델
 class CartItem {
   final int menuNum;
@@ -53,7 +50,7 @@ class CustomerPurchasePage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(() => MenuListScreen());
+              // Get.to(() => MenuListScreen());
             },
             icon: Icon(Icons.receipt_long),
           ),
