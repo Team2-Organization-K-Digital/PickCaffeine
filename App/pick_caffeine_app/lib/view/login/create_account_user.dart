@@ -78,6 +78,32 @@ Center(
                 
               },),
               SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('성별 선택 :', style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: accountHandler.genderList.map((gender) {
+                      return Row(
+                        children: [
+                          Radio<String>(
+                            value: gender,
+                            groupValue: accountHandler.selectedgender.value,
+                            onChanged: (value) {
+                              if (value != null) {
+                                accountHandler.selectedgender.value = value;
+                              }
+                            },
+                          ),
+                          Text(gender),
+                          const SizedBox(width: 16),
+                        ],
+                      );
+                    }).toList()),
+                ],
+              ),
+              SizedBox(height: 30),
               CustomTextField(label: "비밀번호 를 입력 해주세요", controller: pwController),
               SizedBox(height: 30),
               CustomTextField(label: "전화번호 를 입력 해주세요", controller: phoneController),
@@ -129,6 +155,8 @@ _showDialogue(){
         onPressed: () {
           Get.back();
           Get.back();
+          accountHandler.idReadOnly.value = false;
+          accountHandler.nickReadOnly.value = false;
         }, 
         child: Text('돌아가기', style: TextStyle(color: AppColors.brown))
       )

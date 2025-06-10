@@ -4,6 +4,7 @@ class UserAccount {
   final String userPW;
   final String userPhone;
   final String userEmail;
+  final String userGender;
 
   UserAccount(
     {
@@ -12,6 +13,7 @@ class UserAccount {
       required this.userPW,
       required this.userPhone,
       required this.userEmail,
+      required this.userGender
     }
   );
 // ----------------------------------------- //
@@ -21,7 +23,8 @@ factory UserAccount.fromMap(Map<String, dynamic> map){
     userNickname: map['userNickname'], 
     userPW: map['userPW'], 
     userPhone: map['userPhone'], 
-    userEmail: map['userEmail']
+    userEmail: map['userEmail'],
+    userGender: map['userGender']
   );
 }
 // ----------------------------------------- //

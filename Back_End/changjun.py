@@ -257,12 +257,12 @@ async def selectStore():
 @router.post("/insertUserAccount")
 async def insertUserAccount(
     userid : str=Form(...), nickname : str=Form(...), userPw : str=Form(...),  phone : str=Form(...), 
-    userEmail: str=Form(...), userState : str=Form(...), createDate : str=Form(...)):
+    userEmail: str=Form(...), userState : str=Form(...), createDate : str=Form(...), gender : str=Form(...)):
         try:
             conn = connect()
             curs = conn.cursor()
-            sql = 'INSERT INTO users (user_id, user_nickname, user_password, user_phone, user_email, user_state, user_create_date) VALUES (%s,%s,%s,%s,%s,%s,%s)'
-            curs.execute(sql, (userid, nickname, userPw, phone, userEmail, userState, createDate))
+            sql = 'INSERT INTO users (user_id, user_nickname, user_password, user_phone, user_email, user_state, user_create_date, user_gender) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)'
+            curs.execute(sql, (userid, nickname, userPw, phone, userEmail, userState, createDate, gender))
             conn.commit()
             conn.close()
             return {'result' : 'OK'}
@@ -292,11 +292,34 @@ async def selectUsernickNameDoubleCheck(usernickname : str):
     result = [{'count' : row[0]}for row in rows]
     return {'results' : result}
 # ----------------------------------------------------------------------------------- #
-@router.get("/select/login/{userId}/{userPw}")
+# 8. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 users table 에 select 하는 함수
+@router.get("/select/loginUser/{userId}/{userPw}")
 async def selectUser(userId : str, userPw : str):
     conn = connect()
     curs = conn.cursor()
     curs.execute("SELECT count(*) FROM users WHERE user_id =%s and user_password =%s", (userId, userPw))
+    rows = curs.fetchall()
+    conn.close()
+    result = [{'count':row[0]} for row in rows]
+    return {'results' : result}
+# ----------------------------------------------------------------------------------- #
+# 8. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 users table 에 select 하는 함수
+@router.get("/select/loginStore/{storeId}/{storePw}")
+async def selectStore(storeId : str, storePw : str):
+    conn = connect()
+    curs = conn.cursor()
+    curs.execute("SELECT count(*) FROM store WHERE store_id =%s and store_password =%s", (storeId, storePw))
+    rows = curs.fetchall()
+    conn.close()
+    result = [{'count':row[0]} for row in rows]
+    return {'results' : result}
+# ----------------------------------------------------------------------------------- #
+# 8. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 users table 에 select 하는 함수
+@router.get("/select/loginAdmin/{adminId}/{adminPw}")
+async def selectAdmin(adminId : str, adminPw : str):
+    conn = connect()
+    curs = conn.cursor()
+    curs.execute("SELECT count(*) FROM admin WHERE admin_id =%s and admin_password =%s", (adminId, adminPw))
     rows = curs.fetchall()
     conn.close()
     result = [{'count':row[0]} for row in rows]

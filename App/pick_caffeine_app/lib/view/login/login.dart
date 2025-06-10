@@ -74,16 +74,6 @@ class Login extends StatelessWidget {
                     idController.text.trim(), 
                     pwController.text.trim()
                   );
-                  if (accountHandler.loginCheck.value == 1) {
-                    // 로그인 시 id 를 value 로 넣어줌
-                    accountHandler.box.write('loginId', idController.text.trim());
-                    Get.offAll(this);
-                    Get.to(()=> CustomerBottomTabbar());
-                    Get.snackbar('로그인 성공', '로그인을 환영 합니다.', backgroundColor: AppColors.brown, colorText: AppColors.white);
-
-                  } else{
-                    Get.snackbar('로그인 실패', 'id 혹은 pw 값이 틀렸습니다.', backgroundColor: AppColors.red, colorText: AppColors.white);
-                  }
                 }
               }
             ),
