@@ -78,8 +78,8 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                       items:
                                                           handler.storeImages,
                                                       options: CarouselOptions(
-                                                        height:
-                                                            350, // height 와 viewportFraction 을 기준으로 이미지의 크기가 설정됨.
+                                                        height: 350,
+                                                        // height 와 viewportFraction 을 기준으로 이미지의 크기가 설정됨.
                                                         autoPlay: false,
                                                         viewportFraction:
                                                             1, // 각 페이지가 차지하는 viewport의 정도임. 0.8로 설정하면 Indicator 가 없는 슬라이드 구성가능함.
