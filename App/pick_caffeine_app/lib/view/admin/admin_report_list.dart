@@ -20,7 +20,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:pick_caffeine_app/model/kwonhyong/admin_model.dart';
-import 'package:pick_caffeine_app/model/kwonhyong/kwonhyoung_controller.dart';
 
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
 
