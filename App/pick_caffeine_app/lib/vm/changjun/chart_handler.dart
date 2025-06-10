@@ -24,18 +24,16 @@ class ChartHandler extends AccountHandler{
   @override
   void onInit() async{
     super.onInit();
-    final now = DateTime.now();
-    await fetchDuration();
-    fetchProductChart(now.year, now.month);
-    fetchQuantityChart(now.year, now.month);
+    
   }
 // ---------------------------------------------------------------------------------- //
 //1. 앱을 실행 할 때 작동되며 사용자가 data 를 입력하는 등의 변화가 있었을 때 데이터를 다시 불러와 list 에 담는 함수
   Future<void> fetchChart()async{
-  
+  String storeId =box.read('loginId');
+
     try{
       chartData.clear();
-      final res = await http.get(Uri.parse("$baseUrl/select/$chartState/doog2089"));
+      final res = await http.get(Uri.parse("$baseUrl/select/$chartState/$storeId"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
 
@@ -61,9 +59,9 @@ class ChartHandler extends AccountHandler{
 // ---------------------------------------------------------------------------------- //
 // 2. database 에서 전체 제품의 선택 연, 월 에 해당하는 매출을 추출하는 함수
   Future<void> fetchProductChart(int year, int month)async{
-
+    String storeId = box.read('loginId');
       chartProductData.clear();
-      final res = await http.get(Uri.parse("$baseUrl/selectProduct/doog2089/$year/$month/$menuNum"));
+      final res = await http.get(Uri.parse("$baseUrl/selectProduct/$storeId/$year/$month/$menuNum"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
       // print(results);
@@ -83,7 +81,8 @@ class ChartHandler extends AccountHandler{
 // ---------------------------------------------------------------------------------- //
 // 3. 제품 매출 선택에 필요한 년도, 월 을 선택하는 버튼 list 에 들어가는 data 를 추출하기 위한 함수
   Future<String> fetchDuration()async{
-      final res = await http.get(Uri.parse("$baseUrl/selectDuration/doog2089"));
+    String storeId = box.read('loginId');
+      final res = await http.get(Uri.parse("$baseUrl/selectDuration/$storeId"));
       final data = json.decode(utf8.decode(res.bodyBytes))['results'];
       // print(data);
       int storeYear = data[0]['year'];
@@ -116,7 +115,8 @@ addDurationList(int storeYear, int storeMonth){
 // ---------------------------------------------------------------------------------- //
 // 4. 해당 매장에 있는 메뉴의 id 와 이름을 list로 추출하는 함수
   Future<void> fetchMenu()async{
-      final res = await http.get(Uri.parse("$baseUrl/selectMenu/doog2089"));
+    String storeid = box.read('loginId');
+      final res = await http.get(Uri.parse("$baseUrl/selectMenu/$storeid"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
       
@@ -132,9 +132,9 @@ addDurationList(int storeYear, int storeMonth){
 // ---------------------------------------------------------------------------------- //
 // 2. database 에서 전체 제품의 선택 연, 월 에 해당하는 매출을 추출하는 함수
   Future<void> fetchQuantityChart(int year, int month)async{
-
+    String storeId = box.read('loginId');
       chartProductData.clear();
-      final res = await http.get(Uri.parse("$baseUrl/selectQuantity/doog2089/$year/$month/$menuNum"));
+      final res = await http.get(Uri.parse("$baseUrl/selectQuantity/$storeId/$year/$month/$menuNum"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
       // print(results);

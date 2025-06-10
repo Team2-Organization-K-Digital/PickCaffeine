@@ -33,12 +33,16 @@ class StoreChartDuration extends StatelessWidget {
 // ----------------------------------------------------------------- //
     final tooltipBehavior = TooltipBehavior(enable: true);
     final ChartHandler chartHandler = Get.find<JunTemp>();
+    final now = DateTime.now();
+
 // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
 // ----------------------------------------------------------------- //
     chartHandler.fetchChart();
-    // chartHandler.fetchMenu();
+    chartHandler.fetchDuration();
+    chartHandler.fetchProductChart(now.year, now.month);
+    chartHandler.fetchQuantityChart(now.year, now.month);
 // ----------------------------------------------------------------- //
     return Obx(
       () {

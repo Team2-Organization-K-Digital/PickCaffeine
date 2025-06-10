@@ -12,7 +12,7 @@ class StoreHandler extends ChartHandler{
   final RxList<Stores> sortedByDistance = <Stores>[].obs;
   final RxList<Stores> sortedByReview = <Stores>[].obs;
   final RxList<Stores> sortedByZzim = <Stores>[].obs;
-  final box = GetStorage();
+  // final box = GetStorage();
 
 
   double currentLatitude = 0.0;
