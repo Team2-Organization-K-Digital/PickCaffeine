@@ -14,13 +14,15 @@
 // ----------------------------------------------------------------- //
 */
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 class StoreHomeReview extends StatelessWidget {
   const StoreHomeReview({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(title: Text("리뷰보기"),),
+    );
   }
 }

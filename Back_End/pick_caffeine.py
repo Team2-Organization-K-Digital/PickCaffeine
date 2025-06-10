@@ -7,13 +7,12 @@ from seoyun import router as seoyun_router
 
 ip = "127.0.0.1"
 
-
 app = FastAPI() 
-app.include_router(changjun_router,prefix="/changjun",tags=["changjun"])
-app.include_router(eunjun_router,prefix="/eunjun",tags=["eunjun"])
-app.include_router(kwonhyoung_router,prefix="/kwonhyoung",tags=['kwonhyoung'])
-app.include_router(seong_router,prefix="/seong",tags=['seong'])
-app.include_router(seoyun_router,prefix="/seoyun",tags=['seoyun'])
+app.include_router(changjun_router,prefix="/changjun")
+app.include_router(eunjun_router,prefix="/eunjun")
+app.include_router(kwonhyoung_router,prefix="/kwonhyoung")
+app.include_router(seong_router,prefix="/seong")
+app.include_router(seoyun_router,prefix="/seoyun")
 
 if __name__ == "__main__":
     import uvicorn

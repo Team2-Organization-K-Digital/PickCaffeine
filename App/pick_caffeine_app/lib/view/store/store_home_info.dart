@@ -2,110 +2,153 @@
 /*
 // ----------------------------------------------------------------- //
   - title         : Information Home Page (Store)
-  - Description   : 매장 홈페이지 화면구성 ()
-  - Author        : Kim Eunjun
+  - Description   :
+  - Author        : gamseong
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
-  - package       : Getx
+  - package       :
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.05 v1.0.0  : 
+  - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
-
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
-import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:pick_caffeine_app/vm/image_vm_dart';
+import 'package:pick_caffeine_app/vm/vm_store_update.dart';
+import 'package:pick_caffeine_app/view/store/store_update.dart'; // 업데이트 페이지 import
 
 class StoreHomeInfo extends StatelessWidget {
   StoreHomeInfo({super.key});
-  final vmHandler = Get.find<VmHandlerTemp>();
+
+  final vm = Get.find<VmStoreUpdate>();
+  final imageModel = Get.find<ImageModel>();
+  final mapController = MapController();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return vmHandler.loginStore.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 100,
-                    child: Text(
-                      vmHandler.loginStore.first.store_content,
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text("영업시간 : ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_business_hour,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text("정기 휴무 : ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_regular_hoilday,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text("임시 휴무 : ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_temporary_holiday,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text("전화번호: ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_phone,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
-                  Center(
-                    child: SizedBox(
-                      height: 500,
-                      width: 400,
-                      child: MenuUtility().flutterMap(vmHandler),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text("사업자 번호 : "),
-                      Text(
-                        vmHandler.loginStore.first.store_business_num
-                            .toString(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
+    return Scaffold(
+      body: Obx(() {
+        final store = vm.getStorehome;
+        if (store == null) {
+          return Center(child: Text('스토어 정보가 없습니다'));
+        }
 
-                  SizedBox(height: 100),
-                ],
+        return Column(
+          children: [
+            const SizedBox(height: 40),
+
+            Center(
+              child: SizedBox(
+                height: 150,
+                child: Obx(() => ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: imageModel.imageFileList.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < imageModel.imageFileList.length) {
+                          final file = imageModel.imageFileList[index];
+                          return Container(
+                            margin: EdgeInsets.all(8),
+                            child: Image.file(
+                              File(file.path),
+                              width: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        } else {
+                          return GestureDetector(
+                            onTap: () async =>
+                                await imageModel.getImageFromGallerylist(ImageSource.gallery),
+                            child: Container(
+                              width: 150,
+                              margin: EdgeInsets.all(8),
+                              color: Colors.grey[300],
+                              child: Icon(Icons.add),
+                            ),
+                          );
+                        }
+                      },
+                    )),
               ),
             ),
-          );
-    });
+
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("매장명: ${store.store_name}"),
+                    SizedBox(height: 4),
+                    Text("설명: ${store.store_content}"),
+                    SizedBox(height: 4),
+                    Text("영업시간: ${store.store_business_hour}"),
+                    SizedBox(height: 4),
+                    Text("정기휴무: ${store.store_regular_holiday}"),
+                    SizedBox(height: 4),
+                    Text("임시휴무: ${store.store_temporary_holiday}"),
+                    SizedBox(height: 4),
+                    Text("전화번호: ${store.store_phone}"),
+                    SizedBox(height: 12),
+
+                    Container(
+                      height: 300,
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: FlutterMap(
+                        mapController: mapController,
+                        options: MapOptions(
+                          initialCenter: LatLng(
+                            store.store_latitude ?? 37.4979,
+                            store.store_longitude ?? 127.0276,
+                          ),
+                          initialZoom: 15,
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                point: LatLng(
+                                  store.store_latitude ?? 37.4979,
+                                  store.store_longitude ?? 127.0276,
+                                ),
+                                width: 40,
+                                height: 40,
+                                child: Icon(Icons.location_on, color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: ElevatedButton(
+                onPressed: () => Get.to(() => StoreUpdate()),
+                style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50)),
+                child: Text("정보 수정하기"),
+              ),
+            ),
+          ],
+        );
+      }),
+    );
   }
 }
