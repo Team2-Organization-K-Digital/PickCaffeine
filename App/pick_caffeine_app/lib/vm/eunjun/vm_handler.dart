@@ -7,7 +7,7 @@ import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_purchase.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_purchase.dart';
 
 class VmHandlerMenu extends VmHandlerPurchase {
   var lastMenuNum = 0.obs;

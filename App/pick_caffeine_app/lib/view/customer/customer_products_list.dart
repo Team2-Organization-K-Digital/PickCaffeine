@@ -24,7 +24,7 @@ import 'package:pick_caffeine_app/view/customer/customer_product_options.dart';
 import 'package:pick_caffeine_app/view/customer/customer_shopping_cart.dart';
 import 'package:pick_caffeine_app/view/store/store_add_product.dart';
 import 'package:pick_caffeine_app/view/store/store_products_update.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:pick_caffeine_app/widget_class/message/storemenuwidget.dart';
 import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 
@@ -142,7 +142,6 @@ class CustomerProductsList extends StatelessWidget {
                                     ),
                                     child: TextButton(
                                       style: ElevatedButton.styleFrom(
-                                        fixedSize: Size(80, 30),
                                         backgroundColor:
                                             vmHandler.clickedCategory.value !=
                                                     index
@@ -216,11 +215,12 @@ class CustomerProductsList extends StatelessWidget {
                       return Column(
                         children: [
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  right: 300,
                                   top: 5,
+                                  left: 20,
                                   bottom: 5,
                                 ),
                                 child: Text(

@@ -30,7 +30,7 @@ import 'package:pick_caffeine_app/view/customer/customer_products_list.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CustomerStoreDetail extends StatelessWidget {

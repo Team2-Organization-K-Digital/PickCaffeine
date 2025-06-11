@@ -22,7 +22,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/Eunjun/selected_menu.dart';
 import 'package:pick_caffeine_app/view/customer/customer_shopping_cart.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 
 class CustomerProductOptions extends StatelessWidget {
   final vmHandler = Get.find<VmHandlerTemp>();

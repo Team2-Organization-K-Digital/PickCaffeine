@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:pick_caffeine_app/model/Eunjun/categories.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 
 class Storemenuwidget {
   categoryDialog(VmHandlerTemp handler, String store_id) {

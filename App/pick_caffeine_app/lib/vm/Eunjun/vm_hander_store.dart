@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/model/Eunjun/store.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler.dart';
 import 'package:http/http.dart' as http;
 
 class VmHanderStore extends VmHandlerMenu {
@@ -11,6 +11,7 @@ class VmHanderStore extends VmHandlerMenu {
   final RxList<MyStores> myStores = <MyStores>[].obs;
   final RxList<Widget> storeImages = <Widget>[].obs;
   var activeIndex = 0.obs;
+  var fetchValue = false;
 
   Future<void> fetchLoginStore(String storeid) async {
     final res = await http.get(Uri.parse('$baseUrl/select/store/${storeid}'));
@@ -58,8 +59,12 @@ class VmHanderStore extends VmHandlerMenu {
   }
 
   fetchStore(String storeId) async {
+    if (fetchValue) {
+      return;
+    }
     await fetchStoreImage(storeId);
     await fetchLoginStore(storeId);
+    fetchValue = true;
   }
 
   Future<void> fetchMyStores(String user_id) async {

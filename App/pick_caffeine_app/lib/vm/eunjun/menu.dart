@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/image_provider.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_selectoption.dart';
+import 'package:pick_caffeine_app/vm/eunjun/image_provider.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_selectoption.dart';
 
 class MenuController extends VmHandlerSelectoption {
   final RxList<TextEditingController> titleControllers =

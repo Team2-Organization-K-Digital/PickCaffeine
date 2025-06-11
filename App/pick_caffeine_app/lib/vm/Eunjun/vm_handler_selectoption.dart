@@ -6,7 +6,7 @@ import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/model/Eunjun/selected_menu.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/image_provider.dart';
+import 'package:pick_caffeine_app/vm/eunjun/image_provider.dart';
 
 class VmHandlerSelectoption extends ImageModel {
   final String baseUrl = "http://127.0.0.1:8000/eunjun";

@@ -26,17 +26,18 @@ import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class StoreHomeBodyTabbar extends StatelessWidget {
   StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
-  final storeId = "111";
+
   final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
+    final storeId = box.read("loginId");
     handler.fetchStore(storeId);
 
     return DefaultTabController(
@@ -164,42 +165,118 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                       //   },
                                       // ),
                                     ),
-
+                                    SizedBox(height: 20),
                                     Obx(
-                                      () => Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Switch(
-                                            value: handler.openCloseValue.value,
-                                            onChanged: (value) {
-                                              handler.openCloseValue.value =
-                                                  value;
-                                            },
-                                          ),
-                                          Text(
-                                            handler.openCloseValue.value
-                                                ? "판매 중"
-                                                : "준비 중",
-                                          ),
-                                          Switch(
-                                            value:
-                                                handler.closeForeverValue.value,
-                                            onChanged: (value) {
-                                              handler.closeForeverValue.value =
-                                                  value;
-                                            },
-                                          ),
-                                          Text(
-                                            handler.closeForeverValue.value
-                                                ? "영업 중   "
-                                                : "영업 종료",
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {},
-                                            child: Text('회원정보 수정'),
-                                          ),
-                                        ],
+                                      () => Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 10,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            SizedBox(
+                                              width: 400,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Transform.scale(
+                                                        scale: 1.3,
+                                                        child: Switch(
+                                                          value:
+                                                              handler
+                                                                  .openCloseValue
+                                                                  .value,
+                                                          onChanged: (value) {
+                                                            handler
+                                                                .openCloseValue
+                                                                .value = value;
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              left: 15,
+                                                            ),
+                                                        child: Text(
+                                                          handler
+                                                                  .openCloseValue
+                                                                  .value
+                                                              ? "판매 중"
+                                                              : "준비 중",
+                                                          style: TextStyle(
+                                                            fontSize: 30,
+                                                            color:
+                                                                AppColors.black,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Transform.scale(
+                                                        scale: 1.3,
+                                                        child: Switch(
+                                                          value:
+                                                              handler
+                                                                  .closeForeverValue
+                                                                  .value,
+                                                          onChanged: (value) {
+                                                            handler
+                                                                .closeForeverValue
+                                                                .value = value;
+                                                          },
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              left: 15,
+                                                            ),
+                                                        child: Text(
+                                                          handler
+                                                                  .closeForeverValue
+                                                                  .value
+                                                              ? "영업 중   "
+                                                              : "영업 종료",
+
+                                                          style: TextStyle(
+                                                            fontSize: 30,
+                                                            color:
+                                                                AppColors.black,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 20,
+                                              ),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  fixedSize: Size(180, 45),
+                                                ),
+                                                onPressed: () {},
+                                                child: Text(
+                                                  '회원정보 수정',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     SizedBox(height: 10),
@@ -235,7 +312,7 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                   foregroundColor: AppColors.white,
                                   backgroundColor: AppColors.lightbrown,
 
-                                  fixedSize: Size(300, 50),
+                                  fixedSize: Size(300, 65),
                                 ),
                                 onPressed: () {
                                   box.write("storeId", '111');
@@ -248,7 +325,7 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                 child: Text(
                                   '메뉴 보기',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -272,10 +349,10 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   TabPersistentHeaderDelegate();
 
   @override
-  double get minExtent => 110;
+  double get minExtent => 150;
 
   @override
-  double get maxExtent => 110;
+  double get maxExtent => 150;
 
   @override
   Widget build(
@@ -296,13 +373,17 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                 children: [
                   Text(
                     handler.loginStore.first.store_name,
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 60),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      //
-                    },
-                    child: Text("가게 정보 수정"),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(fixedSize: Size(210, 50)),
+                      onPressed: () {
+                        //
+                      },
+                      child: Text("가게 정보 수정", style: TextStyle(fontSize: 22)),
+                    ),
                   ),
                 ],
               ),
@@ -315,11 +396,14 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                 Tab(
                   child: Text(
                     '가게 정보',
-                    style: TextStyle(color: AppColors.black),
+                    style: TextStyle(fontSize: 30, color: AppColors.black),
                   ),
                 ),
                 Tab(
-                  child: Text('리뷰', style: TextStyle(color: AppColors.black)),
+                  child: Text(
+                    '리뷰',
+                    style: TextStyle(fontSize: 30, color: AppColors.black),
+                  ),
                 ),
               ],
               onTap: (value) {

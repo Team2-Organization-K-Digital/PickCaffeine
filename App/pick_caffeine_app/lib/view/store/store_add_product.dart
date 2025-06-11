@@ -22,7 +22,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 
 class StoreAddProduct extends StatelessWidget {
   StoreAddProduct({super.key});
