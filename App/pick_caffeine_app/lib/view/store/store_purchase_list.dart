@@ -26,11 +26,11 @@ class StorePurchaseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchPurchaseStore(111.toString());
+    order.fetchPurchaseStore(box.read('login_Id'));
 
 
-    order.fetchUserDetail('111');
-    order.fetchMenuStore('111');
+    order.fetchUserDetail(box.read('login_Id'));
+    order.fetchMenuStore(box.read('login_Id'));
 
     return Scaffold(
       body: Column(
@@ -178,7 +178,7 @@ class StorePurchaseList extends StatelessWidget {
                                             purchaseList.purchase_num
                                                 .toString(),
                                           );
-                                          order.fetchPurchaseStore(111.toString());
+                                          order.fetchPurchaseStore(box.read('login_Id'));
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: const Color.fromARGB(
@@ -210,7 +210,7 @@ class StorePurchaseList extends StatelessWidget {
                                                     .toString(),
                                               );
                                               await order.fetchPurchaseStore(
-                                                111.toString(),
+                                                box.read('login_Id')
                                               );
                                               Get.back();
                                             },
@@ -237,7 +237,7 @@ class StorePurchaseList extends StatelessWidget {
                                                     .toString(),
                                               );
                                               await order.fetchPurchaseStore(
-                                                111.toString(),
+                                                box.read('login_Id')
                                               );
                                               Get.back();
                                             },
@@ -264,7 +264,7 @@ class StorePurchaseList extends StatelessWidget {
                                                     .toString(),
                                               );
                                               await order.fetchPurchaseStore(
-                                                111.toString(),
+                                                box.read('login_Id')
                                               );
                                               Get.back();
                                             },

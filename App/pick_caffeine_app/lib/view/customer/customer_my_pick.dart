@@ -25,7 +25,7 @@ class CustomerMyPick extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchMyStore(11.toString());
+    order.fetchMyStore(box.read('login_Id'));
 
     return Scaffold(
       appBar: AppBar(

@@ -32,10 +32,11 @@ class CustomerPurchaseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchPurchase('11');
-    order.fetchStore('11');
-    order.fetchReview('11');
-    order.fetchMenu('11');
+    
+    order.fetchPurchase(box.read('login_Id'));
+    order.fetchStore(box.read('login_Id'));
+    order.fetchReview(box.read('login_Id'));
+    order.fetchMenu(box.read('login_Id'));
       
     return Scaffold(
       appBar: AppBar(title: Text('주문내역')),
@@ -286,7 +287,7 @@ class CustomerPurchaseList extends StatelessWidget {
                 );
 
                 // 🎯 여기서 서버에서 다시 리뷰 불러오기
-                await order.fetchReview('11');
+                await order.fetchReview(box.read('login_Id'));
                 order.index.value ++;
 
                 Get.snackbar(
