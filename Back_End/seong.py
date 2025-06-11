@@ -21,7 +21,7 @@ def connect():
         host=ip,
         user="root",
         password="qwer1234",
-        db="pick_caffeine",
+        db="mydb",
         charset="utf8"
     )
 # ----------------------------------------------------------------------------------- #
