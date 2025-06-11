@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_create_store.dart';
 
-class VmStoreUpdate extends VmCreateStore {
+class Vmgamseong extends VmCreateStore {
   var error = ''.obs;
   var isLoading = false.obs;
   var stores = <StoreHome>[].obs;
