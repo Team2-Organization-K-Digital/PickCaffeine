@@ -18,7 +18,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/admin_model.dart';
+import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
+import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
+
+import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 
 import 'package:pick_caffeine_app/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';

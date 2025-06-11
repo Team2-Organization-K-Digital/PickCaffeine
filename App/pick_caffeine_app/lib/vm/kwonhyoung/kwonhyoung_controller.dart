@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:pick_caffein/model/declaration_model.dart';
-import 'package:pick_caffein/model/inquiry_model.dart'; 
+import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
+import 'package:pick_caffeine_app/model/kwonhyoung/inquiry_model.dart';
+
 
 // 개선된 버전(25.06.10.)
 

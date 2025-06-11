@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "pick_caffeine_app",
+            "cwd": "App/pick_caffeine_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "pick_caffeine_app (profile mode)",
+            "cwd": "App/pick_caffeine_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "pick_caffeine_app (release mode)",
+            "cwd": "App/pick_caffeine_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+			"name": "ipad",
+			"request": "launch",
+			"type": "dart",
+			"deviceId": "F86BF21A-EE22-4D1A-BF4F-F9F1B3C79010"
+		},
+		{
+			"name": "iphone",
+			"request": "launch",
+			"type": "dart",
+			"deviceId": "A6BC8439-6360-4D78-9F1C-925C7C7C6B03"
+		},
+	],
+	"compounds": [
+		{
+			"name": "All Devices",
+			"configurations": ["ipad", "iphone"],
+		}
+	
+    ]
+}

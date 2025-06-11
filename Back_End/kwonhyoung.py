@@ -5,29 +5,30 @@ date : 2025-06-10
 version : 1.2
 """
 
-from fastapi import FastAPI, HTTPException, Form, Path
+from fastapi import  HTTPException, Form, Path, APIRouter
 import pymysql
 from fastapi.responses import JSONResponse, Response
 from typing import Optional
 from datetime import datetime
 import base64
 
-app = FastAPI()
+# router = FastAPI()
+router = APIRouter()
 
 def connect():
     conn = pymysql.connect(
         # host='192.168.20.26',
-        host='192.168.50.236',
+        host='127.0.0.1',
         user='root',
         password='qwer1234',
         db='pick_caffeine',
         charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor
+        
     )
     return conn
 
 # 관리자 조회
-@app.get('/select')
+@router.get('/select')
 async def admin_select():
     conn = connect()
     curs = conn.cursor()
@@ -40,7 +41,7 @@ async def admin_select():
     return {'admin' : rows}
 
 # 전체 신고 조회 (개선된 버전)
-@app.get('/declarations')
+@router.get('/declarations')
 async def get_all_declarations():
     conn = connect()
     curs = conn.cursor()
@@ -87,7 +88,7 @@ async def get_all_declarations():
         return {"declarations": []}
 
 # 개별 신고 조회
-@app.get('/declarations_indi/{review_num}')
+@router.get('/declarations_indi/{review_num}')
 async def get_declaration(review_num: int):
     conn = connect()
     curs = conn.cursor()
@@ -111,7 +112,7 @@ async def get_declaration(review_num: int):
     return {"error": "신고 내역 없음"}
 
 # 신고 등록 (수정된 버전 - 중복 처리 및 안정성 강화)
-@app.post("/declaration_insert")
+@router.post("/declaration_insert")
 async def declaration_insert(
     userId: str = Form(...),
     reviewNum: int = Form(...),
@@ -245,7 +246,7 @@ async def declaration_insert(
         conn.close()
 
 # 신고 수정(제재 내용 포함)
-@app.put('/declarations/{review_num}')
+@router.put('/declarations/{review_num}')
 async def update_declaration(
     review_num: int,
     userId: str = Form(...),
@@ -309,7 +310,7 @@ async def update_declaration(
         conn.close()
 
 # 신고 삭제
-@app.delete('/declarations_delete/{review_num}')
+@router.delete('/declarations_delete/{review_num}')
 async def delete(review_num: int):
     conn = connect()
     curs = conn.cursor()
@@ -325,7 +326,7 @@ async def delete(review_num: int):
         return{'result':'Error', 'status': 'error'}
 
 # 통계 정보 조회
-@app.get('/stats')
+@router.get('/stats')
 async def get_stats():
     conn = connect()
     curs = conn.cursor()
@@ -363,7 +364,7 @@ async def get_stats():
         }
 
 # 제재 유저 목록 조회
-@app.get('/sanctioned_users')
+@router.get('/sanctioned_users')
 async def get_sanctioned_users():
     conn = connect()
     curs = conn.cursor()
@@ -396,7 +397,7 @@ async def get_sanctioned_users():
         return {"sanctioned_users": []}
 
 # 제재 해제 (개선된 버전 - 리뷰 상태 완전 복원)
-@app.put('/release_sanction/{user_id}')
+@router.put('/release_sanction/{user_id}')
 async def release_sanction(user_id: str):
     conn = connect()
     curs = conn.cursor()
@@ -514,7 +515,7 @@ async def release_sanction(user_id: str):
 
 
 # 전체 문의 조회
-@app.get('/inquiries')
+@router.get('/inquiries')
 async def get_all_inquiries():
     conn = connect()
     curs = conn.cursor()
@@ -534,7 +535,7 @@ async def get_all_inquiries():
     return {'inquiries': rows}
 
 # 개별 문의 조회
-@app.get('/inquiries_indi/{inquiry_num}')
+@router.get('/inquiries_indi/{inquiry_num}')
 async def get_inquiries(inquiry_num: int):
     conn = connect()
     curs = conn.cursor()
@@ -549,7 +550,7 @@ async def get_inquiries(inquiry_num: int):
     return {"결과": row}
 
 # 문의 등록
-@app.post('/inquiry_insert')
+@router.post('/inquiry_insert')
 async def inquiry_insert(
     userId: str = Form(...),
     inquiryDate: str = Form(..., description='YYYY-MM-DD 형식으로 입력'),
@@ -599,7 +600,7 @@ async def inquiry_insert(
         conn.close()
 
 # 문의 수정
-@app.put('/inquiry/{inquiry_num}')
+@router.put('/inquiry/{inquiry_num}')
 async def update_inquiry(
     inquiry_num: int = Path(..., alias="inquiry_num"),
     userId: str = Form(...),
@@ -650,7 +651,7 @@ async def update_inquiry(
         conn.close()
 
 # 문의 삭제
-@app.delete('/inquirise/{inquiry_num}')
+@router.delete('/inquirise/{inquiry_num}')
 async def delete_inquiry(inquiry_num: int):
     conn = connect()
     curs = conn.cursor()
@@ -668,7 +669,7 @@ async def delete_inquiry(inquiry_num: int):
 # =============== 개선된 매장 및 리뷰 관리 API ===============
 
 # 전체 매장 조회 (개선된 버전)
-@app.get('/stores')
+@router.get('/stores')
 async def get_all_stores():
     conn = connect()
     curs = conn.cursor()
@@ -700,7 +701,7 @@ async def get_all_stores():
         return {"stores": []}
 
 # 개별 매장 조회 (개선된 버전)
-@app.get('/stores/{store_id}')
+@router.get('/stores/{store_id}')
 async def get_store(store_id: str):
     conn = connect()
     curs = conn.cursor()
@@ -730,7 +731,7 @@ async def get_store(store_id: str):
         return {"error": "매장 조회 실패"}
 
 # 매장별 리뷰 조회 (개선된 버전)
-@app.get('/stores/{store_id}/reviews')
+@router.get('/stores/{store_id}/reviews')
 async def get_store_reviews(store_id: str):
     conn = connect()
     curs = conn.cursor()
@@ -773,7 +774,7 @@ async def get_store_reviews(store_id: str):
         return {"reviews": []}
 
 # 전체 리뷰 조회 (개선된 버전 - 최신 제재 상태 포함)
-@app.get('/reviews')
+@router.get('/reviews')
 async def get_all_reviews():
     conn = connect()
     curs = conn.cursor()
@@ -830,7 +831,7 @@ async def get_all_reviews():
         return {"reviews": []}
 
 # 리뷰 상태 업데이트 (제재용)
-@app.put('/reviews/{review_num}/status')
+@router.put('/reviews/{review_num}/status')
 async def update_review_status(
     review_num: int,
     review_state: str = Form(...),
@@ -869,7 +870,7 @@ async def update_review_status(
         return {"result": "리뷰 상태 업데이트 실패", "status": "error"}
 
 # 관리자 통계 정보 조회 (개선된 버전)
-@app.get('/admin_stats')
+@router.get('/admin_stats')
 async def get_admin_stats():
     conn = connect()
     curs = conn.cursor()
@@ -937,7 +938,7 @@ async def get_admin_stats():
         }
 
 # 매장 통계 정보 조회 (매장별 리뷰 수, 평점 등)
-@app.get('/store_stats')
+@router.get('/store_stats')
 async def get_store_stats():
     conn = connect()
     curs = conn.cursor()
@@ -968,7 +969,7 @@ async def get_store_stats():
         return {"store_stats": []}
 
 # 대시보드용 요약 정보
-@app.get('/dashboard_summary')
+@router.get('/dashboard_summary')
 async def get_dashboard_summary():
     conn = connect()
     curs = conn.cursor()
@@ -1023,7 +1024,3 @@ async def get_dashboard_summary():
             },
             "recent_activities": []
         }
-
-if __name__=='__main__':
-    import uvicorn
-    uvicorn.run(app, host='192.168.50.236', port=8000)
