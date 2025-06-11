@@ -3,6 +3,7 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_tabbar.dart';
+import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/view/login/login.dart';
 import 'package:pick_caffeine_app/view/store/store_main_bottom_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';

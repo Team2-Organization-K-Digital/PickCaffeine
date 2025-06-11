@@ -103,7 +103,13 @@ class StoreProductsList extends StatelessWidget {
                       vmHandler.categories.isEmpty
                           ? Center(child: Text('카테고리가 없습니다.'))
                           : Expanded(
-                            child: ListView.builder(
+                            child: ReorderableListView.builder(
+                              onReorder: (oldIndex, newIndex) {
+                                final item = vmHandler.categories.removeAt(
+                                  oldIndex,
+                                );
+                                vmHandler.categories.insert(newIndex, item);
+                              },
                               scrollDirection: Axis.horizontal,
                               itemCount: vmHandler.categories!.length + 1,
                               itemBuilder: (context, index) {

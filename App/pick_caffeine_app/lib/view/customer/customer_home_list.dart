@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/changjun/model/stores.dart';
+import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/changjun/store_list_handler.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
@@ -36,7 +37,6 @@ class CustomerHomeList extends StatelessWidget {
   // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: Obx(() {
         // if (storeHandler.isLoading.value) {
@@ -80,13 +80,14 @@ class CustomerHomeList extends StatelessWidget {
         itemCount: storeList.length > 6 ? 6 : storeList.length,
         itemBuilder: (context, index) {
           final store = storeList[index];
-          Uint8List? imageBytes = store.storeImage.isNotEmpty
-          ? base64Decode(store.storeImage)
-          : null;
+          Uint8List? imageBytes =
+              store.storeImage.isNotEmpty
+                  ? base64Decode(store.storeImage)
+                  : null;
           return GestureDetector(
             onTap: () async {
               await storeHandler.box.write('storeId', store.storeId);
-              // Get.to(()=>);
+              Get.to(() => CustomerStoreDetail());
             },
             child: Card(
               color: AppColors.white,
@@ -101,11 +102,15 @@ class CustomerHomeList extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: 
-                      imageBytes != null
-                      ? Image.memory(imageBytes, width: 150, height: 150, fit: BoxFit.fill)
-                      :Icon(Icons.image_not_supported, size:100),
-                      
+                      child:
+                          imageBytes != null
+                              ? Image.memory(
+                                imageBytes,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.fill,
+                              )
+                              : Icon(Icons.image_not_supported, size: 100),
                     ),
                     SizedBox(height: 5),
                     Text(
