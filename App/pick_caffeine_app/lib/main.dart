@@ -16,10 +16,11 @@ void main() {
   Get.put(JunTemp());
   Get.put(CustomerTabbar());
   Get.put(VmHandlerTemp());
-  
+
   Get.put(InquiryController());
   Get.put(DeclarationController());
   Get.put(Order());
+  Get.put(VmStoreUpdate());
 
   Get.put(VmStoreUpdate());
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: Login(),
+        home: CustomerStoreDetail(),
       );
     }
     return GetMaterialApp(
