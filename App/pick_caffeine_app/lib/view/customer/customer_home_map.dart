@@ -13,14 +13,56 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
-
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 class CustomerHomeMap extends StatelessWidget {
-  const CustomerHomeMap({super.key});
+  CustomerHomeMap({super.key});
+
+  final vmgpshandleer = Get.find<VmStoreUpdate>();
+  final mapController = MapController();
+
+
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    Future.delayed(Duration.zero, () {
+      vmgpshandleer.loadStoresAndMarkers();
+      vmgpshandleer.checkLocationPermission();
+      // vmgpshandleer.loadlikeMarkers();
+    });
+
+    return Scaffold(
+      appBar: AppBar(title: Text('고객용 매장 지도')),
+      body: Obx(() {
+        return FlutterMap(
+          mapController: mapController,
+          options: MapOptions(
+            onTap:(tapPosition, point) {
+          
+          },
+            initialCenter: vmgpshandleer.targetLocation.value ?? LatLng(37.5665, 126.9780),
+            initialZoom: 13,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              userAgentPackageName: 'com.example.app',
+            ),
+            MarkerLayer(
+              markers: vmgpshandleer.markers,
+            ),
+            // MarkerLayer(markers: vmgpshandleer.loadlikeMarkers,
+            // ),
+          ],
+        );
+      }),
+    );
   }
-}
+
+  }
+
+
