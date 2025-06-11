@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pick_caffeine_app/model/Eunjun/purchase.dart';
 import 'package:pick_caffeine_app/model/Eunjun/selected_menu.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/menu.dart';
+import 'package:pick_caffeine_app/vm/eunjun/menu.dart';
 
 import 'package:http/http.dart' as http;
 

@@ -15,7 +15,7 @@
 */
 
 import 'dart:convert';
-import 'dart:ui';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -25,7 +25,7 @@ import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/kwonhyong/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/view/store/store_add_product.dart';
 import 'package:pick_caffeine_app/view/store/store_products_update.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:pick_caffeine_app/widget_class/message/storemenuwidget.dart';
 import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 
@@ -59,7 +59,7 @@ class StoreProductsList extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 30),
                 child: Text(
                   storeName,
-                  style: TextStyle(color: AppColors.black, fontSize: 25),
+                  style: TextStyle(color: AppColors.black, fontSize: 40),
                 ),
               ),
               SizedBox(width: 10),
@@ -69,8 +69,8 @@ class StoreProductsList extends StatelessWidget {
             return Row(
               children: [
                 SizedBox(
-                  width: 400,
-                  height: 60,
+                  width: MediaQuery.of(context).size.width,
+                  height: 100,
                   child: Row(
                     children: [
                       TextButton(
@@ -80,19 +80,26 @@ class StoreProductsList extends StatelessWidget {
                           vmHandler.fetchCategory(storeId);
                         },
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               '카테고리',
-                              style: TextStyle(color: AppColors.black),
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: AppColors.black,
+                              ),
                             ),
                             Text(
                               '설정',
-                              style: TextStyle(color: AppColors.black),
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: AppColors.black,
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      VerticalDivider(width: 0),
+                      VerticalDivider(width: 2, thickness: 3),
                       vmHandler.categories.isEmpty
                           ? Center(child: Text('카테고리가 없습니다.'))
                           : Expanded(
@@ -132,6 +139,7 @@ class StoreProductsList extends StatelessWidget {
                                       child: Text(
                                         '전체 메뉴',
                                         style: TextStyle(
+                                          fontSize: 25,
                                           color:
                                               vmHandler.clickedCategory.value !=
                                                       index
@@ -154,7 +162,6 @@ class StoreProductsList extends StatelessWidget {
                                     ),
                                     child: TextButton(
                                       style: ElevatedButton.styleFrom(
-                                        fixedSize: Size(80, 30),
                                         backgroundColor:
                                             vmHandler.clickedCategory.value !=
                                                     index
@@ -190,6 +197,7 @@ class StoreProductsList extends StatelessWidget {
                                       child: Text(
                                         category.category_name,
                                         style: TextStyle(
+                                          fontSize: 25,
                                           color:
                                               vmHandler.clickedCategory.value !=
                                                       index
@@ -203,7 +211,7 @@ class StoreProductsList extends StatelessWidget {
                               },
                             ),
                           ),
-                      VerticalDivider(width: 0),
+                      VerticalDivider(width: 5, thickness: 3),
                       IconButton(
                         onPressed: () {
                           if (vmHandler.categoryMenuAdd.isEmpty) {
@@ -218,7 +226,7 @@ class StoreProductsList extends StatelessWidget {
                             },
                           );
                         },
-                        icon: Icon(Icons.add),
+                        icon: Icon(Icons.add, size: 50),
                       ),
                     ],
                   ),
@@ -245,17 +253,18 @@ class StoreProductsList extends StatelessWidget {
                       return Column(
                         children: [
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  right: 300,
+                                  left: 20,
                                   top: 5,
                                   bottom: 5,
                                 ),
                                 child: Text(
                                   category.category_name,
                                   style: TextStyle(
-                                    fontSize: 25,
+                                    fontSize: 60,
                                     color: AppColors.brown,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -398,7 +407,7 @@ class StoreProductsList extends StatelessWidget {
                                                         .spaceBetween,
                                                 children: [
                                                   SizedBox(
-                                                    width: 200,
+                                                    width: 500,
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.all(
@@ -412,7 +421,7 @@ class StoreProductsList extends StatelessWidget {
                                                           Text(
                                                             menu.menu_name,
                                                             style: TextStyle(
-                                                              fontSize: 16,
+                                                              fontSize: 30,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
@@ -427,7 +436,7 @@ class StoreProductsList extends StatelessWidget {
                                                             child: Text(
                                                               menu.menu_content,
                                                               style: TextStyle(
-                                                                fontSize: 10,
+                                                                fontSize: 20,
                                                               ),
                                                               overflow:
                                                                   TextOverflow

@@ -20,7 +20,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/Eunjun/purchase.dart';
 import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 
 class CustomerShoppingCart extends StatelessWidget {

@@ -15,13 +15,11 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/store/store_home_body_tabbar.dart';
 import 'package:pick_caffeine_app/view/store/store_purchase_list.dart';
-import 'package:pick_caffeine_app/vm/Eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 
 class StoreMainBottomTabbar extends StatelessWidget {
   StoreMainBottomTabbar({super.key});
@@ -38,6 +36,9 @@ class StoreMainBottomTabbar extends StatelessWidget {
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
+            iconSize: 35,
+            selectedFontSize: 18,
+            unselectedFontSize: 16,
             unselectedItemColor: AppColors.white,
             selectedItemColor: AppColors.lightbrown,
             backgroundColor: AppColors.brown,
