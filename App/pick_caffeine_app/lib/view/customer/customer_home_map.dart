@@ -13,3 +13,14 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
+import 'package:flutter/material.dart';
+
+class CustomerHomeMap extends StatelessWidget {
+  const CustomerHomeMap({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}

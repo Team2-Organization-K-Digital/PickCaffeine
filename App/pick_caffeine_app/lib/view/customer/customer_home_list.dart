@@ -36,34 +36,19 @@ class CustomerHomeList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
-    return Scaffold(
-      backgroundColor: AppColors.white,
+    return Obx( () {
+      return storeHandler.storeData.isEmpty
+      ? Center(child: CircularProgressIndicator())
 // ----------------------------------------------------------------- //
-    body: storeHandler.storeData.isEmpty
-    ? Center(child: CircularProgressIndicator())
-    :
-    SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
+      :
+      SingleChildScrollView(
+        padding: EdgeInsets.all(0),
+        scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  SizedBox(width: 310,child: CustomTextField(label: '검색', controller: searchController)),
-                  SizedBox(width: 20,),
-                  ButtonBrown(
-                    text: '검색', 
-                    onPressed: () {
-                      //
-                    },
-                  )
-                ],
-              ),
-              SizedBox(height: 50,),
               _buildText('나와 가까운 매장'),
               _listView(storeHandler.sortedByDistance),
               SizedBox(height: 50,),
@@ -75,9 +60,10 @@ class CustomerHomeList extends StatelessWidget {
             ]
           ),
         ),
-      ),
-    ),
-  );
+      
+          );
+  }
+);
 
 }// build
 // --------------------------------- Widget ------------------------------------- //

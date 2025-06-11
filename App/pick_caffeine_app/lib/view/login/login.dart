@@ -23,7 +23,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
-import 'package:pick_caffeine_app/view/customer/customer_bottom_tabbar.dart';
 import 'package:pick_caffeine_app/view/login/create_account_user.dart';
 import 'package:pick_caffeine_app/vm/changjun/account_handler.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';

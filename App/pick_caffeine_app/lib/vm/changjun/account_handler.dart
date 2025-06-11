@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/admin/admin_report_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_bottom_tabbar.dart';
-import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/store/store_main_bottom_tabbar.dart';
 
 class AccountHandler extends GetxController{
@@ -70,6 +69,7 @@ Future<dynamic> usernicknameDoubleCheck(String nickname)async{
 // 4. 로그인 시 사용자가 입력한 id 와 password 값이 일치하는 data 가 database (users, store, admin) 에 존재하는지 확인하는 함수
 Future<dynamic> userLoginCheck(String id, String pw)async{
 // users 테이블 대조
+  box.write('loginId', id);
   loginCheck.value = 0;
   final resUser = await http.get(Uri.parse("$baseUrl/select/loginUser/$id/$pw"));
   final dataUser = json.decode(utf8.decode(resUser.bodyBytes))['results'];
