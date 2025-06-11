@@ -16,9 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_slidable/flutter_slidable.dart'; 
-import 'package:pick_caffein/vm/getx_controller.dart'; 
-import 'package:pick_caffein/view/widgets/admin_bottom_tab.dart'; 
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart'; 
+
+
+import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart'; 
 
 // 관리자 문의내역역 페이지 (25.06.10. 수정된 버전)
 class InquiryReport extends StatelessWidget {

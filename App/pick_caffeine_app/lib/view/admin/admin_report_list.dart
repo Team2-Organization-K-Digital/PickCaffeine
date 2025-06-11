@@ -18,9 +18,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffein/model/declaration_model.dart';
-import 'package:pick_caffein/view/inquiry_report.dart';
-import 'package:pick_caffein/vm/getx_controller.dart';
+import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
+import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
+
+import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 
 // 관리자 매장 관리 페이지 (25.06.10. 개선된 버전)
 class AdminReportScreen extends StatelessWidget {

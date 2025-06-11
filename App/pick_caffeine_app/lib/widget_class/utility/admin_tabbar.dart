@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffein/view/declaration_report.dart';
-import 'package:pick_caffein/view/inquiry_report.dart';
+import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
+import 'package:pick_caffeine_app/view/admin/admin_report_list.dart';
+
 
 // 관리자 하단 네비게이션 위젯
 class BottomTabbar extends StatelessWidget {
@@ -32,7 +33,8 @@ class BottomTabbar extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (selectedIndex != 0) {
-                  Get.off(() => AdminReportScreen());
+                  Get.off(() => AdminReportScreen
+                  ());
                 }
               },
               child: Column(
