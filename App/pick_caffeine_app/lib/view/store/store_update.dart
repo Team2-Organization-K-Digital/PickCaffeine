@@ -21,8 +21,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/vm/image_vm_dart';
-import 'package:pick_caffeine_app/vm/vm_store_update.dart';
-import 'package:pick_caffeine_app/model/store_home.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
 
 class StoreUpdate extends StatelessWidget {
   StoreUpdate({super.key});
@@ -187,46 +187,51 @@ class StoreUpdate extends StatelessWidget {
             const SizedBox(height: 20),
 
             // 정보 수정 버튼
-            Center(
-              child: ElevatedButton(
-  onPressed: () async {
-    print('👉 수정 버튼 눌림');
-
-    final updated = StoreHome(
-      store_id: store.store_id,
-      store_password: store.store_password,
-      store_name: store.store_name,
-      store_phone: phoneController.text,
-      store_business_num: store.store_business_num,
-      store_address: addressController.text,
-      store_address_detail: addressDetailController.text,
-      store_latitude: vm.targetLocation.value?.latitude ?? store.store_latitude,
-      store_longitude: vm.targetLocation.value?.longitude ?? store.store_longitude,
-      store_content: contentController.text,
-      store_state: store.store_state,
-      store_regular_holiday: regularController.text,
-      store_temporary_holiday: tempController.text,
-      store_business_hour: businessnumController.text,
-    );
-
-    try {
-      final result = await vm.updateStorelist(updated);
-      print("👉 결과: $result");
-
-      if (result == 'OK') {
-        vm.setStore(updated);
-        Get.snackbar("완료", "정보가 수정되었습니다");
-        Get.back();
-      } else {
-        Get.snackbar("오류", result);
-      }
-    } catch (e) {
-      print(" 예외 발생: $e");
-    }
-  },
-  child: Text("정보 수정"),
-),
-
+            Row(
+              children: [
+                Center(
+                  child: ElevatedButton(
+                  onPressed: () async {
+                    print('수정 버튼 눌림');
+                
+                    final updated = StoreHome(
+                      store_id: store.store_id,
+                      store_password: store.store_password,
+                      store_name: store.store_name,
+                      store_phone: phoneController.text,
+                      store_business_num: store.store_business_num,
+                      store_address: addressController.text,
+                      store_address_detail: addressDetailController.text,
+                      store_latitude: vm.targetLocation.value?.latitude ?? store.store_latitude,
+                      store_longitude: vm.targetLocation.value?.longitude ?? store.store_longitude,
+                      store_content: contentController.text,
+                      store_state: store.store_state,
+                      store_regular_holiday: regularController.text,
+                      store_temporary_holiday: tempController.text,
+                      store_business_hour: businessnumController.text,
+                    );
+                
+                    try {
+                      final result = await vm.updateStorelist(updated);
+                      print(" 결과: $result");
+                
+                      if (result == 'OK') {
+                        vm.setStore(updated);
+                        Get.snackbar("완료", "정보가 수정되었습니다");
+                        Get.back();
+                      } else {
+                        Get.snackbar("오류", result);
+                      }
+                    } catch (e) {
+                      print(" 예외 발생: $e");
+                    }
+                  },
+                  child: Text("정보 수정"),
+                ),
+                
+                ),ElevatedButton(
+                  onPressed: () => Get.back(), child: Text("매장으로돌아가기"))
+              ],
             )
           ],
         ),

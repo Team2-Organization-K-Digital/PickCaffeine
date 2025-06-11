@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_map.dart';
 
 import 'package:pick_caffeine_app/vm/image_vm_dart';  
-import 'package:pick_caffeine_app/vm/vm_store_update.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 void main() {
   Get.put<ImageModel>(ImageModel());

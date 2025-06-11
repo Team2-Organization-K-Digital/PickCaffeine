@@ -20,7 +20,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/vm/image_vm_dart';
-import 'package:pick_caffeine_app/vm/vm_store_update.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:pick_caffeine_app/view/store/store_update.dart'; // 업데이트 페이지 import
 
 class StoreHomeInfo extends StatelessWidget {

@@ -15,10 +15,10 @@
 */
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/model/create_store.dart';
-import 'package:pick_caffeine_app/model/store_home.dart';
+import 'package:pick_caffeine_app/model/gamseong/create_store.dart';
+import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
-import 'package:pick_caffeine_app/vm/vm_store_update.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 class CreateAccountStore extends StatelessWidget {
   CreateAccountStore({super.key});
