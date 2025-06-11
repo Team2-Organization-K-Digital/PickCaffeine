@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
-import 'package:pick_caffeine_app/vm/image_vm_dart';
+import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
+
 
 class VmGpsHandller extends ImageModel {
 

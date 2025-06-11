@@ -1,6 +1,6 @@
-import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+// import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
-class VmReview extends VmStoreUpdate{
+// class VmReview extends VmStoreUpdate{
   
   
-}
+// }

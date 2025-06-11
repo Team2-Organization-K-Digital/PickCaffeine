@@ -163,7 +163,7 @@ class CreateAccountStore extends StatelessWidget {
         middleText: "가입이 등록 되었습니다.",
         actions: [
           TextButton(
-            onPressed: () => Get.to(StoreHomeInfo()),
+            onPressed: () => Get.to(()),
             child: Text("확인"),
       ),
     ],
