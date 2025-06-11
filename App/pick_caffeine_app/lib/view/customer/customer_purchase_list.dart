@@ -17,6 +17,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_detail.dart';
@@ -28,15 +29,16 @@ class CustomerPurchaseList extends StatelessWidget {
 
   final TextEditingController reviewController = TextEditingController();
   final RxMap<int, bool> isReviewVisible = <int, bool>{}.obs; //후기 유무
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     
-    order.fetchPurchase(box.read('login_Id'));
-    order.fetchStore(box.read('login_Id'));
-    order.fetchReview(box.read('login_Id'));
-    order.fetchMenu(box.read('login_Id'));
+    order.fetchPurchase(box.read('loginId'));
+    order.fetchStore(box.read('loginId'));
+    order.fetchReview(box.read('loginId'));
+    order.fetchMenu(box.read('loginId'));
       
     return Scaffold(
       appBar: AppBar(title: Text('주문내역')),

@@ -19,13 +19,6 @@ class ChartHandler extends AccountHandler{
 
   final RxList<ChartMenu> menuList = <ChartMenu>[].obs;
   final RxString menuNum = " ".obs;
-
-// ---------------------------------------------------------------------------------- //
-  @override
-  void onInit() async{
-    super.onInit();
-    
-  }
 // ---------------------------------------------------------------------------------- //
 //1. 앱을 실행 할 때 작동되며 사용자가 data 를 입력하는 등의 변화가 있었을 때 데이터를 다시 불러와 list 에 담는 함수
   Future<void> fetchChart()async{
@@ -113,7 +106,7 @@ addDurationList(int storeYear, int storeMonth){
   }
 }
 // ---------------------------------------------------------------------------------- //
-// 4. 해당 매장에 있는 메뉴의 id 와 이름을 list로 추출하는 함수
+// 5. 해당 매장에 있는 메뉴의 id 와 이름을 list로 추출하는 함수
   Future<void> fetchMenu()async{
     String storeid = box.read('loginId');
       final res = await http.get(Uri.parse("$baseUrl/selectMenu/$storeid"));
@@ -130,7 +123,7 @@ addDurationList(int storeYear, int storeMonth){
           menuList.value = returnResult;
   }
 // ---------------------------------------------------------------------------------- //
-// 2. database 에서 전체 제품의 선택 연, 월 에 해당하는 매출을 추출하는 함수
+// 6. database 에서 전체 제품의 선택 연, 월 에 해당하는 매출을 추출하는 함수
   Future<void> fetchQuantityChart(int year, int month)async{
     String storeId = box.read('loginId');
       chartProductData.clear();
@@ -151,6 +144,5 @@ addDurationList(int storeYear, int storeMonth){
           
           // print(chartQuantityData);
 }
-// ---------------------------------------------------------------------------------- //
-// ---------------------------------------------------------------------------------- //
+// ---------------------------------------------------------------------------------- /
 }

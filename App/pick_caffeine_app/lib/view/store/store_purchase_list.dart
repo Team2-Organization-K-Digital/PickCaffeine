@@ -16,12 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/store/store_purchase_detail.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class StorePurchaseList extends StatelessWidget {
-  const StorePurchaseList({super.key});
+   StorePurchaseList({super.key});
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {

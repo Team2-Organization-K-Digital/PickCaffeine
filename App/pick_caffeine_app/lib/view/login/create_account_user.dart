@@ -10,9 +10,12 @@
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.05 v1.0.0  :
+  - 2025.06.05 v1.0.0  : 고객의 회원가입 페이지 화면 구성 및 입력 값 판별 & db insert 확인
+
+  - 2025.06.11 v1.0.1  : 전반적인 화면 디자인 개선 및 appbar title 수정
 // ----------------------------------------------------------------- //
 */
+// ----------------------------------------------------------------- //
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
@@ -20,7 +23,7 @@ import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_light_brown.dart';
 import 'package:pick_caffeine_app/widget_class/utility/custom_text_field.dart';
-
+// ----------------------------------------------------------------- //
 class CreateAccountUser extends StatelessWidget {
   CreateAccountUser({super.key});
   final accountHandler = Get.find<JunTemp>();
@@ -29,7 +32,7 @@ class CreateAccountUser extends StatelessWidget {
   final pwController = TextEditingController();
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
-
+// ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +40,7 @@ class CreateAccountUser extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.brown,
         foregroundColor: AppColors.white,
-        title: Text("유저 회원가입", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("고객 회원가입", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
 // ----------------------------------------------------------------- //
       body:Obx(() => 
@@ -47,9 +50,10 @@ Center(
           child: Column(
             children: [
               SizedBox(height: 30),
-// id 등록
+// textfield : id
               CustomTextField(label: "아이디 를 입력 해주세요", controller: idController, readOnly: accountHandler.idReadOnly.value),
               SizedBox(height: 10),
+// button : id double check
               ButtonLightBrown(text: '아이디 중복 확인', onPressed: () async{
                 if (idController.text.trim().isEmpty) {
                   Get.snackbar('오류 발생', '값을 입력 한 뒤 확인 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
@@ -62,9 +66,10 @@ Center(
               },
             ),
               SizedBox(height: 20),
-// nickname 입력
+// textfield : nickname
               CustomTextField(label: "닉네임 을 입력 해주세요", controller: nickNameController),
               SizedBox(height: 10),
+// button : nickname double check
               ButtonLightBrown(text: '닉네임 중복 확인', onPressed: () async{
                 if (nickNameController.text.trim().isEmpty) {
                   Get.snackbar('오류 발생', '값을 입력 한 뒤 확인 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
@@ -74,10 +79,9 @@ Center(
                   ? _showIdDialogue('닉네임', nickNameController.text.trim())
                   : Get.snackbar('닉네임 중복', '다른 닉네임를 이용 해주세요.');
                 }
-                
-                
               },),
               SizedBox(height: 30),
+// radio button : gender select
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -103,13 +107,17 @@ Center(
                     }).toList()),
                 ],
               ),
+// textfield : password
               SizedBox(height: 30),
               CustomTextField(label: "비밀번호 를 입력 해주세요", controller: pwController),
+// textfield : phone
               SizedBox(height: 30),
               CustomTextField(label: "전화번호 를 입력 해주세요", controller: phoneController),
               SizedBox(height: 30),
+// textfield : email
               CustomTextField(label: "이메일 을 입력 해주세요", controller: emailController),
               SizedBox(height: 30),
+// button : create account
               ButtonBrown(
                 text: '회원가입', 
                 onPressed: () async{
@@ -145,7 +153,8 @@ Center(
       ) 
     );
   }
-// ----------------------------------------------------------------- //
+// ------------------------ Widget ---------------------------------- //
+// 1. 회원가입 성공 시 나타나는 dialogue
 _showDialogue(){
   Get.defaultDialog(
     title: '가입 완료',
@@ -163,7 +172,8 @@ _showDialogue(){
     ]
   );
 }
-// ----------------------------------------------------------------- //
+// ------------------------------------------------------------------- //
+// 2. id 와 nickname doubleCheck 성공 시 나타나는 dialogue
 _showIdDialogue(String type,String input){
   Get.defaultDialog(
     title: '확인 완료',

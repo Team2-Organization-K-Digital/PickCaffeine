@@ -6,7 +6,7 @@
   -               : 현재 위치를 기준으로 거리 가까운 순, 리뷰 많은 순, 찜 많은 순 매장 들이 나타난다.
   - Author        : Lee ChangJun
   - Created Date  : 2025.06.05
-  - Last Modified : 2025.06.09
+  - Last Modified : 2025.06.11
   - package       : GetX
 
 // ----------------------------------------------------------------- //
@@ -14,37 +14,31 @@
   - 2025.06.06 v1.0.0  : 매장 들의 list 를 vm 과 model 을 연결하여 화면에 출력
 
   - 2025.06.09 v1.0.1  : 전반적인 디자인 재구성 및 tabbar, 매장의 영업 상태 추가
+
+  - 2025.06.11 v1.0.2  : 팀원들의 file 을 merge 한 뒤 data 연결 확인 및  전반적인 디자인 개선
 // ----------------------------------------------------------------- //
 */
-
+// ----------------------------------------------------------------- //
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/changjun/model/stores.dart';
+import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/changjun/store_list_handler.dart';
-import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
-import 'package:pick_caffeine_app/widget_class/utility/custom_text_field.dart';
-
+// ----------------------------------------------------------------- //
 class CustomerHomeList extends StatelessWidget {
   CustomerHomeList({super.key});
   final searchController = TextEditingController();
   final StoreHandler storeHandler = Get.find<JunTemp>();
-
-  // ----------------------------------------------------------------- //
+// ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
+      backgroundColor: AppColors.lightpick,
       body: Obx(() {
-        // if (storeHandler.isLoading.value) {
-        //   return Center(child: CircularProgressIndicator());
-        // }
-        // if (storeHandler.storeData.isEmpty) {
-        //   return Center(child: Text('데이터를 불러오는데 실패 했습니다.'));
-        // }
         return SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Padding(
@@ -53,12 +47,15 @@ class CustomerHomeList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildText('나와 가까운 매장'),
+                SizedBox(height: 5),
                 _listView(storeHandler.sortedByDistance),
                 SizedBox(height: 50),
                 _buildText('리뷰가 많은 매장'),
+                SizedBox(height: 5),
                 _listView(storeHandler.sortedByReview),
                 SizedBox(height: 50),
                 _buildText('찜이 많은 매장'),
+                SizedBox(height: 5),
                 _listView(storeHandler.sortedByZzim),
               ],
             ),
@@ -66,11 +63,8 @@ class CustomerHomeList extends StatelessWidget {
         );
       }),
     );
-
-    // ----------------------------------------------------------------- //
   } // build
-
-  // --------------------------------- Widget ------------------------------------- //
+// --------------------------------- Widget ------------------------------------- //
   Widget _listView(List<Stores> storeList) {
     return SizedBox(
       width: double.infinity,
@@ -86,7 +80,7 @@ class CustomerHomeList extends StatelessWidget {
           return GestureDetector(
             onTap: () async {
               await storeHandler.box.write('storeId', store.storeId);
-              // Get.to(()=>);
+              Get.to(()=>CustomerStoreDetail());
             },
             child: Card(
               color: AppColors.white,
@@ -95,23 +89,30 @@ class CustomerHomeList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+// Text : store_state
                     Text(
-                      store.storeState.toString(),
+                      store.storeState == -1
+                      ? "영업 종료"
+                      : store.storeState == 0
+                      ? "영업 중"
+                      : "준비 중",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
+// Image : store_image
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(4.0),
                       child: 
                       imageBytes != null
                       ? Image.memory(imageBytes, width: 150, height: 150, fit: BoxFit.fill)
                       :Icon(Icons.image_not_supported, size:100),
-                      
                     ),
                     SizedBox(height: 5),
+// Text : store_name
                     Text(
                       store.storeName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
+// Text : store_mypick & store_review - total count
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -134,6 +135,7 @@ class CustomerHomeList extends StatelessWidget {
                         Text(store.reviewCount.toString()),
                       ],
                     ),
+// Text : store_distance - from user
                     Row(
                       children: [
                         Text(
@@ -154,9 +156,8 @@ class CustomerHomeList extends StatelessWidget {
         },
       ),
     );
-  }
-
-  // ------------------------------------------------------------------------------ //
+  }// build
+// ------------------------------- Widget -------------------------------------- //
   // 매장 리스트 상단 표시 글자 위젯
   Widget _buildText(String content) {
     return Container(
@@ -178,6 +179,5 @@ class CustomerHomeList extends StatelessWidget {
       ),
     );
   }
-
-  // ------------------------------------------------------------------------------ //
+// ------------------------------------------------------------------------------ //
 }// class

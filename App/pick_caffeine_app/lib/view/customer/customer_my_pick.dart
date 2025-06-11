@@ -17,15 +17,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerMyPick extends StatelessWidget {
-  const CustomerMyPick({super.key});
+  CustomerMyPick({super.key});
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchMyStore(box.read('login_Id'));
+    order.fetchMyStore(box.read('loginId'));
 
     return Scaffold(
       appBar: AppBar(

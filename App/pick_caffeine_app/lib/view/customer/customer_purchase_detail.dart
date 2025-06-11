@@ -16,11 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerPurchaseDetail extends StatelessWidget {
-  const CustomerPurchaseDetail({super.key});
-
+   CustomerPurchaseDetail({super.key});
+  final box = GetStorage();
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
