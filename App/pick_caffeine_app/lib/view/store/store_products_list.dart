@@ -408,7 +408,14 @@ class StoreProductsList extends StatelessWidget {
                                                     category.category_name,
                                                     menu.menu_num!,
                                                   ],
-                                                );
+                                                )!.then((value) {
+                                                  vmHandler.fetchMenuInCategory(
+                                                    storeId,
+                                                  );
+                                                  vmHandler.fetchCategory(
+                                                    storeId,
+                                                  );
+                                                });
                                               },
                                               child: Row(
                                                 mainAxisAlignment:

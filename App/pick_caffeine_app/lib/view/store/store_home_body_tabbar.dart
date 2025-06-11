@@ -192,9 +192,30 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                                   .openCloseValue
                                                                   .value,
                                                           onChanged: (value) {
-                                                            handler
-                                                                .openCloseValue
-                                                                .value = value;
+                                                            if (handler
+                                                                .closeForeverValue
+                                                                .value) {
+                                                              if (value) {
+                                                                handler
+                                                                    .updateStoreState(
+                                                                      storeId,
+                                                                      1,
+                                                                    );
+                                                              } else {
+                                                                handler
+                                                                    .updateStoreState(
+                                                                      storeId,
+                                                                      0,
+                                                                    );
+                                                              }
+                                                              handler
+                                                                  .openCloseValue
+                                                                  .value = value;
+                                                            } else {
+                                                              handler
+                                                                  .openCloseValue
+                                                                  .value = false;
+                                                            }
                                                           },
                                                         ),
                                                       ),
@@ -228,6 +249,22 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                                   .closeForeverValue
                                                                   .value,
                                                           onChanged: (value) {
+                                                            if (value) {
+                                                              handler
+                                                                  .updateStoreState(
+                                                                    storeId,
+                                                                    0,
+                                                                  );
+                                                            } else {
+                                                              handler
+                                                                  .updateStoreState(
+                                                                    storeId,
+                                                                    -1,
+                                                                  );
+                                                              handler
+                                                                  .openCloseValue
+                                                                  .value = value;
+                                                            }
                                                             handler
                                                                 .closeForeverValue
                                                                 .value = value;

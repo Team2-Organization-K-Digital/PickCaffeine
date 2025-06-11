@@ -564,6 +564,24 @@ async def select(storeid : str):
 
 
 
+@router.post("/update/store{store_id}/state{store_state}")
+async def updateMenuState(store_id: str, store_state:int):
+    # Connection으로 부터 Cursor 생성
+    conn = connect()
+    curs = conn.cursor()
+    # SQL 문장
+    try:
+        sql = "update store set store_state=%s where store_id=%s"
+        curs.execute(sql, (store_state,store_id))
+        conn.commit()
+        conn.close()
+        return {'result':'OK'}
+    except Exception as ex:
+        conn.close()
+        print("Error :", ex)
+        return {'result':'Error'}
+
+
 # 매장 image 
 # =====================================
 

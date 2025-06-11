@@ -108,4 +108,17 @@ class VmHanderStore extends VmHandlerMenu {
 
     return result;
   }
+
+  Future<void> updateStoreState(String store_id, int store_state) async {
+    final url = Uri.parse(
+      "$baseUrl/update/store${store_id}/state${store_state}",
+    );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'store_id': store_id, 'store_state': store_state}),
+    );
+    final result = json.decode(utf8.decode(response.bodyBytes))['result'];
+    return result;
+  }
 }
