@@ -1,9 +1,9 @@
-// 매장 주문 리스트 페이지
+// 매장 주문내역 페이지
 /*
 // ----------------------------------------------------------------- //
-  - title         : Store Purchase List Page
+  - title         : Purchase List Page (Store)
   - Description   :
-  - Author        : Jeong SeoYun
+  - Author        : Jeong seoyun
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
   - package       :
@@ -13,6 +13,7 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
@@ -26,7 +27,6 @@ class StorePurchaseList extends StatelessWidget {
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     order.fetchPurchaseStore(111.toString());
-    order.fetchReview(11.toString());
 
 
     order.fetchUserDetail('111');
@@ -37,6 +37,8 @@ class StorePurchaseList extends StatelessWidget {
         children: [
           SizedBox(height: 100),
           Obx(() {
+            // 최신 주문이 위로 오도록 정렬
+            order.purchase.sort((a, b) => b.purchase_date.compareTo(a.purchase_date));
             return Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.all(0),
@@ -53,7 +55,7 @@ class StorePurchaseList extends StatelessWidget {
 
 
                   return Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                     child: Column(
                       children: [
                         Row(
@@ -70,7 +72,7 @@ class StorePurchaseList extends StatelessWidget {
                                       16,
                                     ),
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 30,
                                       color: const Color.fromARGB(
                                         255,
                                         73,
@@ -82,14 +84,21 @@ class StorePurchaseList extends StatelessWidget {
                                   Text(
                                     '${userInfo[0]} 님',
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 35,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ), // 고객이름
                                   Text(
                                     menu_store[0][0].toString(),
-                                    style: TextStyle(fontSize: 15),
+                                    style: TextStyle(fontSize: 25),
                                   ), // 메뉴이름
+                                  Text(
+                                    '${menu_store[0][3]}원',
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ), // 메뉴가격
                                   GestureDetector(
                                     onTap: () {
                                       // 주문 상세페이지로 감
@@ -106,20 +115,13 @@ class StorePurchaseList extends StatelessWidget {
                                       );
                                     },
                                     child: Text(
-                                      '주문 상세정보 보기',
+                                      '주문 상세정보 보기 ▶︎',
                                       style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.grey,
+                                        fontSize: 25,
+                                        color: Colors.grey[500],
                                       ),
                                     ),
                                   ),
-                                  Text(
-                                    '${menu_store[0][3]}원',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ), // 메뉴가격
                                 ],
                               ),
                             ),
@@ -130,7 +132,7 @@ class StorePurchaseList extends StatelessWidget {
                                   Text(
                                     purchaseList.purchase_num.toString(),
                                     style: TextStyle(
-                                      fontSize: 40,
+                                      fontSize: 50,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -144,6 +146,10 @@ class StorePurchaseList extends StatelessWidget {
                                         : state == 2
                                         ? '제조완료'
                                         : '수령완료',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20
+                                          ),
                                   ),
                                 ],
                               ),
@@ -151,12 +157,17 @@ class StorePurchaseList extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(20.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               state == -1
-                                  ? Text('취소된 주문입니다.')
+                                  ? Text('취소된 주문입니다.',
+                                  style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30
+                                          ),
+                                  )
                                   : Row(
                                     children: [
                                       ElevatedButton(
@@ -176,18 +187,20 @@ class StorePurchaseList extends StatelessWidget {
                                             61,
                                             61,
                                           ),
+                                          minimumSize: Size(300, 70)
                                         ),
                                         child: Text(
                                           '주문취소',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 30
                                           ),
                                         ),
                                       ),
                                       //주문확인 -> 제조완료 -> 수령완료 ->1->2->3
                                       // 상태에 따라 버튼 UI를 바꾼다
-                                      // SizedBox(width: 30,),
+                                      SizedBox(width: 200,),
                                       state == 0
                                           ? ElevatedButton(
                                             onPressed: () async {
@@ -205,8 +218,15 @@ class StorePurchaseList extends StatelessWidget {
                                               backgroundColor: Color(
                                                 0xFFE9C268,
                                               ),
+                                              minimumSize: Size(300, 70)
                                             ),
-                                            child: Text('주문접수'),
+                                            child: Text('주문접수',
+                                            style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30
+                                          ),
+                                            ),
                                           )
                                           : state == 1
                                           ? ElevatedButton(
@@ -225,8 +245,15 @@ class StorePurchaseList extends StatelessWidget {
                                               backgroundColor: Color(
                                                 0xFFE9C268,
                                               ),
+                                              minimumSize: Size(300, 70)
                                             ),
-                                            child: Text('제조완료'),
+                                            child: Text('제조완료',
+                                            style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30
+                                          ),
+                                            ),
                                           )
                                           : state == 2
                                           ? ElevatedButton(
@@ -245,10 +272,22 @@ class StorePurchaseList extends StatelessWidget {
                                               backgroundColor: Color(
                                                 0xFFE9C268,
                                               ),
+                                              minimumSize: Size(300, 70)
                                             ),
-                                            child: Text('수령완료'),
+                                            child: Text('수령완료',
+                                            style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30
+                                          ),
+                                            ),
                                           )
-                                          : Text(''),
+                                          : Text('수령 완료됨',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30
+                                          ),
+                                          ),
                                     ],
                                   ),
                             ],

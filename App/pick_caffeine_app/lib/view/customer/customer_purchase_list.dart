@@ -1,9 +1,9 @@
-// 주문 내역 페이지
+// 고객 주문내역 페이지
 /*
 // ----------------------------------------------------------------- //
-  - title         : Purchase List Page
+  - title         : Purchase List Page (Customer)
   - Description   :
-  - Author        : Jeong SeoYun
+  - Author        : Jeong seoyun
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
   - package       :
@@ -13,6 +13,7 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,7 +58,7 @@ class CustomerPurchaseList extends StatelessWidget {
                   // print(menu);
               
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -79,7 +80,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                         10,
                                       ),
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 15,
                                         color: Color.fromARGB(255, 73, 73, 73),
                                       ),
                                     ),
@@ -96,7 +97,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                       order.menu.isNotEmpty
                                           ? menu[0][0].toString()
                                           : '메뉴 정보 없음',
-                                      style: TextStyle(fontSize: 15),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                                     GestureDetector(
                                       onTap: () {
@@ -113,9 +114,9 @@ class CustomerPurchaseList extends StatelessWidget {
                                         );
                                       },
                                       child: Text(
-                                        '주문 상세정보 보기',
+                                        '주문 상세정보 보기 ▶︎',
                                         style: TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 13,
                                           color: Colors.grey,
                                         ),
                                       ),
@@ -125,7 +126,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                           ? menu[0][3].toString()
                                           : '메뉴 정보 없음',
                                       style: TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -136,13 +137,13 @@ class CustomerPurchaseList extends StatelessWidget {
                                 padding: EdgeInsets.fromLTRB(0, 0, 30, 40),
                                 child: Column(
                                   children: [
-                                    Text(
-                                      purchaseList.purchase_num.toString(),
-                                      style: TextStyle(
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   purchaseList.purchase_num.toString(),
+                                    //   style: TextStyle(
+                                    //     fontSize: 40,
+                                    //     fontWeight: FontWeight.w400,
+                                    //   ),
+                                    // ),
                                     Text(
                                       state == -1
                                           ? '주문취소'
@@ -153,6 +154,10 @@ class CustomerPurchaseList extends StatelessWidget {
                                           : state == 2
                                           ? '제조완료'
                                           : '수령완료',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -178,6 +183,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                         200,
                                         130,
                                       ),
+                                      minimumSize: Size(100, 40)
                                     ),
                                     child: Text(
                                       '작성완료',
