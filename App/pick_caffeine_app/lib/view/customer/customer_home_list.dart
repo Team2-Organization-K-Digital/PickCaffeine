@@ -18,6 +18,7 @@
 */
 
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
@@ -32,55 +33,58 @@ class CustomerHomeList extends StatelessWidget {
   final searchController = TextEditingController();
   final StoreHandler storeHandler = Get.find<JunTemp>();
 
-// ----------------------------------------------------------------- //
+  // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
-    storeHandler.fetchStore();
-    return Obx( () {
-      return storeHandler.storeData.isEmpty
-      ? Center(child: CircularProgressIndicator())
-// ----------------------------------------------------------------- //
-      :
-      SingleChildScrollView(
-        padding: EdgeInsets.all(0),
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildText('나와 가까운 매장'),
-              _listView(storeHandler.sortedByDistance),
-              SizedBox(height: 50,),
-              _buildText('리뷰가 많은 매장'),
-              _listView(storeHandler.sortedByReview),
-              SizedBox(height: 50,),
-              _buildText('찜이 많은 매장'),
-              _listView(storeHandler.sortedByZzim),
-            ]
+    
+    return Scaffold(
+      body: Obx(() {
+        // if (storeHandler.isLoading.value) {
+        //   return Center(child: CircularProgressIndicator());
+        // }
+        // if (storeHandler.storeData.isEmpty) {
+        //   return Center(child: Text('데이터를 불러오는데 실패 했습니다.'));
+        // }
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildText('나와 가까운 매장'),
+                _listView(storeHandler.sortedByDistance),
+                SizedBox(height: 50),
+                _buildText('리뷰가 많은 매장'),
+                _listView(storeHandler.sortedByReview),
+                SizedBox(height: 50),
+                _buildText('찜이 많은 매장'),
+                _listView(storeHandler.sortedByZzim),
+              ],
+            ),
           ),
-        ),
-      
-          );
-  }
-);
+        );
+      }),
+    );
 
-}// build
-// --------------------------------- Widget ------------------------------------- //
+    // ----------------------------------------------------------------- //
+  } // build
+
+  // --------------------------------- Widget ------------------------------------- //
   Widget _listView(List<Stores> storeList) {
     return SizedBox(
       width: double.infinity,
       height: 280,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount:
-            storeList.length > 6
-                ? 6
-                : storeList.length,
+        itemCount: storeList.length > 6 ? 6 : storeList.length,
         itemBuilder: (context, index) {
           final store = storeList[index];
+          Uint8List? imageBytes = store.storeImage.isNotEmpty
+          ? base64Decode(store.storeImage)
+          : null;
           return GestureDetector(
-            onTap: () async{
+            onTap: () async {
               await storeHandler.box.write('storeId', store.storeId);
               // Get.to(()=>);
             },
@@ -90,33 +94,58 @@ class CustomerHomeList extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  
                   children: [
-                    Text(store.storeState, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text(
+                      store.storeState.toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: 
-                      store.storeState == '영업준비중'
-                      ?Image.asset('images/logo_image.png')
-                      :Image.memory(base64Decode(store.storeImage),width: 150,height: 150,),
+                      imageBytes != null
+                      ? Image.memory(imageBytes, width: 150, height: 150, fit: BoxFit.fill)
+                      :Icon(Icons.image_not_supported, size:100),
+                      
                     ),
-                    SizedBox(height: 5,),
-                    Text(store.storeName, style: TextStyle(fontWeight: FontWeight.bold),),
+                    SizedBox(height: 5),
+                    Text(
+                      store.storeName,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                    Text('찜 : ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                    Text(store.myStoreCount.toString()),
-                    SizedBox(width: 20,),
-                    Text('리뷰 : ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                    Text(store.reviewCount.toString()),
-                    ],
-                  ),
-                  Row(children: [
-                    Text('거리 : ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                    Text('${store.distance} km'),
-                    ],
-                  )
+                      children: [
+                        Text(
+                          '찜 : ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(store.myStoreCount.toString()),
+                        SizedBox(width: 20),
+                        Text(
+                          '리뷰 : ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(store.reviewCount.toString()),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '거리 : ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text('${store.distance} km'),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -127,28 +156,28 @@ class CustomerHomeList extends StatelessWidget {
     );
   }
 
-// ------------------------------------------------------------------------------ //
-// 매장 리스트 상단 표시 글자 위젯
-Widget _buildText(String content){
-  return Container(
-    width: 190,
-    height: 42,
-    decoration: BoxDecoration(
-      color: AppColors.lightbrown,
-      borderRadius: BorderRadius.circular(10)
-    ),
-    child: Center(
-      child: Text(
-        content,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 25,
-          color: AppColors.white
+  // ------------------------------------------------------------------------------ //
+  // 매장 리스트 상단 표시 글자 위젯
+  Widget _buildText(String content) {
+    return Container(
+      width: 190,
+      height: 42,
+      decoration: BoxDecoration(
+        color: AppColors.lightbrown,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Text(
+          content,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            color: AppColors.white,
+          ),
         ),
       ),
-    ),
-  );
-}
-// ------------------------------------------------------------------------------ //
-// ------------------------------------------------------------------------------ //
+    );
+  }
+
+  // ------------------------------------------------------------------------------ //
 }// class
