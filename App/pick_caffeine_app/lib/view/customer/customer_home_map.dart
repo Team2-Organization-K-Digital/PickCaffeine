@@ -15,7 +15,6 @@
 */
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/vm/vm_store_update.dart';
@@ -33,7 +32,7 @@ class CustomerHomeMap extends StatelessWidget {
     Future.delayed(Duration.zero, () {
       vmgpshandleer.loadStoresAndMarkers();
       vmgpshandleer.checkLocationPermission();
-      vmgpshandleer.loadlikeMarkers();
+      // vmgpshandleer.loadlikeMarkers();
     });
 
     return Scaffold(
@@ -56,8 +55,8 @@ class CustomerHomeMap extends StatelessWidget {
             MarkerLayer(
               markers: vmgpshandleer.markers,
             ),
-            MarkerLayer(markers: vmgpshandleer.loadlikeMarkers,
-            ),
+            // MarkerLayer(markers: vmgpshandleer.loadlikeMarkers,
+            // ),
           ],
         );
       }),
