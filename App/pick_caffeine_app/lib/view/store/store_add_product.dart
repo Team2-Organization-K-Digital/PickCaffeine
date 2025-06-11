@@ -20,6 +20,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
@@ -37,183 +38,221 @@ class StoreAddProduct extends StatelessWidget {
     final storeId = value[0];
     final category = menuProvier.categoryMenuAdd.value;
     return Scaffold(
-      appBar: AppBar(title: Text("메뉴 옵션 페이지")),
+      appBar: AppBar(title: Text("메뉴 추가 페이지")),
       body: SingleChildScrollView(
         child: Obx(
-          () => Column(
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap:
-                      () =>
-                          menuProvier.getImageFromGallery(ImageSource.gallery),
-                  child: Container(
-                    height: 200,
-                    width: 200,
-                    child:
-                        menuProvier.imageFile.value == null
-                            ? Center(
-                              child: Icon(
-                                Icons.add_box_outlined,
-                                size: 200,
-                                color: Colors.grey,
-                              ),
-                            )
-                            : Image.file(
-                              File(menuProvier.imageFile.value!.path),
-                            ),
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+          () => Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.85,
+              child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20, right: 30),
-                    child: Text('카테고리 : $category'),
-                  ),
-                ],
-              ),
-              TextField(
-                controller: menunamecontroller,
-                decoration: InputDecoration(hintText: '메뉴 이름을 입력하세요'),
-              ),
-              TextField(
-                controller: menupricecontroller,
-                decoration: InputDecoration(hintText: '메뉴 가격을 입력하세요'),
-              ),
-              TextField(
-                maxLines: 5,
-                controller: menucontentcontroller,
-                decoration: InputDecoration(hintText: '메뉴 설명을 입력하세요'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: menuProvier.addTitle,
-                    child: Text('옵션 타이틀 추가'),
-                  ),
-                  VerticalDivider(color: Colors.black, indent: 5, endIndent: 5),
-                ],
-              ),
-              Divider(color: Colors.black),
-              SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: menuProvier.titleControllers.length,
-                itemBuilder: (context, i) {
-                  return Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: 250,
-                              child: TextField(
-                                controller: menuProvier.titleControllers[i],
-                                decoration: InputDecoration(
-                                  hintText: '옵션 타이틀 입력',
+                  Center(
+                    child: GestureDetector(
+                      onTap:
+                          () => menuProvier.getImageFromGallery(
+                            ImageSource.gallery,
+                          ),
+                      child: SizedBox(
+                        height: 500,
+                        width: 400,
+                        child:
+                            menuProvier.imageFile.value == null
+                                ? Center(
+                                  child: Icon(
+                                    Icons.add_box_outlined,
+                                    size: 400,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                                : Image.file(
+                                  File(menuProvier.imageFile.value!.path),
                                 ),
-                              ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, right: 30),
+                        child: Text(
+                          '카테고리 : $category',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  TextField(
+                    controller: menunamecontroller,
+                    decoration: InputDecoration(
+                      hintText: '메뉴 이름을 입력하세요',
+                      hintStyle: TextStyle(
+                        color: AppColors.lightbrown,
+                        fontSize: 25,
+                      ),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextField(
+                      controller: menupricecontroller,
+                      decoration: InputDecoration(
+                        hintText: '메뉴 가격을 입력하세요',
+                        hintStyle: TextStyle(fontSize: 25),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextField(
+                      maxLines: 5,
+                      controller: menucontentcontroller,
+                      decoration: InputDecoration(
+                        hintText: '메뉴 설명을 입력하세요',
+                        hintStyle: TextStyle(fontSize: 25),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: menuProvier.addTitle,
+                        child: Text('옵션 타이틀 추가'),
+                      ),
+                      VerticalDivider(
+                        color: Colors.black,
+                        indent: 5,
+                        endIndent: 5,
+                      ),
+                    ],
+                  ),
+                  Divider(color: Colors.black),
+                  SizedBox(height: 10),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: menuProvier.titleControllers.length,
+                    itemBuilder: (context, i) {
+                      return Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 250,
+                                  child: TextField(
+                                    controller: menuProvier.titleControllers[i],
+                                    decoration: InputDecoration(
+                                      hintText: '옵션 타이틀 입력',
+                                    ),
+                                  ),
+                                ),
+                                Obx(
+                                  () => Checkbox(
+                                    value: menuProvier.selected[i],
+                                    onChanged: (value) {
+                                      menuProvier.selected[i] = value!;
+                                    },
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    menuProvier.removeTitle(i);
+                                  },
+                                  icon: Icon(Icons.delete),
+                                ),
+                              ],
                             ),
+
                             Obx(
-                              () => Checkbox(
-                                value: menuProvier.selected[i],
-                                onChanged: (value) {
-                                  menuProvier.selected[i] = value!;
+                              () => ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount:
+                                    menuProvier.optionControllers[i].length,
+                                itemBuilder: (context, index) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      SizedBox(
+                                        width: 200,
+                                        child: TextField(
+                                          controller:
+                                              menuProvier
+                                                  .optionControllers[i][index],
+                                          decoration: InputDecoration(
+                                            labelText: '옵션 이름 입력',
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 80,
+                                        child: TextField(
+                                          controller:
+                                              menuProvier
+                                                  .optPriceControllers[i][index],
+                                          decoration: InputDecoration(
+                                            labelText: '옵션 가격(원)',
+                                            labelStyle: TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+
+                                      IconButton(
+                                        onPressed: () {
+                                          menuProvier.removeOption(i, index);
+                                        },
+
+                                        icon: Icon(Icons.remove),
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  );
                                 },
                               ),
                             ),
-                            IconButton(
+                            TextButton(
                               onPressed: () {
-                                menuProvier.removeTitle(i);
+                                menuProvier.addOption(i);
                               },
-                              icon: Icon(Icons.delete),
+                              child: Text("+ 옵션 추가"),
+                            ),
+                            Divider(
+                              thickness: 3,
+                              color: Color(0xffD7A86E).withOpacity(0.5),
                             ),
                           ],
                         ),
-
-                        Obx(
-                          () => ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: menuProvier.optionControllers[i].length,
-                            itemBuilder: (context, index) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  SizedBox(
-                                    width: 200,
-                                    child: TextField(
-                                      controller:
-                                          menuProvier
-                                              .optionControllers[i][index],
-                                      decoration: InputDecoration(
-                                        labelText: '옵션 이름 입력',
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 80,
-                                    child: TextField(
-                                      controller:
-                                          menuProvier
-                                              .optPriceControllers[i][index],
-                                      decoration: InputDecoration(
-                                        labelText: '옵션 가격(원)',
-                                        labelStyle: TextStyle(fontSize: 12),
-                                      ),
-                                    ),
-                                  ),
-
-                                  IconButton(
-                                    onPressed: () {
-                                      menuProvier.removeOption(i, index);
-                                    },
-
-                                    icon: Icon(Icons.remove),
-                                    color: Colors.red,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            menuProvier.addOption(i);
-                          },
-                          child: Text("+ 옵션 추가"),
-                        ),
-                        Divider(
-                          thickness: 3,
-                          color: Color(0xffD7A86E).withOpacity(0.5),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await menuProvier.fetchCategoryNum(category, storeId);
+                      await insert();
+                      menuProvier.clearAll();
+                      menunamecontroller.clear();
+                      menucontentcontroller.clear();
+                      menupricecontroller.clear();
+                      Get.back();
+                    },
+                    child: Text("메뉴 추가"),
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await menuProvier.fetchCategoryNum(category, storeId);
-                  await insert();
-                  menuProvier.clearAll();
-                  menunamecontroller.clear();
-                  menucontentcontroller.clear();
-                  menupricecontroller.clear();
-                  Get.back();
-                },
-                child: Text("메뉴 추가"),
-              ),
-            ],
+            ),
           ),
         ),
       ),
