@@ -277,7 +277,13 @@ class StoreProductsList extends StatelessWidget {
                             ],
                           ),
                           menusInCategory.isEmpty
-                              ? Text('메뉴가 없습니다.')
+                              ? Text(
+                                '메뉴가 없습니다.',
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )
                               : ListView.builder(
                                 padding: EdgeInsets.all(5),
                                 shrinkWrap: true,
@@ -446,7 +452,7 @@ class StoreProductsList extends StatelessWidget {
                                                           Text(
                                                             '${menu.menu_price.toString()} 원',
                                                             style: TextStyle(
-                                                              fontSize: 16,
+                                                              fontSize: 25,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
@@ -460,7 +466,7 @@ class StoreProductsList extends StatelessWidget {
                                                             child: Text(
                                                               '주문수 : ',
                                                               style: TextStyle(
-                                                                fontSize: 10,
+                                                                fontSize: 20,
                                                               ),
                                                             ),
                                                           ),
@@ -474,8 +480,8 @@ class StoreProductsList extends StatelessWidget {
                                                           right: 25,
                                                         ),
                                                     child: SizedBox(
-                                                      width: 95,
-                                                      height: 95,
+                                                      width: 200,
+                                                      height: 200,
                                                       child: Image.memory(
                                                         base64Decode(
                                                           menu.menu_image,
