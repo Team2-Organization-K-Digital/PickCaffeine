@@ -1,9 +1,9 @@
-// 찜 매장 목록 페이지
+// 고객 찜한 매장 리스트 페이지
 /*
 // ----------------------------------------------------------------- //
-  - title         : My Pick Page
+  - title         : Customer My Pick Page (Customer)
   - Description   :
-  - Author        : Jeong SeoYun
+  - Author        : Jeong seoyun
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
   - package       :
@@ -13,8 +13,8 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
-import 'dart:convert';
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
@@ -25,9 +25,7 @@ class CustomerMyPick extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchMyStore(11.toString());
-              order.fetchMyStoreCount('111');
-              order.fetchReviewCount('111');
+    order.fetchMyStore(box.read('login_Id'));
 
     return Scaffold(
       appBar: AppBar(
@@ -41,6 +39,7 @@ class CustomerMyPick extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.all(8.0),
           child: GridView.builder(
+
             itemCount: order.myStore.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 두개씩
@@ -86,12 +85,13 @@ class CustomerMyPick extends StatelessWidget {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.star_outlined),
-                        Text(order.storeCount.toString()),
+                        Icon(Icons.favorite_border_outlined),
+                        Text(order.myStore[index]['store_like_count'].toString()),
+                        SizedBox(width: 60,),
                         Icon(Icons.chat_bubble_outline_rounded),
-                        Text(order.reviewCount.toString())
+                        Text(order.myStore[index]['review_count'].toString())
                       ],
                     )
                   ],

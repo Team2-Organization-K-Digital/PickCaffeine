@@ -2,17 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/model/seoyun/store_model.dart';
+import 'package:http/http.dart' as http;
 
 class Order extends GetxController {
+
   final index = 0.obs;
   // 백엔드 서버 주소
   final String baseUrl = "http://127.0.0.1:8000/seoyun";
 
   // 구매 내역 리스트
   final RxList<Purchase> purchase = <Purchase>[].obs;
-
 
   // 매장 전체 
   final RxList<Store> store =  <Store>[].obs;
@@ -21,12 +21,14 @@ class Order extends GetxController {
 
   final RxList userMap = [].obs;
 
-
   // 리뷰 여부 (구매 번호 리스트)
   final RxList<int> review = <int>[].obs;
 
-  // 상세 메뉴 정보 리스트
+  // 상세 메뉴 정보 리스트 - 고객
   final RxList detailMenu = [].obs;
+
+  // 상세 메뉴 정보 리스트 - 매장
+  final RxList detailMenuStore = [].obs;
 
   // 메뉴 정보 리스트 - 고객 
   final RxList menu = [].obs;
@@ -37,30 +39,13 @@ class Order extends GetxController {
   // 찜한 매장 리스트
   final RxList myStore = [].obs;
 
-  // 매장 이름
-  var storeName = ''.obs;
 
-  // 매장 전화번호
-  var storePhone = ''.obs;
-
-  // 유저 닉네임
-  var userNickname = ''.obs;
-
-  // 유저 전화번호
-  var userPhone = ''.obs;
-
-  // 매장 찜 수
-  var storeCount = 0.obs;
-
-  // 매장 후기 수
-  var reviewCount = 0.obs;
-
-  /// 해당 유저의 구매 내역 불러오기
+  /// 해당 유저의 구매 내역 불러오기 - 고객
   Future<void> fetchPurchase(String id) async {
     await _fetchPurchaseData('$baseUrl/select/purchase_list/$id');
   }
 
-  /// 매장 사장님 입장에서 구매 내역 불러오기
+  /// 매장 사장님 입장에서 구매 내역 불러오기 - 매장
   Future<void> fetchPurchaseStore(String id) async {
     await _fetchPurchaseData('$baseUrl/select/purchase_list_store/$id');
   }
@@ -90,7 +75,6 @@ class Order extends GetxController {
 
   /// 매장 전체 정보 (내부 사용용)
   Future<void> fetchStoreData(String id) async {
-    final res = await http.get(Uri.parse("$baseUrl/select/store/$id"));
     try {
       store.clear();
       final res = await http.get(Uri.parse(id));
@@ -121,7 +105,7 @@ class Order extends GetxController {
     }
   }
 
-  /// 구매 내역에 해당하는 매장 정보 불러오기
+  /// 구매 내역에 해당하는 매장 정보 불러오기 - 고객
   Future<void> fetchStore(String id) async {
   try {
     final res = await http.get(Uri.parse("$baseUrl/select/purchase_list/storeinfo/$id"));
@@ -134,7 +118,7 @@ class Order extends GetxController {
   }
 }
 
-  /// 주문 내역에 해당하는 유저 정보 불러오기
+  /// 주문 내역에 해당하는 유저 정보 불러오기 - 매장
   Future<void> fetchUserDetail(String id) async {
   try {
     final res = await http.get(Uri.parse("$baseUrl/select/purchase_list/userinfo/$id"));
@@ -147,7 +131,7 @@ class Order extends GetxController {
   }
 }
 
-  /// 특정 주문의 상세 메뉴 불러오기 (메뉴 + 옵션 + 가격 + 수량)
+  /// 특정 주문의 상세 메뉴 불러오기 (메뉴 + 옵션 + 가격 + 수량) - 고객
   Future<void> fetchDetailMenu(String id, String num) async {
     try {
       detailMenu.clear();
@@ -157,6 +141,22 @@ class Order extends GetxController {
 
       for (var item in results) {
         detailMenu.add({'menu': item[0], 'option': item[1], 'price': item[2], 'quantity': item[3]});
+      }
+    } catch (e) {
+      Get.snackbar('에러', '상세메뉴 불러오기 실패');
+    }
+  }
+
+  /// 특정 주문의 상세 메뉴 불러오기 (메뉴 + 옵션 + 가격 + 수량) - 매장
+  Future<void> fetchDetailMenuStore(String id, String num) async {
+    try {
+      detailMenuStore.clear();
+      final res = await http.get(Uri.parse("$baseUrl/select/detail_menu/store/$id/$num"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+
+      for (var item in results) {
+        detailMenuStore.add({'menu': item[0], 'option': item[1], 'price': item[2], 'quantity': item[3]});
       }
     } catch (e) {
       Get.snackbar('에러', '상세메뉴 불러오기 실패');
@@ -234,21 +234,6 @@ class Order extends GetxController {
     }
   }
 
-  /// 구매한 유저의 정보(닉네임, 전화번호) 불러오기
-  Future<void> fetchUser(String num) async {
-    try {
-      final res = await http.get(Uri.parse("$baseUrl/select/purchase_store/$num"));
-      final data = json.decode(utf8.decode(res.bodyBytes));
-      final List results = data['results'];
-
-      if (results.length >= 1) {
-        userNickname.value = results[0][0];
-        userPhone.value = results[0][1];
-      }
-    } catch (e) {
-      Get.snackbar('에러', '고객 정보 불러오기 실패');
-    }
-  }
 
   /// 리뷰 저장하기 (텍스트와 이미지 함께 업로드)
   Future<void> saveReview({
@@ -299,6 +284,8 @@ class Order extends GetxController {
     }
   }
 
+
+
   /// 유저가 찜한 매장 리스트 불러오기
   Future<void> fetchMyStore(String id) async {
     try {
@@ -308,33 +295,12 @@ class Order extends GetxController {
 
       myStore.clear();
       for (var store in results) {
-        myStore.add({'store_name': store['store_name'], 'image_1': store['image_1']});
+        myStore.add({'store_id': store['store_id'], 'store_name': store['store_name'], 'image_1': store['image_1'], 'store_like_count': store['store_like_count'], 'review_count': store['review_count']});
       }
     } catch (e) {
       Get.snackbar('에러', '찜한 매장 불러오기 실패');
     }
       print(myStore);
-  }
-
-  /// 해당 매장 찜 수 불러오기
-  Future<void> fetchMyStoreCount(String id) async {
-      final res = await http.get(Uri.parse("$baseUrl/select/my_store_count/$id"));
-      final data = json.decode(utf8.decode(res.bodyBytes));
-      final List results = data['results'];
-      print(results);
-
-      storeCount.value = results[0][0];
-
-  }
-
-  /// 해당 매장 후기 수 불러오기
-  Future<void> fetchReviewCount(String id) async {
-      final res = await http.get(Uri.parse("$baseUrl/select/review_count/$id"));
-      final data = json.decode(utf8.decode(res.bodyBytes));
-      final List results = data['results'];
-
-      reviewCount.value = results[0][0];
-
   }
 
 }
