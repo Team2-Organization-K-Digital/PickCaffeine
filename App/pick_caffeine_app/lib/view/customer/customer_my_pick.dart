@@ -17,7 +17,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/vm/oder_list.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerMyPick extends StatelessWidget {
   const CustomerMyPick({super.key});
@@ -49,7 +49,7 @@ class CustomerMyPick extends StatelessWidget {
               childAspectRatio: 3 / 4, // 가로 세로 비율
             ),
             itemBuilder: (context, index) {
-              final store = order.myStore[index];
+              // final store = order.myStore[index];
               return Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

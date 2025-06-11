@@ -15,9 +15,9 @@
 */
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/model/purchase.dart';
+import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/store/store_purchase_detail.dart';
-import 'package:pick_caffeine_app/vm/oder_list.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class StorePurchaseList extends StatelessWidget {
   const StorePurchaseList({super.key});
@@ -25,11 +25,12 @@ class StorePurchaseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchPurchase(11.toString());
+    order.fetchPurchaseStore(111.toString());
     order.fetchReview(11.toString());
-    order.fetchStore(11.toString(), 111.toString());
-    order.fetchMenu(11.toString(), 10.toString());
-    order.fetchUser(10.toString());
+
+
+    order.fetchUserDetail('111');
+    order.fetchMenuStore('111');
 
     return Scaffold(
       body: Column(
@@ -44,6 +45,13 @@ class StorePurchaseList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final Purchase purchaseList = order.purchase[index];
                   final state = int.parse(purchaseList.purchase_state);
+                  final purchaseNum = purchaseList.purchase_num;
+
+                  final userInfo = order.userMap[index]; 
+
+                  final List menu_store = order.menuStore.where((m) => m[1] == purchaseNum).toList();
+
+
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Column(
@@ -72,14 +80,14 @@ class StorePurchaseList extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    '${order.userNickname}',
+                                    '${userInfo[0]} 님',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                  ), // 매장이름
+                                  ), // 고객이름
                                   Text(
-                                    order.menu[0]['name'].toString(),
+                                    menu_store[0][0].toString(),
                                     style: TextStyle(fontSize: 15),
                                   ), // 메뉴이름
                                   GestureDetector(
@@ -90,8 +98,10 @@ class StorePurchaseList extends StatelessWidget {
                                         arguments: [
                                           purchaseList.purchase_num,
                                           purchaseList.purchase_date,
+                                          userInfo[0],
+                                          userInfo[1],
                                           purchaseList.purchase_request,
-                                          order.menu[0]['total'],
+                                          menu_store[0][3],
                                         ],
                                       );
                                     },
@@ -104,7 +114,7 @@ class StorePurchaseList extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    '${order.menu[0]['total'].toString()}원',
+                                    '${menu_store[0][3]}원',
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
@@ -157,7 +167,7 @@ class StorePurchaseList extends StatelessWidget {
                                             purchaseList.purchase_num
                                                 .toString(),
                                           );
-                                          order.fetchPurchase(11.toString());
+                                          order.fetchPurchaseStore(111.toString());
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: const Color.fromARGB(
@@ -186,8 +196,8 @@ class StorePurchaseList extends StatelessWidget {
                                                 purchaseList.purchase_num
                                                     .toString(),
                                               );
-                                              await order.fetchPurchase(
-                                                11.toString(),
+                                              await order.fetchPurchaseStore(
+                                                111.toString(),
                                               );
                                               Get.back();
                                             },
@@ -206,8 +216,8 @@ class StorePurchaseList extends StatelessWidget {
                                                 purchaseList.purchase_num
                                                     .toString(),
                                               );
-                                              await order.fetchPurchase(
-                                                11.toString(),
+                                              await order.fetchPurchaseStore(
+                                                111.toString(),
                                               );
                                               Get.back();
                                             },
@@ -226,8 +236,8 @@ class StorePurchaseList extends StatelessWidget {
                                                 purchaseList.purchase_num
                                                     .toString(),
                                               );
-                                              await order.fetchPurchase(
-                                                11.toString(),
+                                              await order.fetchPurchaseStore(
+                                                111.toString(),
                                               );
                                               Get.back();
                                             },

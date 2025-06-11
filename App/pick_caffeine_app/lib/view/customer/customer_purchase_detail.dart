@@ -15,7 +15,7 @@
 */
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/vm/oder_list.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerPurchaseDetail extends StatelessWidget {
   const CustomerPurchaseDetail({super.key});
@@ -23,9 +23,9 @@ class CustomerPurchaseDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchDetailMenu(11.toString(), 13.toString());
-    order.fetchStore(11.toString(), 111.toString());
     final args = Get.arguments ?? '__';
+    order.fetchStore(11.toString());
+    order.fetchDetailMenu(11.toString(), args[0].toString());
     return Scaffold(
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
@@ -54,14 +54,14 @@ class CustomerPurchaseDetail extends StatelessWidget {
                 ],
               ),
               Text(
-                '주문 매장 ${order.storeName.toString()}',
+                '주문 매장 ${args[2]}',
                 style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18
                 ),
               ),
               Text(
-                '매장 연락처 ${order.storePhone.toString()}',
+                '매장 연락처 ${args[3]}',
                 style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18
@@ -98,7 +98,7 @@ class CustomerPurchaseDetail extends StatelessWidget {
           
                     return ListTile(
                       title: Text(item['menu']),
-                      subtitle: Text('옵션 : ${item['option']}'),
+                      subtitle: Text('옵션 : ${item['option'] ?? '__'} '),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -111,9 +111,9 @@ class CustomerPurchaseDetail extends StatelessWidget {
                 );
               }),
               Text('요청 사항'),
-              Text('요청 사항 내용 : ${args[2]}'),
+              Text('요청 사항 내용 : ${args[4]}'),
               Text('결제 금액'),
-              Text(args[3].toString()),
+              Text(args[5].toString()),
             ],
           ),
         ),

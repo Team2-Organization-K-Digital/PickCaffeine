@@ -15,7 +15,7 @@
 */
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pick_caffeine_app/vm/oder_list.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class StorePurchaseDetail extends StatelessWidget {
   const StorePurchaseDetail({super.key});
@@ -23,10 +23,10 @@ class StorePurchaseDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchDetailMenu(11.toString(), 13.toString());
-    order.fetchStore(11.toString(), 111.toString());
-    order.fetchUser(10.toString());
     final args = Get.arguments ?? '__';
+    order.fetchDetailMenu(11.toString(), args[0].toString());
+    order.fetchStore(11.toString());
+    order.fetchUser(10.toString());
     return Scaffold(
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
@@ -55,14 +55,14 @@ class StorePurchaseDetail extends StatelessWidget {
                 ],
               ),
               Text(
-                '고객ID ${order.userNickname}',
+                '고객ID ${args[2]}',
                 style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18
                 ),
               ),
               Text(
-                '고객 연락처 ${order.userPhone}',
+                '고객 연락처 ${args[3]}',
                 style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18
@@ -112,9 +112,9 @@ class StorePurchaseDetail extends StatelessWidget {
                 );
               }),
               Text('요청 사항'),
-              Text('요청 사항 내용 : ${args[2]}'),
+              Text('요청 사항 내용 : ${args[4]}'),
               Text('결제 금액'),
-              Text(args[3].toString()),
+              Text(args[5].toString()),
             ],
           ),
         ),
