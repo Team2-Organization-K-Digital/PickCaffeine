@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: CustomerStoreDetail(),
+        home: Login(),
       );
     }
     return GetMaterialApp(

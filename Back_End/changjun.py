@@ -303,7 +303,7 @@ async def selectUser(userId : str, userPw : str):
     result = [{'count':row[0]} for row in rows]
     return {'results' : result}
 # ----------------------------------------------------------------------------------- #
-# 8. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 users table 에 select 하는 함수
+# 9. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 store table 에 select 하는 함수
 @router.get("/select/loginStore/{storeId}/{storePw}")
 async def selectStore(storeId : str, storePw : str):
     conn = connect()
@@ -314,7 +314,7 @@ async def selectStore(storeId : str, storePw : str):
     result = [{'count':row[0]} for row in rows]
     return {'results' : result}
 # ----------------------------------------------------------------------------------- #
-# 8. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 users table 에 select 하는 함수
+# 10. 사용자가 로그인을 진행 할 때 입력한 id 와 pw 값을 admin table 에 select 하는 함수
 @router.get("/select/loginAdmin/{adminId}/{adminPw}")
 async def selectAdmin(adminId : str, adminPw : str):
     conn = connect()
