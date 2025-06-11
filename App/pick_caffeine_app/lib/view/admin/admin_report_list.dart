@@ -7,24 +7,22 @@
                     신고 관련 페이지를 모두 작성함)
   - Author        : Lee KwonHyoung
   - Created Date  : 2025.06.05
-  - Last Modified : 2025.06.05
+  - Last Modified : 2025.06.11
   - package       : get: ^4.7.2
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.05 v1.0.0  : 구현된 페이지 첫 작성
+  - 2025.06.05 v1.0.1  : 구현된 페이지 첫 작성
 // ----------------------------------------------------------------- //
 */
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pick_caffein/model/declaration_model.dart';
+import 'package:pick_caffein/view/inquiry_report.dart';
+import 'package:pick_caffein/vm/getx_controller.dart';
 
-import 'package:pick_caffeine_app/model/kwonhyong/admin_model.dart';
-import 'package:pick_caffeine_app/model/kwonhyong/kwonhyoung_controller.dart';
-
-import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
-
-// 관리자 첫페이지(유저 신고관리)
+// 관리자 매장 관리 페이지 (25.06.10. 개선된 버전)
 class AdminReportScreen extends StatelessWidget {
   AdminReportScreen({super.key});
   final DeclarationController controller = Get.put(DeclarationController());
@@ -35,55 +33,59 @@ class AdminReportScreen extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       body: Column(
         children: [
-          _buildTopImageWithText(),
-          _buildUserStoreInfo(), // 유저수/매장수 정보 고정 표시
-          _buildTabBar(),
-          _buildTabBarView(),
-          _buildBottomNavigation(),
+          _buildTopImageWithText(), // 상단 앱바쪽 이미지지
+          _buildStoreUserInfo(), // 이미지 밑 매장/회원 수 정보 표시시
+          _buildTabBar(), // 상단 탭바
+          _buildTabBarView(), // 탭바뷰뷰
+          _buildBottomNavigation(), // 하단 탭바
         ],
       ),
     );
   }
 
-  // 최상단 이미지(이미지 에셋으로 작성)
+  // 상단 앱바 이미지
   Widget _buildTopImageWithText() {
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
           height: 150,
-          child: Image.asset('images/cafe.png', fit: BoxFit.cover),
+          child: Image.asset('images/cafe.png',
+            fit: BoxFit.cover,
+          ),
         ),
       ],
     );
   }
 
-  // 유저수/매장수 정보 (고정)
-  Widget _buildUserStoreInfo() {
+  // 매장수/회원수 정보 표시 
+  Widget _buildStoreUserInfo() {
     return Container(
       padding: EdgeInsets.all(16),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Obx(
-            () => Text(
-              '유저 수: ${controller.userCount.value}명',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          Obx(() => Text(
+            '매장 수: ${controller.storeCount.value}개',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
-          ),
-          Obx(
-            () => Text(
-              '매장 수: ${controller.storeCount.value}개',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          )),
+          Obx(() => Text(
+            '회원 수: ${controller.userCount.value}명',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
-          ),
+          )),
         ],
       ),
     );
   }
 
-  // 탭바 (순서 변경: 제재 등록 -> 신고접수 관리 -> 제재 유저 목록)
+  // 탭바 (매장리스트, 매장 리뷰, 제재 내역)
   Widget _buildTabBar() {
     return Container(
       color: Colors.white,
@@ -93,379 +95,280 @@ class AdminReportScreen extends StatelessWidget {
         unselectedLabelColor: Colors.grey[600],
         indicatorColor: Color(0xFF8B4513),
         indicatorWeight: 3,
-        tabs: [Tab(text: "제재 등록"), Tab(text: "신고접수 관리"), Tab(text: "제재 유저 목록")],
-      ),
-    );
-  }
-
-  // 탭바 뷰 (순서 변경)
-  Widget _buildTabBarView() {
-    return Expanded(
-      child: TabBarView(
-        controller: controller.tabController,
-        children: [
-          _buildSanctionRegistrationTab(), // 제재 등록
-          _buildReportManagementTab(), // 신고접수 관리
-          _buildSanctionedUsersTab(), // 제재 유저 목록
+        tabs: [
+          Tab(text: "매장 리스트"),
+          Tab(text: "매장 리뷰"),
+          Tab(text: "제재 내역"),
         ],
       ),
     );
   }
 
-  // 제재 등록 탭
-  Widget _buildSanctionRegistrationTab() {
+  // 탭바 뷰
+  Widget _buildTabBarView() {
+    return Expanded(
+      child: TabBarView(
+        controller: controller.tabController,
+        children: [
+          _buildStoreListTab(),
+          _buildReviewListTab(),
+          _buildSanctionListTab(),
+        ],
+      ),
+    );
+  }
+
+  // 매장리스트 탭
+  Widget _buildStoreListTab() {
     return Obx(() {
-      if (controller.selectedDeclaration.value == null) {
+      if (controller.isLoading.value) {
         return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.warning_amber_outlined,
-                size: 80,
-                color: Colors.grey[400],
-              ),
-              SizedBox(height: 16),
-              Text(
-                '제재 처리할 신고를 선택해주세요',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => controller.tabController.index = 1,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF8B4513),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+          child: CircularProgressIndicator(color: Color(0xFF8B4513)),
+        );
+      }
+
+      final storeList = controller.stores;
+
+      if (storeList.isEmpty) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.store_outlined, size: 80, color: Colors.grey[400]),
+                SizedBox(height: 16),
+                Text(
+                  '등록된 매장이 없습니다.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    await controller.refreshData();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF8B4513),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
+                  child: Text('새로고침', style: TextStyle(color: Colors.white)),
                 ),
-                child: Text(
-                  '신고 목록으로 이동',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }
 
-      final declaration = controller.selectedDeclaration.value!;
-
-      return SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 신고 정보 카드
-            _buildSanctionInfoCard(declaration),
-            SizedBox(height: 20),
-
-            // 제재 옵션 선택
-            _buildSanctionOptionsCard(),
-            SizedBox(height: 20),
-
-            // 제재 등록 버튼
-            _buildSanctionActionButtons(),
-          ],
+      return RefreshIndicator(
+        onRefresh: controller.refreshData,
+        color: Color(0xFF8B4513),
+        child: ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: storeList.length,
+          itemBuilder: (context, index) {
+            final store = storeList[index];
+            return _buildStoreListItem(store);
+          },
         ),
       );
     });
   }
 
-  // 신고 정보 카드
-  Widget _buildSanctionInfoCard(Declaration declaration) {
+  // 매장 리스트 아이템 (클릭 기능 추가)
+  Widget _buildStoreListItem(Map<String, dynamic> store) {
     return Card(
+      margin: EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '신고접수내역',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF8B4513),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: InkWell(
+        onTap: () {
+          // 매장 선택하고 해당 매장의 리뷰 필터링
+          controller.selectedStoreId.value = store['store_id']?.toString() ?? '';
+          controller.selectedReviewNums.clear(); // 선택된 리뷰 초기화
+          // 매장 리뷰 탭으로 이동
+          controller.tabController.animateTo(1);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // 매장 이미지 (개선된 버전)
+              GestureDetector(
+                onTap: () => _showStoreInfo(store),
+                child: Container(
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: controller.getStatusColor(
-                      declaration.declarationState,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey[300],
+                    border: Border.all(color: Colors.grey[300]!, width: 1),
                   ),
-                  child: Text(
-                    declaration.declarationState,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: store['store_image'] != null && store['store_image'].toString().isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            store['store_image'],
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B4513)),
+                                  ),
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.store, color: Colors.grey[600], size: 30);
+                            },
+                          ),
+                        )
+                      : Icon(Icons.store, color: Colors.grey[600], size: 30),
                 ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // 날짜 정보
-            Row(
-              children: [
-                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-                SizedBox(width: 8),
-                Text(
-                  'Date: ${_formatDate(declaration.declarationDate)}',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+              SizedBox(width: 16),
+              
+              // 매장 정보
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      store['store_name']?.toString() ?? '매장명 없음',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '사업자번호: ${store['store_business_num']?.toString() ?? '정보 없음'}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      store['store_address']?.toString() ?? '주소 정보 없음',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (store['store_phone'] != null)
+                      Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Text(
+                          '📞 ${store['store_phone']}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
-            SizedBox(height: 12),
-
-            // 신고 내용
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[300]!),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '신고 접수 내용',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    declaration.declarationContent,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[800],
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // 제재 옵션 카드
-  Widget _buildSanctionOptionsCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '제재내역',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF8B4513),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // 제재 구분 드롭다운
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Dropdown',
+              
+              // 상태 표시
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStoreStatusColor(store['store_state']?.toString()),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  store['store_state']?.toString() ?? '상태 불명',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
+                    fontSize: 11,
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 8),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                  ),
-                  child: Obx(
-                    () => DropdownButton<String>(
-                      value: controller.selectedSanctionType.value,
-                      isExpanded: true,
-                      underline: SizedBox(),
-                      items:
-                          ['1차 제재', '2차 제재']
-                              .map(
-                                (type) => DropdownMenuItem(
-                                  value: type,
-                                  child: Text(type),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.setSanctionType(value);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // 제재 기간 드롭다운
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
               ),
-              child: Obx(
-                () => DropdownButton<String>(
-                  value: controller.selectedSanctionPeriod.value,
-                  isExpanded: true,
-                  underline: SizedBox(),
-                  items:
-                      ['1일', '3일', '7일', '30일', '영구정지']
-                          .map(
-                            (period) => DropdownMenuItem(
-                              value: period,
-                              child: Text(period),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      controller.setSanctionPeriod(value);
-                    }
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // 제재 적용일
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.pink[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.pink[200]!),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '제재 적용일: ${_formatDate(DateTime.now())}',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                  ),
-                  SizedBox(height: 8),
-                  Obx(
-                    () => Text(
-                      '선택된 제재: ${controller.generateSanctionContent()}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.red[700],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // 제재 액션 버튼
-  Widget _buildSanctionActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            controller.selectedDeclaration.value = null;
-            controller.tabController.index = 1;
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[600],
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            '취소',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        SizedBox(width: 20),
-        ElevatedButton(
-          onPressed: () {
-            final declaration = controller.selectedDeclaration.value!;
-            controller.updateDeclaration(
-              reviewNum: declaration.reviewNum,
-              userId: declaration.userId,
-              declarationDate:
-                  declaration.declarationDate.toIso8601String().split('T')[0],
-              declarationContent: declaration.declarationContent,
-              declarationState: '처리완료',
-              sanctionContent: controller.generateSanctionContent(),
-              sanctionDate: DateTime.now().toIso8601String().split('T')[0],
-            );
-            controller.selectedDeclaration.value = null;
-            controller.tabController.index = 2;
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            '제재 등록',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // 신고접수 관리 탭 (유저수/매장수 정보 제거)
-  Widget _buildReportManagementTab() {
+  // 매장 리뷰 탭 (체크박스 기능 구현)
+  Widget _buildReviewListTab() {
     return Column(
       children: [
-        // 신고 리스트
+        // 상단 정보
+        Container(
+          padding: EdgeInsets.all(16),
+          color: Colors.white,
+          child: Column(
+            children: [
+              // 선택된 매장 정보 표시
+              Obx(() {
+                if (controller.selectedStoreId.value.isNotEmpty) {
+                  final selectedStore = controller.stores.firstWhereOrNull(
+                    (store) => store['store_id'] == controller.selectedStoreId.value,
+                  );
+                  if (selectedStore != null) {
+                    return Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(12),
+                      margin: EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF8B4513).withAlpha(20),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Color(0xFF8B4513).withAlpha(20)),
+                      ),
+                      child: Text(
+                        '선택된 매장: ${selectedStore['store_name']}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF8B4513),
+                        ),
+                      ),
+                    );
+                  }
+                }
+                return Container();
+              }),
+              
+              // 리뷰 통계
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Obx(() => Text(
+                    '리뷰 수: ${controller.filteredReviews.length}개',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+                  Obx(() => Text(
+                    '선택된 리뷰: ${controller.selectedReviews.length}개',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.red[700],
+                    ),
+                  )),
+                ],
+              ),
+            ],
+          ),
+        ),
+        
+        // 리뷰 리스트
         Expanded(
           child: Obx(() {
             if (controller.isLoading.value) {
@@ -474,27 +377,25 @@ class AdminReportScreen extends StatelessWidget {
               );
             }
 
-            final pendingDeclarations =
-                controller.declarations
-                    .where((d) => d.sanctionContent == null)
-                    .toList();
+            final reviewList = controller.filteredReviews;
 
-            if (pendingDeclarations.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      size: 80,
-                      color: Colors.green[400],
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      '처리 대기중인 신고가 없습니다.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                  ],
+            if (reviewList.isEmpty) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.rate_review_outlined, size: 80, color: Colors.grey[400]),
+                      SizedBox(height: 16),
+                      Text(
+                        controller.selectedStoreId.value.isEmpty 
+                          ? '매장을 선택해주세요.' 
+                          : '해당 매장의 리뷰가 없습니다.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -504,218 +405,529 @@ class AdminReportScreen extends StatelessWidget {
               color: Color(0xFF8B4513),
               child: ListView.builder(
                 padding: EdgeInsets.all(16),
-                itemCount: pendingDeclarations.length,
+                itemCount: reviewList.length,
                 itemBuilder: (context, index) {
-                  final declaration = pendingDeclarations[index];
-                  return _buildReportListItem(declaration);
+                  final review = reviewList[index];
+                  return _buildReviewListItem(review);
                 },
               ),
             );
           }),
         ),
+        
+        // 하단 제재 버튼
+        Container(
+          padding: EdgeInsets.all(16),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => _showSanctionDialog(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[600],
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  '제재하기',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  // 신고 리스트 아이템
-  Widget _buildReportListItem(Declaration declaration) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () {
-          controller.selectedDeclaration.value = declaration;
-          controller.tabController.index = 0;
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+  // 리뷰 리스트 아이템 (이미지와 체크박스 기능 추가)
+  Widget _buildReviewListItem(Map<String, dynamic> review) {
+    final reviewNum = review['review_num'] ?? 0;
+    
+    return Obx(() {
+      final isSelected = controller.selectedReviewNums.contains(reviewNum);
+      
+      return Card(
+        margin: EdgeInsets.only(bottom: 12),
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: isSelected ? Border.all(color: Color(0xFF8B4513), width: 2) : null,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 체크박스
+                Checkbox(
+                  value: isSelected,
+                  onChanged: (value) {
+                    controller.toggleReviewSelection(reviewNum);
+                  },
+                  activeColor: Color(0xFF8B4513),
+                ),
+                SizedBox(width: 12),
+                
+                // 리뷰 이미지
+                GestureDetector(
+                  onTap: () => _showImageDialog(review['review_image']),
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey[300],
+                      border: Border.all(color: Colors.grey[300]!, width: 1),
+                    ),
+                    child: review['review_image'] != null && review['review_image'].toString().isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Stack(
+                              children: [
+                                Image.network(
+                                  review['review_image'],
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                  height: 50,
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes != null
+                                                ? loadingProgress.cumulativeBytesLoaded / 
+                                                  loadingProgress.expectedTotalBytes!
+                                                : null,
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B4513)),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Icon(Icons.broken_image, color: Colors.grey[500], size: 20),
+                                    );
+                                  },
+                                ),
+                                // 확대 표시 아이콘
+                                Positioned(
+                                  bottom: 2,
+                                  right: 2,
+                                  child: Container(
+                                    padding: EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.6),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.zoom_in,
+                                      color: Colors.white,
+                                      size: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image_not_supported, color: Colors.grey[500], size: 20),
+                              Text(
+                                '이미지\n없음',
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  color: Colors.grey[500],
+                                  height: 1.0,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                
+                // 리뷰 내용
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey[300],
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      // 상단 정보
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            declaration.userId,
+                            '${review['user_nickname']?.toString() ?? '익명'} (${review['user_id']?.toString() ?? ''})',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          Text(
-                            'ID: ${declaration.userId}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: _getReviewStateColor(review['review_state']?.toString()),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              review['review_state']?.toString() ?? '상태없음',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
                       ),
+                      SizedBox(height: 4),
+                      
+                      // 매장 정보
+                      Text(
+                        '매장: ${review['store_name']?.toString() ?? '알수없는 매장'}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      
+                      // 구매 번호
+                      Text(
+                        '구매번호: ${review['purchase_num']?.toString() ?? '정보없음'}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      
+                      // 리뷰 내용
+                      Text(
+                        review['review_content']?.toString() ?? '',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[800],
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8),
+                      
+                      // 작성일
+                      Text(
+                        '작성일: ${_formatReviewDate(review['review_date'])}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey[500],
+                        ),
+                      ),
                     ],
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: controller.getStatusColor(
-                        declaration.declarationState,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      declaration.declarationState,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    size: 14,
-                    color: Colors.grey[600],
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    'Date: ${_formatDate(declaration.declarationDate)}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  SizedBox(width: 16),
-                  Icon(
-                    Icons.report_outlined,
-                    size: 14,
-                    color: Colors.grey[600],
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    '리뷰번호: ${declaration.reviewNum}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8),
-              Text(
-                declaration.declarationContent,
-                style: TextStyle(fontSize: 13, color: Colors.grey[800]),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      controller.selectedDeclaration.value = declaration;
-                      controller.tabController.index = 0;
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Color(0xFF8B4513).withOpacity(0.1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                    child: Text(
-                      '제재내역',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF8B4513),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
+      );
+    });
+  }
+
+  // 제재 다이얼로그 (제재 사유 입력 + 1차/2차 제재 선택)
+  void _showSanctionDialog() {
+    if (controller.selectedReviews.isEmpty) {
+      Get.snackbar(
+        '알림',
+        '제재할 리뷰를 선택해주세요.',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    final TextEditingController sanctionReasonController = TextEditingController();
+    final RxString selectedSanctionLevel = '1차 제재'.obs;
+    final List<String> sanctionLevels = ['1차 제재', '2차 제재'];
+
+    Get.dialog(
+      AlertDialog(
+        title: Text(
+          '리뷰 제재',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF8B4513),
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 선택된 리뷰 수 표시
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red[200]!),
+                  ),
+                  child: Text(
+                    '선택된 리뷰: ${controller.selectedReviews.length}개',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.red[700],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                
+                // 제재 레벨 선택
+                Text(
+                  '제재 단계',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Obx(() => DropdownButtonFormField<String>(
+                  value: selectedSanctionLevel.value,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  items: sanctionLevels.map((level) {
+                    return DropdownMenuItem(
+                      value: level,
+                      child: Text(level),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      selectedSanctionLevel.value = value;
+                    }
+                  },
+                )),
+                SizedBox(height: 16),
+                
+                // 제재 사유 입력
+                Text(
+                  '제재 사유',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '입력한 제재 사유는 제재 내역에 기록됩니다.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: sanctionReasonController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    hintText: '제재 사유를 구체적으로 입력해주세요...\n예: 부적절한 언어 사용, 허위 정보 작성 등',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: EdgeInsets.all(12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              '취소',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (sanctionReasonController.text.trim().isEmpty) {
+                Get.snackbar(
+                  '알림',
+                  '제재 사유를 입력해주세요.',
+                  backgroundColor: Colors.orange,
+                  colorText: Colors.white,
+                );
+                return;
+              }
+      
+              Get.back(); // 다이얼로그 먼저 닫기
+              
+              // 제재 처리
+              await controller.sanctionSelectedReviewsWithReason(
+                sanctionLevel: selectedSanctionLevel.value,
+                sanctionReason: sanctionReasonController.text.trim(),
+              );
+              
+              // 잠시 대기 후 제재 내역 탭으로 이동
+              await Future.delayed(Duration(milliseconds: 500));
+              controller.tabController.animateTo(2);
+              
+              // 성공 메시지
+              Get.snackbar(
+                '제재 완료',
+                '제재 처리가 완료되었습니다. 제재 내역을 확인하세요.',
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+                duration: Duration(seconds: 3),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[600],
+            ),
+            child: Text(
+              '제재하기',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // 제재 유저 목록 탭
-  Widget _buildSanctionedUsersTab() {
+  // 제재 내역 탭
+  Widget _buildSanctionListTab() {
     return Column(
       children: [
-        // 상단 정보 바
+        // 상단 정보 및 필터
         Container(
           padding: EdgeInsets.all(16),
           color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Obx(
-                () => Text(
-                  '제재 유저 수: ${controller.sanctionedUserCount.value}명',
+              Obx(() {
+                final filteredCount = controller.filteredSanctionedDeclarations.length;
+                final totalCount = controller.declarations
+                    .where((d) => d.sanctionContent != null && d.sanctionContent!.isNotEmpty)
+                    .length;
+                
+                return Text(
+                  controller.selectedSanctionType.value == '전체'
+                    ? '제재 건수: $totalCount건'
+                    : '${controller.selectedSanctionType.value}: $filteredCount건 (전체: $totalCount건)',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.red[700],
                   ),
+                );
+              }),
+              
+              // 필터 드롭다운
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ),
-              IconButton(
-                onPressed: controller.refreshData,
-                icon: Icon(Icons.refresh, color: Color(0xFF8B4513)),
+                child: Obx(() => DropdownButton<String>(
+                  value: controller.selectedSanctionType.value,
+                  underline: SizedBox(),
+                  items: ['전체', '1차 제재', '2차 제재']
+                      .map((type) => DropdownMenuItem(
+                            value: type,
+                            child: Text(type, style: TextStyle(fontSize: 12)),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      controller.setSanctionType(value);
+                    }
+                  },
+                )),
               ),
             ],
           ),
         ),
-
-        // 제재 유저 리스트
+        
+        // 제재 내역 리스트
         Expanded(
           child: Obx(() {
             if (controller.isLoading.value) {
-              return Center(
-                child: CircularProgressIndicator(color: Color(0xFF8B4513)),
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: Color(0xFF8B4513)),
+                      SizedBox(height: 16),
+                      Text(
+                        '제재 내역을 불러오는 중...',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             }
-
-            // 제재된 유저들 (sanctionContent가 있는 경우)
-            final sanctionedDeclarations =
-                controller.declarations
-                    .where(
-                      (d) =>
-                          d.sanctionContent != null &&
-                          d.sanctionContent!.isNotEmpty,
-                    )
-                    .toList();
-
+            
+            // 필터링된 제재 내역 사용
+            final sanctionedDeclarations = controller.filteredSanctionedDeclarations;
+            
             if (sanctionedDeclarations.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.person_off_outlined,
-                      size: 80,
-                      color: Colors.grey[400],
-                    ),
+                    Icon(Icons.policy_outlined, size: 80, color: Colors.grey[400]),
                     SizedBox(height: 16),
                     Text(
-                      '제재중인 유저가 없습니다.',
+                      controller.selectedSanctionType.value == '전체' 
+                        ? '제재 내역이 없습니다.'
+                        : '${controller.selectedSanctionType.value} 대상자가 없습니다.',
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await controller.refreshData();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF8B4513),
+                      ),
+                      child: Text('새로고침', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -730,7 +942,7 @@ class AdminReportScreen extends StatelessWidget {
                 itemCount: sanctionedDeclarations.length,
                 itemBuilder: (context, index) {
                   final sanction = sanctionedDeclarations[index];
-                  return _buildSanctionedUserItem(sanction);
+                  return _buildSanctionListItem(sanction);
                 },
               ),
             );
@@ -740,8 +952,8 @@ class AdminReportScreen extends StatelessWidget {
     );
   }
 
-  // 제재 유저 리스트 아이템
-  Widget _buildSanctionedUserItem(Declaration sanction) {
+  // 제재 내역 리스트 아이템 (제재 해제 기능 추가)
+  Widget _buildSanctionListItem(Declaration sanction) {
     return Card(
       margin: EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -756,51 +968,30 @@ class AdminReportScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // 상단 정보 행
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.red[100],
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            sanction.userId,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            'ID: ${sanction.userId}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  // 제재 날짜
+                  Text(
+                    '제재 날짜: ${sanction.sanctionDate != null ? _formatDate(sanction.sanctionDate!) : "미설정"}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                  // 제재 단계 배지
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.red[600],
-                      borderRadius: BorderRadius.circular(20),
+                      color: _getSanctionTypeColor(sanction.sanctionContent ?? ''),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      '제재중',
+                      _getSanctionType(sanction.sanctionContent ?? ''),
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -808,10 +999,82 @@ class AdminReportScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
-
-              // 제재 정보
+              SizedBox(height: 12),
+              
+              // 사용자 정보 행
+              Row(
+                children: [
+                  // 사용자 프로필 이미지
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey[300],
+                    ),
+                    child: sanction.userImage != null && sanction.userImage!.isNotEmpty
+                        ? ClipOval(
+                            child: Image.network(
+                              sanction.userImage!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(Icons.person, color: Colors.grey[600], size: 20);
+                              },
+                            ),
+                          )
+                        : Icon(Icons.person, color: Colors.grey[600], size: 20),
+                  ),
+                  SizedBox(width: 12),
+                  
+                  // 사용자 정보
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${sanction.userNickname ?? '알수없음'} (${sanction.userId})',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '상태: ${sanction.userState ?? '알수없음'}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  // 제재 해제 버튼
+                  ElevatedButton(
+                    onPressed: () => _showReleaseSanctionDialog(sanction),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[600],
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    child: Text(
+                      '해제',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              
+              // 제재 내용
               Container(
+                width: double.infinity,
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.red[50],
@@ -821,25 +1084,13 @@ class AdminReportScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '제재 내용:',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[700],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '제재일: ${sanction.sanctionDate != null ? _formatDate(sanction.sanctionDate!) : ""}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
+                    Text(
+                      '제재 내용:',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     SizedBox(height: 4),
                     Text(
@@ -850,46 +1101,45 @@ class AdminReportScreen extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      '신고 사유: ${sanction.declarationContent}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
                   ],
                 ),
               ),
-              SizedBox(height: 12),
-
-              // 액션 버튼
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton.icon(
-                    onPressed: () => _showReleaseSanctionDialog(sanction),
-                    icon: Icon(
-                      Icons.lock_open,
-                      size: 16,
-                      color: Colors.green[700],
-                    ),
-                    label: Text(
-                      '제재 해제',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.green[700],
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green[50],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              
+              // // 제재 사유 표시 (declarationContent)
+              // if (sanction.declarationContent.isNotEmpty) ...[
+              //   SizedBox(height: 8),
+              //   Container(
+              //     width: double.infinity,
+              //     padding: EdgeInsets.all(8),
+              //     decoration: BoxDecoration(
+              //       color: Colors.orange[50],
+              //       borderRadius: BorderRadius.circular(6),
+              //       border: Border.all(color: Colors.orange[200]!),
+              //     ),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(
+              //           '제재 사유:',
+              //           style: TextStyle(
+              //             fontSize: 11,
+              //             color: Colors.orange[700],
+              //             fontWeight: FontWeight.w600,
+              //           ),
+              //         ),
+              //         SizedBox(height: 2),
+              //         Text(
+              //           sanction.declarationContent,
+              //           style: TextStyle(
+              //             fontSize: 13,
+              //             color: Colors.orange[800],
+              //             fontWeight: FontWeight.w500,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ],
             ],
           ),
         ),
@@ -897,123 +1147,91 @@ class AdminReportScreen extends StatelessWidget {
     );
   }
 
-  // 제재 해제 다이얼로그
+  // 제재 해제 확인 다이얼로그
   void _showReleaseSanctionDialog(Declaration sanction) {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Icon(Icons.lock_open, color: Colors.green[700]),
-            SizedBox(width: 8),
-            Text('제재 해제'),
-          ],
+        title: Text(
+          '제재 해제 확인',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF8B4513),
+          ),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('다음 사용자의 제재를 해제하시겠습니까?', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 16),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+        content: Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '다음 사용자의 제재를 해제하시겠습니까?',
+                style: TextStyle(fontSize: 14),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '사용자: ${sanction.userId}',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  Text('ID: ${sanction.userId}'),
-                  SizedBox(height: 8),
-                  Text(
-                    '제재 내용: ${sanction.sanctionContent}',
-                    style: TextStyle(color: Colors.red[700]),
-                  ),
-                ],
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '사용자: ${sanction.userNickname ?? '알수없음'} (${sanction.userId})',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '제재 내용: ${sanction.sanctionContent ?? ''}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                    ),
+                    Text(
+                      '제재 날짜: ${sanction.sanctionDate != null ? _formatDate(sanction.sanctionDate!) : "미설정"}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 12),
+              Text(
+                '제재가 해제되면 해당 사용자는 다시 정상적으로 서비스를 이용할 수 있습니다.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.orange[700],
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('취소', style: TextStyle(color: Colors.grey[600])),
+            child: Text(
+              '취소',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
-              try {
-                await controller.releaseSanction(sanction.userId);
-
-                // 로컬 데이터에서도 해당 Declaration의 sanctionContent를 null로 설정
-                final index = controller.declarations.indexWhere(
-                  (d) =>
-                      d.userId == sanction.userId &&
-                      d.reviewNum == sanction.reviewNum,
-                );
-
-                if (index != -1) {
-                  // 기존 Declaration 객체를 복사하여 sanctionContent를 null로 설정
-                  final updatedDeclaration = Declaration(
-                    reviewNum: controller.declarations[index].reviewNum,
-                    userId: controller.declarations[index].userId,
-                    declarationDate:
-                        controller.declarations[index].declarationDate,
-                    declarationContent:
-                        controller.declarations[index].declarationContent,
-                    declarationState: '처리완료', // 상태는 처리완료로 유지
-                    sanctionContent: null, // 제재 내용을 null로 설정
-                    sanctionDate: controller.declarations[index].sanctionDate,
-                  );
-
-                  // 리스트에서 해당 항목 업데이트
-                  controller.declarations[index] = updatedDeclaration;
-                }
-
-                // 성공 메시지
-                Get.snackbar(
-                  '완료',
-                  '제재가 해제되었습니다.',
-                  backgroundColor: Colors.green,
-                  colorText: Colors.white,
-                  duration: Duration(seconds: 2),
-                );
-
-                Get.back();
-              } catch (e) {
-                // 에러 발생 시에도 다이얼로그 닫기
-                Get.back();
-
-                // 에러 메시지 표시
-                Get.snackbar(
-                  '오류',
-                  '제재 해제 중 오류가 발생했습니다: ${e.toString()}',
-                  backgroundColor: Colors.red,
-                  colorText: Colors.white,
-                  duration: Duration(seconds: 3),
-                );
-              }
+              Get.back(); // 다이얼로그 닫기
+              await controller.releaseSanction(sanction.userId);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[700],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              backgroundColor: Colors.green[600],
             ),
-            child: Text('제재 해제', style: TextStyle(color: Colors.white)),
+            child: Text(
+              '제재 해제',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
     );
-  }
-
-  // 날짜 포맷팅
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   // 하단 네비게이션
@@ -1035,15 +1253,15 @@ class AdminReportScreen extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
-                // 현재 페이지
+               Get.to(()=> AdminReportScreen() );
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.warning_amber, color: Colors.white, size: 26),
+                  Icon(Icons.store, color: Colors.white, size: 26),
                   SizedBox(height: 4),
                   Text(
-                    '신고 관리',
+                    '매장 관리',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -1054,21 +1272,20 @@ class AdminReportScreen extends StatelessWidget {
               ),
             ),
           ),
-          Container(width: 1, height: 40, color: Colors.white.withAlpha(25)),
+          Container(
+            width: 1,
+            height: 40,
+            color: Colors.white.withAlpha(25),
+          ),
           Expanded(
             child: InkWell(
               onTap: () {
-                // 문의 관리 페이지로 이동
-                Get.to(() => InquiryReport());
+                Get.to(()=>InquiryReport());
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.question_answer,
-                    color: Colors.white.withAlpha(25),
-                    size: 26,
-                  ),
+                  Icon(Icons.question_answer, color: Colors.white.withAlpha(25), size: 26),
                   SizedBox(height: 4),
                   Text(
                     '문의 관리',
@@ -1085,5 +1302,321 @@ class AdminReportScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // =============== 추가 다이얼로그 메서드들 ===============
+
+  // 이미지 확대 다이얼로그
+  void _showImageDialog(dynamic imageUrl) {
+    if (imageUrl == null || imageUrl.toString().isEmpty) {
+      Get.snackbar(
+        '알림',
+        '표시할 이미지가 없습니다.',
+        backgroundColor: Colors.grey[600],
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: GestureDetector(
+          onTap: () => Get.back(),
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Center(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: Get.width * 0.9,
+                  maxHeight: Get.height * 0.8,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    imageUrl.toString(),
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        width: 200,
+                        height: 200,
+                        color: Colors.white,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded / 
+                                      loadingProgress.expectedTotalBytes!
+                                    : null,
+                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B4513)),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                '이미지 로딩 중...',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 200,
+                        height: 200,
+                        color: Colors.white,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.broken_image, size: 50, color: Colors.grey[400]),
+                              SizedBox(height: 16),
+                              Text(
+                                '이미지를 불러올 수 없습니다.',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 매장 정보 다이얼로그
+  void _showStoreInfo(Map<String, dynamic> store) {
+    Get.dialog(
+      AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.store, color: Color(0xFF8B4513)),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                store['store_name']?.toString() ?? '매장명 없음',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF8B4513),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 매장 이미지 (있는 경우)
+              if (store['store_image'] != null && store['store_image'].toString().isNotEmpty) ...[
+                GestureDetector(
+                  onTap: () => _showImageDialog(store['store_image']),
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey[200],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        store['store_image'],
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(Icons.store, size: 50, color: Colors.grey[400]),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+              ],
+              
+              // 매장 정보
+              _buildInfoRow('사업자번호', store['store_business_num']?.toString() ?? '정보 없음'),
+              _buildInfoRow('주소', store['store_address']?.toString() ?? '주소 정보 없음'),
+              _buildInfoRow('전화번호', store['store_phone']?.toString() ?? '전화번호 없음'),
+              _buildInfoRow('상태', store['store_state']?.toString() ?? '연결 안됨'),
+              
+              // 매장 설명 (있는 경우)
+              if (store['store_content'] != null && store['store_content'].toString().isNotEmpty) ...[
+                SizedBox(height: 8),
+                Text(
+                  '매장 소개',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                SizedBox(height: 4),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    store['store_content'].toString(),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.amber[700],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              '닫기',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back(); // 다이얼로그 닫기
+              // 매장 선택하고 리뷰 탭으로 이동
+              controller.selectedStoreId.value = store['store_id']?.toString() ?? '';
+              controller.selectedReviewNums.clear(); // 선택된 리뷰 초기화
+              controller.tabController.animateTo(1);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF8B4513),
+            ),
+            child: Text(
+              '리뷰 보기',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 정보 행 위젯 (매장 정보용)
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[500],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 매장 상태별 색상
+  Color _getStoreStatusColor(String? status) {
+    switch (status) {
+      case '운영중':
+        return Colors.green;
+      case '휴업':
+        return Colors.orange;
+      case '폐업':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // 리뷰 상태별 색상
+  Color _getReviewStateColor(String? state) {
+    switch (state) {
+      case '정상':
+      case '승인':
+        return Colors.green;
+      case '대기':
+      case '검토중':
+        return Colors.orange;
+      case '삭제':
+      case '제재':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // 제재 유형 추출
+  String _getSanctionType(String sanctionContent) {
+    if (sanctionContent.contains('1차')) return '1차 제재';
+    if (sanctionContent.contains('2차')) return '2차 제재';
+    return '1차 제재';
+  }
+
+  // 제재 유형별 색상
+  Color _getSanctionTypeColor(String sanctionContent) {
+    if (sanctionContent.contains('1차')) return Colors.orange;
+    if (sanctionContent.contains('2차')) return Colors.red;
+    return Colors.orange;
+  }
+
+  // 날짜 포맷팅
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  // 리뷰 날짜 포맷팅
+  String _formatReviewDate(dynamic dateValue) {
+    if (dateValue == null) return '';
+    try {
+      DateTime date;
+      if (dateValue is String) {
+        date = DateTime.parse(dateValue);
+      } else if (dateValue is DateTime) {
+        date = dateValue;
+      } else {
+        return dateValue.toString();
+      }
+      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return dateValue.toString();
+    }
   }
 }
