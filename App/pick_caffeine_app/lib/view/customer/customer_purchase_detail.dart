@@ -1,9 +1,9 @@
-// 주문 상세내역 페이지
+// 고객 주문내역 상세 페이지
 /*
 // ----------------------------------------------------------------- //
-  - title         : Purchase Detail Page
+  - title         : Purchase Detail Page (Customer)
   - Description   :
-  - Author        : Jeong SeoYun
+  - Author        : Jeong seoyun
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
   - package       :
@@ -13,6 +13,7 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
@@ -24,8 +25,8 @@ class CustomerPurchaseDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     final args = Get.arguments ?? '__';
-    order.fetchStore(11.toString());
-    order.fetchDetailMenu(11.toString(), args[0].toString());
+    order.fetchStore(box.read('login_Id'));
+    order.fetchDetailMenu(box.read('login_Id'), args[0].toString());
     return Scaffold(
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
