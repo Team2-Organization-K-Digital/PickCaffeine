@@ -17,6 +17,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_detail.dart';
@@ -25,6 +26,8 @@ import 'package:pick_caffeine_app/vm/seoyun/vm_image_handler.dart';
 
 class CustomerPurchaseList extends StatelessWidget {
   CustomerPurchaseList({super.key});
+
+  final box = GetStorage();
 
   final TextEditingController reviewController = TextEditingController();
   final RxMap<int, bool> isReviewVisible = <int, bool>{}.obs; //후기 유무

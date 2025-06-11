@@ -16,10 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class StorePurchaseDetail extends StatelessWidget {
-  const StorePurchaseDetail({super.key});
+  StorePurchaseDetail({super.key});
+
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
