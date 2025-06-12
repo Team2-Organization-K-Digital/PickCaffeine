@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
@@ -7,9 +8,25 @@ import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 
 class MenuUtility {
   Widget unsaleContainer() {
+    if (Device.get().isTablet) {
+      return Container(
+        width: double.infinity,
+        height: 200,
+        color: AppColors.greyopac,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.cancel, size: 70, color: AppColors.brown),
+              Text('품절', style: TextStyle(fontSize: 20)),
+            ],
+          ),
+        ),
+      );
+    }
     return Container(
       width: double.infinity,
-      height: 200,
+      height: 150,
       color: AppColors.greyopac,
       child: Center(
         child: Column(

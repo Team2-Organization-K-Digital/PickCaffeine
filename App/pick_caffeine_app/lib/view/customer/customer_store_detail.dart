@@ -40,6 +40,7 @@ class CustomerStoreDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    handler.fetchValue = false;
     handler.storeImages.clear();
     handler.fetchStore(storeId);
     handler.fetchMyStores(user_id);

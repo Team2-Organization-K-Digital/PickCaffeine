@@ -18,10 +18,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
-import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_tabbar.dart';
-import 'package:pick_caffeine_app/view/customer/customer_my_pick.dart';
-import 'package:pick_caffeine_app/view/customer/customer_purchase_list.dart';
 import 'package:pick_caffeine_app/view/login/create_account_user.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 

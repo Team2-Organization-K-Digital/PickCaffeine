@@ -21,6 +21,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/Eunjun/menu.dart';
 import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
@@ -47,7 +48,7 @@ class StoreProductsUpdate extends StatelessWidget {
     menuProvier.fetchOptions(menu_num);
 
     return Scaffold(
-      appBar: AppBar(title: Text("메뉴 업데이트 페이지")),
+      appBar: AppBar(toolbarHeight: 0),
       body: SingleChildScrollView(
         child: Obx(() {
           if (menuProvier.selectMenu.isEmpty) {
@@ -57,347 +58,633 @@ class StoreProductsUpdate extends StatelessWidget {
             menunamecontroller.text = sMenu.menu_name;
             menupricecontroller.text = sMenu.menu_price.toString();
             menucontentcontroller.text = sMenu.menu_content;
-            return Column(
+            return Stack(
               children: [
                 Center(
-                  child: GestureDetector(
-                    onTap:
-                        () => menuProvier.getImageFromGallery(
-                          ImageSource.gallery,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: Column(
+                      children: [
+                        Center(
+                          child: GestureDetector(
+                            onTap:
+                                () => menuProvier.getImageFromGallery(
+                                  ImageSource.gallery,
+                                ),
+                            child: SizedBox(
+                              height: 500,
+                              width: 400,
+                              child:
+                                  menuProvier.imageFile.value == null
+                                      ? Center(
+                                        child: Image.memory(
+                                          base64Decode(sMenu.menu_image),
+                                        ),
+                                      )
+                                      : Image.file(
+                                        File(menuProvier.imageFile.value!.path),
+                                      ),
+                            ),
+                          ),
                         ),
-                    child: Container(
-                      height: 200,
-                      width: 200,
-                      color: Colors.grey,
-                      child:
-                          menuProvier.imageFile.value == null
-                              ? Image.memory(
-                                base64Decode(
-                                  menuProvier.selectMenu[0].menu_image,
-                                ),
-                              )
-                              : Image.file(
-                                File(menuProvier.imageFile.value!.path),
-                              ),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, right: 30),
-                      child: Text('카테고리 : $category'),
-                    ),
-                  ],
-                ),
-                TextField(
-                  controller: menunamecontroller,
-                  decoration: InputDecoration(hintText: '메뉴 이름을 입력하세요'),
-                ),
-                TextField(
-                  controller: menupricecontroller,
-                  decoration: InputDecoration(hintText: '메뉴 가격을 입력하세요'),
-                ),
-                TextField(
-                  controller: menucontentcontroller,
-                  decoration: InputDecoration(hintText: '메뉴 설명을 입력하세요'),
-                  maxLines: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        menuProvier.addTitle();
-                      },
-                      child: Text('옵션 타이틀 추가'),
-                    ),
-                    VerticalDivider(
-                      color: Colors.black,
-                      indent: 5,
-                      endIndent: 5,
-                    ),
-                  ],
-                ),
-                Divider(color: Colors.black),
-                SizedBox(height: 10),
-                menuProvier.optionList.isNotEmpty
-                    ? Obx(
-                      () => ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: menuProvier.optionTiltls.length,
-                        itemBuilder: (context, i) {
-                          final optionTitle = menuProvier.optionTiltls[i];
-                          final options =
-                              menuProvier.optionList
-                                  .where((o) => o.option_title == optionTitle)
-                                  .toList();
-                          if (menuProvier.updateSelected.length !=
-                              menuProvier.optionTiltls.length) {
-                            menuProvier.updateSelected.value = List.generate(
-                              menuProvier.optionTiltls.length,
-                              (_) => false,
-                            );
-                          }
-                          final updateValue = menuProvier.updateSelected[i];
-                          return Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: 250,
-                                      child: Text(optionTitle),
-                                    ),
-                                    Obx(
-                                      () => Checkbox(
-                                        value: menuProvier.updateSelected[i],
-                                        onChanged: (value) {
-                                          menuProvier.updateSelected[i] =
-                                              value!;
-                                        },
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        menuProvier.deleteTitle(
-                                          optionTitle.toString(),
-                                          menu_num,
-                                        );
-                                        menuProvier.optionTiltls.removeAt(i);
-                                        menuProvier
-                                            .updateSelected
-                                            .value = List.generate(
-                                          menuProvier.optionTiltls.length,
-                                          (_) => false,
-                                        );
-                                      },
-                                      icon: Icon(Icons.delete),
-                                    ),
-                                  ],
-                                ),
-
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: options.length,
-                                  itemBuilder: (context, index) {
-                                    final option = options[index];
-
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children:
-                                          "${option.option_title}$index" ==
-                                                  menuProvier.editIndex.value
-                                              ? [
-                                                SizedBox(
-                                                  width: 200,
-                                                  child: TextField(
-                                                    controller:
-                                                        editNameController,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          option.option_name,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 80,
-                                                  child: TextField(
-                                                    controller:
-                                                        editPriceController,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          '${option.option_price}원',
-                                                    ),
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () async {
-                                                    await updateOptionAction(
-                                                      option.option_num!,
-                                                      menu_num,
-                                                      option.option_title,
-                                                      updateValue,
-                                                    );
-                                                    menuProvier
-                                                        .editIndex
-                                                        .value = "";
-                                                    menuProvier.fetchOptions(
-                                                      menu_num,
-                                                    );
-                                                    editNameController.clear();
-                                                    editPriceController.clear();
-                                                  },
-                                                  icon: Icon(Icons.check),
-                                                  color: Colors.green,
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    menuProvier.deleteOption(
-                                                      option.option_num!,
-                                                    );
-                                                    menuProvier
-                                                        .editIndex
-                                                        .value = "";
-                                                    menuProvier.fetchOptions(
-                                                      menu_num,
-                                                    );
-                                                  },
-                                                  icon: Icon(Icons.remove),
-                                                  color: Colors.red,
-                                                ),
-                                              ]
-                                              : [
-                                                Text(option.option_name),
-                                                Text("${option.option_price}원"),
-                                                IconButton(
-                                                  onPressed: () async {
-                                                    menuProvier
-                                                            .editIndex
-                                                            .value =
-                                                        "${option.option_title}$index";
-                                                    menuProvier.fetchOptions(
-                                                      menu_num,
-                                                    );
-                                                  },
-                                                  icon: Icon(Icons.edit),
-                                                ),
-                                              ],
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                    : Text(""),
-                Obx(
-                  () => ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: menuProvier.titleControllers.length,
-                    itemBuilder: (context, i) {
-                      return Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: 250,
-                                  child: TextField(
-                                    controller: menuProvier.titleControllers[i],
-                                    decoration: InputDecoration(
-                                      hintText: '옵션 타이틀 입력',
-                                    ),
-                                  ),
-                                ),
-                                Obx(
-                                  () => Checkbox(
-                                    value: menuProvier.selected[i],
-                                    onChanged: (value) {
-                                      menuProvier.selected[i] = value!;
-                                    },
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    menuProvier.removeTitle(i);
-                                  },
-                                  icon: Icon(Icons.delete),
-                                ),
-                              ],
-                            ),
-
-                            Obx(
-                              () => ListView.builder(
-                                padding: EdgeInsets.all(0),
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount:
-                                    menuProvier.optionControllers[i].length,
-                                itemBuilder: (context, index) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      SizedBox(
-                                        width: 200,
-                                        child: TextField(
-                                          controller:
-                                              menuProvier
-                                                  .optionControllers[i][index],
-                                          decoration: InputDecoration(
-                                            labelText: '옵션 이름 입력',
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 80,
-                                        child: TextField(
-                                          controller:
-                                              menuProvier
-                                                  .optPriceControllers[i][index],
-                                          decoration: InputDecoration(
-                                            labelText: '옵션 가격(원)',
-                                            labelStyle: TextStyle(fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
-
-                                      IconButton(
-                                        onPressed: () {
-                                          menuProvier.removeOption(i, index);
-                                        },
-
-                                        icon: Icon(Icons.remove),
-                                        color: Colors.red,
-                                      ),
-                                    ],
-                                  );
-                                },
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 20,
+                                right: 30,
                               ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                menuProvier.addOption(i);
-                              },
-                              child: Text("+ 옵션 추가"),
+                              child: Text(
+                                '카테고리 : $category',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      );
-                    },
+                        TextField(
+                          style: TextStyle(fontSize: 25),
+                          controller: menunamecontroller,
+                          decoration: InputDecoration(
+                            hintText: '메뉴 이름을 입력하세요',
+                            hintStyle: TextStyle(
+                              color: AppColors.lightbrown,
+                              fontSize: 25,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: TextField(
+                            style: TextStyle(fontSize: 25),
+                            controller: menupricecontroller,
+                            decoration: InputDecoration(
+                              hintText: '메뉴 가격을 입력하세요',
+                              hintStyle: TextStyle(fontSize: 25),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: TextField(
+                            maxLines: 5,
+                            controller: menucontentcontroller,
+                            decoration: InputDecoration(
+                              hintText: '메뉴 설명을 입력하세요',
+                              hintStyle: TextStyle(fontSize: 25),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                              ),
+                            ),
+                            style: TextStyle(fontSize: 25),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: menuProvier.addTitle,
+                              child: Text(
+                                '옵션 타이틀 추가',
+                                style: TextStyle(fontSize: 25),
+                              ),
+                            ),
+                            VerticalDivider(
+                              color: Colors.black,
+                              indent: 5,
+                              endIndent: 5,
+                            ),
+                          ],
+                        ),
+                        Divider(color: Colors.black),
+                        SizedBox(height: 10),
+                        menuProvier.optionList.isNotEmpty
+                            ? Obx(
+                              () => ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: menuProvier.optionTiltls.length,
+                                itemBuilder: (context, i) {
+                                  final optionTitle =
+                                      menuProvier.optionTiltls[i];
+                                  final options =
+                                      menuProvier.optionList
+                                          .where(
+                                            (o) =>
+                                                o.option_title == optionTitle,
+                                          )
+                                          .toList();
+                                  if (menuProvier.updateSelected.length !=
+                                      menuProvier.optionTiltls.length) {
+                                    menuProvier
+                                        .updateSelected
+                                        .value = List.generate(
+                                      menuProvier.optionTiltls.length,
+                                      (_) => false,
+                                    );
+                                  }
+                                  final updateValue =
+                                      menuProvier.updateSelected[i];
+                                  return Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            SizedBox(
+                                              width: 500,
+                                              child: Text(
+                                                optionTitle,
+                                                style: TextStyle(fontSize: 25),
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Obx(
+                                                  () => Transform.scale(
+                                                    scale: 1.5,
+                                                    child: Checkbox(
+                                                      value:
+                                                          menuProvier
+                                                              .updateSelected[i],
+                                                      onChanged: (value) {
+                                                        menuProvier
+                                                                .updateSelected[i] =
+                                                            value!;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 25),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    menuProvier.deleteTitle(
+                                                      optionTitle.toString(),
+                                                      menu_num,
+                                                    );
+                                                    menuProvier.optionTiltls
+                                                        .removeAt(i);
+                                                    menuProvier
+                                                        .updateSelected
+                                                        .value = List.generate(
+                                                      menuProvier
+                                                          .optionTiltls
+                                                          .length,
+                                                      (_) => false,
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    size: 50,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: options.length,
+                                          itemBuilder: (context, index) {
+                                            final option = options[index];
+                                            return Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children:
+                                                    "${option.option_title}$index" ==
+                                                            menuProvier
+                                                                .editIndex
+                                                                .value
+                                                        ? [
+                                                          SizedBox(
+                                                            width: 400,
+                                                            child: TextField(
+                                                              controller:
+                                                                  editNameController,
+                                                              decoration: InputDecoration(
+                                                                hintText:
+                                                                    option
+                                                                        .option_name,
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                    ),
+                                                                border: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.all(
+                                                                        Radius.circular(
+                                                                          15,
+                                                                        ),
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                              style: TextStyle(
+                                                                fontSize: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 150,
+                                                            child: TextField(
+                                                              controller:
+                                                                  editPriceController,
+                                                              decoration: InputDecoration(
+                                                                hintText:
+                                                                    '${option.option_price}원',
+                                                                labelStyle:
+                                                                    TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                    ),
+                                                                border: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.all(
+                                                                        Radius.circular(
+                                                                          15,
+                                                                        ),
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                              style: TextStyle(
+                                                                fontSize: 20,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              IconButton(
+                                                                onPressed: () async {
+                                                                  await updateOptionAction(
+                                                                    option
+                                                                        .option_num!,
+                                                                    menu_num,
+                                                                    option
+                                                                        .option_title,
+                                                                    updateValue,
+                                                                  );
+                                                                  menuProvier
+                                                                      .editIndex
+                                                                      .value = "";
+                                                                  menuProvier
+                                                                      .fetchOptions(
+                                                                        menu_num,
+                                                                      );
+                                                                  editNameController
+                                                                      .clear();
+                                                                  editPriceController
+                                                                      .clear();
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons.check,
+                                                                ),
+                                                                color:
+                                                                    Colors
+                                                                        .green,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 50,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  menuProvier
+                                                                      .deleteOption(
+                                                                        option
+                                                                            .option_num!,
+                                                                      );
+                                                                  menuProvier
+                                                                      .editIndex
+                                                                      .value = "";
+                                                                  menuProvier
+                                                                      .fetchOptions(
+                                                                        menu_num,
+                                                                      );
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons.remove,
+                                                                ),
+                                                                color:
+                                                                    Colors.red,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ]
+                                                        : [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                  25,
+                                                                ),
+                                                            child: Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 300,
+                                                                  child: Text(
+                                                                    option
+                                                                        .option_name,
+                                                                    style: TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 50,
+                                                                ),
+                                                                Text(
+                                                                  "${option.option_price}원",
+                                                                  style:
+                                                                      TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                      ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          IconButton(
+                                                            onPressed: () async {
+                                                              menuProvier
+                                                                      .editIndex
+                                                                      .value =
+                                                                  "${option.option_title}$index";
+                                                              menuProvier
+                                                                  .fetchOptions(
+                                                                    menu_num,
+                                                                  );
+                                                            },
+                                                            icon: Icon(
+                                                              Icons.edit,
+                                                              size: 30,
+                                                            ),
+                                                          ),
+                                                        ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                            : Text(""),
+                        Divider(
+                          thickness: 3,
+                          color: Color(0xffD7A86E).withOpacity(0.5),
+                        ),
+                        Obx(
+                          () => ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: menuProvier.titleControllers.length,
+                            itemBuilder: (context, i) {
+                              return Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: 400,
+                                          child: TextField(
+                                            controller:
+                                                menuProvier.titleControllers[i],
+                                            decoration: InputDecoration(
+                                              hintText: '옵션 타이틀 입력',
+                                              hintStyle: TextStyle(
+                                                fontSize: 25,
+                                              ),
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(15),
+                                                ),
+                                              ),
+                                            ),
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '필수 옵션 : ',
+
+                                              style: TextStyle(fontSize: 25),
+                                            ),
+                                            Obx(
+                                              () => Transform.scale(
+                                                scale: 1.5,
+                                                child: Checkbox(
+                                                  value:
+                                                      menuProvier.selected[i],
+                                                  onChanged: (value) {
+                                                    menuProvier.selected[i] =
+                                                        value!;
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 20),
+                                            IconButton(
+                                              onPressed: () {
+                                                menuProvier.removeTitle(i);
+                                              },
+                                              icon: Icon(
+                                                Icons.delete,
+                                                size: 50,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+
+                                    Obx(
+                                      () => ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            menuProvier
+                                                .optionControllers[i]
+                                                .length,
+                                        itemBuilder: (context, index) {
+                                          return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 15,
+                                                  top: 25,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 400,
+                                                      child: TextField(
+                                                        controller:
+                                                            menuProvier
+                                                                .optionControllers[i][index],
+                                                        decoration: InputDecoration(
+                                                          labelText: '옵션 이름 입력',
+                                                          labelStyle: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius.all(
+                                                                  Radius.circular(
+                                                                    15,
+                                                                  ),
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 100),
+                                                    SizedBox(
+                                                      width: 200,
+                                                      child: TextField(
+                                                        controller:
+                                                            menuProvier
+                                                                .optPriceControllers[i][index],
+                                                        decoration: InputDecoration(
+                                                          labelText: '옵션 가격(원)',
+                                                          labelStyle: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius.all(
+                                                                  Radius.circular(
+                                                                    15,
+                                                                  ),
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              IconButton(
+                                                iconSize: 50,
+                                                onPressed: () {
+                                                  menuProvier.removeOption(
+                                                    i,
+                                                    index,
+                                                  );
+                                                },
+
+                                                icon: Icon(Icons.remove),
+                                                color: Colors.red,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    Divider(thickness: 2, height: 50),
+                                    Padding(
+                                      padding: const EdgeInsets.all(15),
+                                      child: TextButton(
+                                        onPressed: () {
+                                          menuProvier.addOption(i);
+                                        },
+                                        child: Text(
+                                          "+ 옵션 추가",
+
+                                          style: TextStyle(fontSize: 25),
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(
+                                      thickness: 3,
+                                      color: Color(0xffD7A86E).withOpacity(0.5),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: AppColors.white,
+                            backgroundColor: AppColors.lightbrown,
+                            fixedSize: Size(200, 50),
+                          ),
+                          onPressed: () async {
+                            await menuProvier.fetchCategoryNum(
+                              category,
+                              storeId,
+                            );
+                            if (menunamecontroller.text.isNotEmpty &&
+                                menupricecontroller.text.isNotEmpty) {
+                              await update();
+                            } else {
+                              Get.snackbar("오류", "메뉴 이름과 가격을 입력해주세요.");
+                            }
+                            menuProvier.clearAll();
+                            menuProvier.fetchSelectMenu(menu_num);
+                            menuProvier.fetchOptions(menu_num);
+                            Get.back();
+                          },
+                          child: Text("메뉴 수정", style: TextStyle(fontSize: 25)),
+                        ),
+                        SizedBox(height: 50),
+                      ],
+                    ),
                   ),
                 ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    await menuProvier.fetchCategoryNum(category, storeId);
-                    if (menunamecontroller.text.isNotEmpty &&
-                        menupricecontroller.text.isNotEmpty) {
-                      await update();
-                    } else {
-                      Get.snackbar("오류", "메뉴 이름과 가격을 입력해주세요.");
-                    }
-                    menuProvier.clearAll();
-                    menuProvier.fetchSelectMenu(menu_num);
-                    menuProvier.fetchOptions(menu_num);
-                    Get.back();
-                  },
-                  child: Text("메뉴 수정"),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: Icon(Icons.arrow_back_ios),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("메뉴 수정 페이지", style: TextStyle(fontSize: 25)),
+                    ),
+                  ],
                 ),
               ],
             );

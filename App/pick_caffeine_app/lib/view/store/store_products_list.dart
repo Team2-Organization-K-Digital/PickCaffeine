@@ -214,6 +214,7 @@ class StoreProductsList extends StatelessWidget {
                       VerticalDivider(width: 5, thickness: 3),
                       IconButton(
                         onPressed: () {
+                          vmHandler.clearImage();
                           if (vmHandler.categoryMenuAdd.isEmpty) {
                             Get.snackbar('경고', '카테고리를 선택해주세요.');
                             return;
@@ -221,6 +222,7 @@ class StoreProductsList extends StatelessWidget {
                           Get.to(StoreAddProduct(), arguments: [storeId])!.then(
                             (_) {
                               vmHandler.categoryMenuAdd.value = "";
+                              vmHandler.clickedCategory.value = 0;
                               vmHandler.fetchMenuInCategory(storeId);
                               vmHandler.fetchCategory(storeId);
                             },
@@ -398,6 +400,7 @@ class StoreProductsList extends StatelessWidget {
                                               behavior:
                                                   HitTestBehavior.translucent,
                                               onTap: () {
+                                                vmHandler.clearImage();
                                                 Get.to(
                                                   StoreProductsUpdate(),
                                                   arguments: [
@@ -405,7 +408,14 @@ class StoreProductsList extends StatelessWidget {
                                                     category.category_name,
                                                     menu.menu_num!,
                                                   ],
-                                                );
+                                                )!.then((value) {
+                                                  vmHandler.fetchMenuInCategory(
+                                                    storeId,
+                                                  );
+                                                  vmHandler.fetchCategory(
+                                                    storeId,
+                                                  );
+                                                });
                                               },
                                               child: Row(
                                                 mainAxisAlignment:

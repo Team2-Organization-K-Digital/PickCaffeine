@@ -17,4 +17,4 @@ app.include_router(seoyun_router,prefix="/seoyun",tags=['seoyun'])
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app,host=ip,port=8000)
+    uvicorn.run(app,host=ip,port=8000,limit_max_requests=1024*1024*10)

@@ -238,15 +238,15 @@ async def selectStore():
             )
         rows = curs.fetchall()
         desc = [col[0] for col in curs.description]
-        results = []
-        for row in rows:
-            row_dict = dict(zip(desc, row))
-            # image_1이 있다면 base64로 인코딩
-            if row_dict['image_1']:
-                row_dict['image_1'] = base64.b64encode(row_dict['image_1']).decode('utf-8')
-            results.append(row_dict)
+        # results = []
+        # for row in rows:
+            # row_dict = dict(zip(desc, row))
+            # # image_1이 있다면 base64로 인코딩
+            # if row_dict['image_1']:
+            #     row_dict['image_1'] = base64.b64encode(row_dict['image_1']).decode('utf-8')
+            # results.append(row_dict)
         conn.close()
-        return{'results': results}
+        return{'results': rows}
     except Exception as e:
         print("Error :", e)
         return{'result' : 'Error'}
