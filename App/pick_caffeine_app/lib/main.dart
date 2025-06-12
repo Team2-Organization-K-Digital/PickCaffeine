@@ -20,7 +20,6 @@ void main() {
   Get.put(JunTemp());
   Get.put(CustomerTabbar());
   Get.put(VmHandlerTemp());
-
   Get.put(InquiryController());
   Get.put(DeclarationController());
   Get.put(Order());
@@ -34,16 +33,16 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    // if (Device.get().isPhone) {
-    //   //Do some notch business
-    //   return GetMaterialApp(
-    //     title: 'Flutter Demo',
-    //     theme: ThemeData(
-    //       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-    //     ),
-    //     home: CustomerPurchaseList(),
-    //   );
-    // }
+    if (Device.get().isPhone) {
+      //Do some notch business
+      return GetMaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        ),
+        home: Login(),
+      );
+    }
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

@@ -28,102 +28,150 @@ class CustomerPurchaseDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     final args = Get.arguments ?? '__';
-    // order.fetchStore(box.read('loginId'));
-    // order.fetchDetailMenu(box.read('loginId'), args[0].toString());
+    order.fetchStore(box.read('loginId'));
+    order.fetchDetailMenu(box.read('loginId'), args[0].toString());
 
-    order.fetchStore('11');
-    order.fetchDetailMenu('11', args[0].toString());
+    // order.fetchStore('11');
+    // order.fetchDetailMenu('11', args[0].toString());
     return Scaffold(
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '주문 번호 ${args[0]}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
+              /// 주문 기본 정보 카드
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('주문 번호', args[0].toString()),
+                      _buildInfoRow(
+                        '주문 시간',
+                        args[1].toString().substring(11, 16),
+                      ),
+                      _buildInfoRow('주문 매장', args[2]),
+                      _buildInfoRow('매장 연락처', args[3].toString()),
+                    ],
                   ),
-                  Text(
-                    '주문 시간 ${args[1].toString().substring(11, 16)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '주문 매장 ${args[2]}',
-                style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18
                 ),
               ),
-              Text(
-                '매장 연락처 ${args[3]}',
-                style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18
+
+              // SizedBox(height: 16),
+
+              /// 메뉴 리스트 카드 , 요청사항
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '주문 메뉴',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+
+                      Obx(() {
+                        return ListView.separated(
+                          itemCount: order.detailMenu.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          separatorBuilder: (_, __) => Divider(),
+                          itemBuilder: (context, index) {
+                            final item = order.detailMenu[index];
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '${item['menu']} (옵션: ${item['option'] ?? '없음'})',
+                                  ),
+                                ),
+                                Text(
+                                  '${item['quantity']}개  |  ${item['price']}원',
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }),
+                      Text(
+                        '요청 사항',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(args[4] ?? '없음'),
+                    ],
+                  ),
                 ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                  '메뉴',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                      fontSize: 20
-                  ),
-                  ), 
-                  Text(
-                    '수량',
-                    style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                      fontSize: 20
-                  ),
-                  )
-                ],
               ),
-          
-              //////////////////////////////////////////////////////////////////
-              Obx(() {
-                return ListView.builder(
-                  itemCount: order.detailMenu.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final item = order.detailMenu[index];
-          
-                    return ListTile(
-                      title: Text(item['menu']),
-                      subtitle: Text('옵션 : ${item['option'] ?? '__'} '),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                        Text(('${item['price']}원')),
-                        SizedBox(width: 10),
-                        Text(('${item['quantity']}개')),
-                      ]),
-                    );
-                  },
-                );
-              }),
-              Text('요청 사항'),
-              Text('요청 사항 내용 : ${args[4]}'),
-              Text('결제 금액'),
-              Text(args[5].toString()),
+
+              SizedBox(height: 10),
+
+              /// 결제 금액 카드
+              Card(
+                color: Colors.brown[100],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '결제 금액',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        '${args[5]}원',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(width: 8),
+          Expanded(child: Text(value, overflow: TextOverflow.ellipsis)),
+        ],
       ),
     );
   }

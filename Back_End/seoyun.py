@@ -24,23 +24,6 @@ class Order(BaseModel):
     purchase_request: str
     purchase_state: str
 
-class Store(BaseModel):
-    store_id: str
-    store_password: str
-    store_name: str
-    store_phone: str
-    store_address: str
-    store_addressdetail: str
-    store_latitude : float
-    store_longitude : float
-    store_content : str
-    store_state : int
-    store_business_num : int
-    store_regular_hoilday : str
-    store_temporary_holiday : str
-    store_business_hour : str
-    store_created_date : str
-
 
 # MySQL server host
 def connect():
@@ -60,24 +43,8 @@ async def select_parchase(id:str):
     curs = conn.cursor()
 
     # SQL 문장
-    sql = "SELECT * FROM purchase_list where user_id = %s"
+    sql = "SELECT * FROM purchase_list where user_id = %s ORDER BY purchase_date DESC"
     curs.execute(sql,(id))
-    rows = curs.fetchall()
-    conn.close()
-    print(rows)
-
-    return {'results': rows} 
-
-# 매장정보
-@router.get("/select/store/{num}")
-async def select_store(num:str):
-    # Connection으로 부터 Cursor 생성
-    conn = connect()
-    curs = conn.cursor()
-
-    # SQL 문장
-    sql = "SELECT s.* FROM store AS s, purchase_list AS pl where pl.store_id = s.store_id and pl.purchase_num = %s"
-    curs.execute(sql,(num))
     rows = curs.fetchall()
     conn.close()
     print(rows)
@@ -109,7 +76,7 @@ async def select_parchase(id:str):
 
     # SQL 문장
     sql = '''
-    SELECT s.store_name , s.store_phone 
+    SELECT s.store_name , s.store_phone ,s.store_id
     FROM purchase_list as pl , store as s 
     where pl.user_id = %s 
     and pl.store_id = s.store_id;
@@ -329,7 +296,8 @@ async def select_mystore(id: str):
         WHERE store_id = s.store_id 
         AND purchase_num IN (SELECT purchase_num FROM review)) AS review_count
     FROM my_store s
-    WHERE s.user_id = %s;
+    WHERE s.user_id = %s
+    ORDER BY s.selected_date DESC;
     '''
     curs.execute(sql, (id,))
     rows = curs.fetchall()

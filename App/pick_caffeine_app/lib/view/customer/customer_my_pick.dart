@@ -29,13 +29,15 @@ class CustomerMyPick extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    // order.fetchMyStore(box.read('loginId'));
-    order.fetchMyStore('11');
+    order.fetchMyStore(box.read('loginId'));
+    // order.fetchMyStore('11');
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
+          backgroundColor: AppColors.white,
+          automaticallyImplyLeading: false,
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -46,6 +48,7 @@ class CustomerMyPick extends StatelessWidget {
           ),
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 250, 250, 250),
       body: Obx(() {
         if (order.myStore.isEmpty) {
           return Center(child: Text('찜한 매장이 없습니다.'));
@@ -58,15 +61,15 @@ class CustomerMyPick extends StatelessWidget {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 두개씩
               crossAxisSpacing: 10, // 사이 간격
-              mainAxisSpacing: 10, // 전체 간격
+              mainAxisSpacing: 10, // 전체 간격 아마도..?
               childAspectRatio: 3 / 4, // 가로 세로 비율
             ),
             itemBuilder: (context, index) {
-              // final store = order.myStore[index];
               return Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                color: AppColors.white,
                 elevation: 4,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
