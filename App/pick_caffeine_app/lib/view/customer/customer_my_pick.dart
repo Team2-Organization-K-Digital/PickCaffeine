@@ -29,7 +29,7 @@ class CustomerMyPick extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    // order.fetchMyStore(box.read('login_Id'));
+    // order.fetchMyStore(box.read('loginId'));
     order.fetchMyStore('11');
 
     return Scaffold(
