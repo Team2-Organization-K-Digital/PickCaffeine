@@ -15,9 +15,9 @@
 */
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/gamseong/create_store.dart';
 import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
-import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 class CreateAccountStore extends StatelessWidget {
@@ -31,13 +31,17 @@ class CreateAccountStore extends StatelessWidget {
   final addresscontroller = TextEditingController();
   final addressdetailcontroller = TextEditingController();
 
-  final createProvider = Get.find<VmStoreUpdate>();
+  final vm = Get.find<Vmgamseong>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("매장 점주등록"),
-      backgroundColor: const Color.fromARGB(255, 134, 69, 46),),
+      backgroundColor: AppColors.lightpick,
+      appBar: AppBar(
+        backgroundColor: AppColors.brown,
+        foregroundColor: AppColors.white,
+        title: Text("매장 회원가입", style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
       body: SingleChildScrollView(
   child: Padding(
     padding: EdgeInsets.all(16),
@@ -50,19 +54,20 @@ class CreateAccountStore extends StatelessWidget {
     Flexible(
       flex: 0,
       child: ElevatedButton(
+        
         onPressed: () async {
           final id = idcontroller.text.trim();
           if (id.isEmpty) {
             Get.snackbar("경고", "아이디를 입력하세요");
             return;
           }
-          final exists = await createProvider.checkstoreid(id);
+          final exists = await vm.checkstoreid(id);
           if (exists) {
-            Get.snackbar("중복", "이미 사용 중인 아이디입니다.");
-            createProvider.storeidChecked.value = false;
+            Get.snackbar("중복", "이미 사용 중인 아이디입니다.",backgroundColor: Colors.red);
+            vm.storeidChecked.value = false;
           } else {
-            Get.snackbar("확인", "사용 가능한 아이디입니다.");
-            createProvider.storeidChecked.value = true;
+            Get.snackbar("확인", "사용 가능한 아이디입니다.",backgroundColor: Colors.blue);
+            vm.storeidChecked.value = true;
           }
         },
         child: Text("중복확인"),
@@ -85,7 +90,7 @@ class CreateAccountStore extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            if (!createProvider.storeidChecked.value) {
+            if (!vm.storeidChecked.value) {
               Get.snackbar("확인필요", "아이디 중복 확인하세요");
               return;
             }
@@ -139,10 +144,10 @@ class CreateAccountStore extends StatelessWidget {
       store_address_detail: addressdetailcontroller.text.trim(),
     );
 
-      final result = await createProvider.createStore(store);
+      final result = await vm.createStore(store);
       if (result == 'OK') {
       
-        createProvider.currentStore.value = StoreHome(
+        vm.currentStore.value = StoreHome(
         store_id: idcontroller.text,
         store_password: passwordcontroller.text,
         store_name: namecontroller.text,

@@ -28,6 +28,7 @@ def connect():
 # ----------------------------------------------------------------------------------- #
 # 로그인 할떄 스토어를 하나만드는것. 로그인시 입력하는데이터값만 따로저장. 
 # 저장후 아래 업데이트스토어등에서는 기본표시로
+
 class Createstore(BaseModel):
     store_id:str
     store_password:str
@@ -40,6 +41,7 @@ class Createstore(BaseModel):
 # ** //  이부분은 은준님이 맡으신파트 개인db에만저장용 //  **
 #  로그인후 스토어를만들어서 가는스토어 . 로그인시 입력받은데이터는 기본데이터로 들어가게하고
 #  로그인에없던데이터는 아래쪽에서 추가할것.
+
 class StoreHome(BaseModel):
     store_id:str
     store_password:str

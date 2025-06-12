@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class VmInformationReview extends GetxController{
+class VmInformation extends GetxController{
 
 final baseUrl = "http://127.0.0.1:8000/seong";
 var user = {}.obs;            
