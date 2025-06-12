@@ -34,22 +34,12 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    // if (Device.get().isPhone) {
-    //   //Do some notch business
-    //   return GetMaterialApp(
-    //     title: 'Flutter Demo',
-    //     theme: ThemeData(
-    //       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-    //     ),
-    //     home: CustomerPurchaseList(),
-    //   );
-    // }
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: CustomerPurchaseList(),
+      home: Login(),
     );
   }
 }

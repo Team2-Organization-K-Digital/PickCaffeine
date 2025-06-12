@@ -203,7 +203,7 @@ class StoreProductsList extends StatelessWidget {
                                         vmHandler.clickedCategory.value = index;
                                         print(vmHandler.categoriesMenu);
                                       },
-                                      key: Key("${index}"),
+                                      key: ValueKey("${index}"),
 
                                       child: Text(
                                         category.category_name,
