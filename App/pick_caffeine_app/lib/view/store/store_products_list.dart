@@ -105,6 +105,9 @@ class StoreProductsList extends StatelessWidget {
                           : Expanded(
                             child: ReorderableListView.builder(
                               onReorder: (oldIndex, newIndex) {
+                                if (oldIndex < newIndex) {
+                                  newIndex -= 1;
+                                }
                                 final item = vmHandler.categories.removeAt(
                                   oldIndex,
                                 );
@@ -200,6 +203,8 @@ class StoreProductsList extends StatelessWidget {
                                         vmHandler.clickedCategory.value = index;
                                         print(vmHandler.categoriesMenu);
                                       },
+                                      key: Key("${index}"),
+
                                       child: Text(
                                         category.category_name,
                                         style: TextStyle(
