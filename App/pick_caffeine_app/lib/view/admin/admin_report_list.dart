@@ -3,8 +3,6 @@
 // ----------------------------------------------------------------- //
   - title         : Report List Page
   - Description   : 관리자 신고관리 페이지
-                    (피그마상 3페이지인데 탭바 이동이라 여기에
-                    신고 관련 페이지를 모두 작성함)
   - Author        : Lee KwonHyoung
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.11
@@ -12,21 +10,30 @@
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.05 v1.0.1  : 구현된 페이지 첫 작성
+  - 2025.06.05 v1.0.0  : 구현된 페이지 첫 작성
+  - 2025.06.11 v1.0.1  : 탭바 기능 변경(매장 리스트, 매장 리뷰, 제재 내역), 겟스토리지
 // ----------------------------------------------------------------- //
 */
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
+import 'package:pick_caffeine_app/vm/kwonhyoung/admin_controller.dart';
 
-import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
-
-// 관리자 매장 관리 페이지 (25.06.10. 개선된 버전)
+// 관리자 매장 관리 페이지 (25.06.11. 수정된 버전2)
 class AdminReportScreen extends StatelessWidget {
   AdminReportScreen({super.key});
   final DeclarationController controller = Get.put(DeclarationController());
+  final DateTime adminTodayDate = DateTime.now();
+  final box = GetStorage();
+
+  late final String adminId; // 관리자 정보 변수
+
+  AdminReportScree({Key? key}) {
+    adminId = box.read('loginId') ?? '__';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +41,10 @@ class AdminReportScreen extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       body: Column(
         children: [
-          _buildTopImageWithText(), // 상단 앱바쪽 이미지지
-          _buildStoreUserInfo(), // 이미지 밑 매장/회원 수 정보 표시시
+          _buildTopImageWithText(), // 상단 앱바쪽 이미지
+          _buildStoreUserInfo(), // 이미지 밑 매장/회원 수 정보 표시
           _buildTabBar(), // 상단 탭바
-          _buildTabBarView(), // 탭바뷰뷰
+          _buildTabBarView(), // 탭바뷰
           _buildBottomNavigation(), // 하단 탭바
         ],
       ),
@@ -62,7 +69,7 @@ class AdminReportScreen extends StatelessWidget {
   // 매장수/회원수 정보 표시 
   Widget _buildStoreUserInfo() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(15),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,10 +77,14 @@ class AdminReportScreen extends StatelessWidget {
           Obx(() => Text(
             '매장 수: ${controller.storeCount.value}개',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
           )),
+          Text(
+            '현재날짜: ${adminTodayDate.toString().substring(0, 10)}',
+            style: TextStyle(fontSize: 15),
+            ),
           Obx(() => Text(
             '회원 수: ${controller.userCount.value}명',
             style: TextStyle(
@@ -97,9 +108,9 @@ class AdminReportScreen extends StatelessWidget {
         indicatorColor: Color(0xFF8B4513),
         indicatorWeight: 3,
         tabs: [
-          Tab(text: "매장 리스트"),
-          Tab(text: "매장 리뷰"),
-          Tab(text: "제재 내역"),
+          Tab(child: Text("매장 리스트", style: TextStyle(fontSize: 20))),
+          Tab(child: Text("매장 리뷰", style: TextStyle(fontSize: 20))),
+          Tab(child: Text("제재 내역", style: TextStyle(fontSize: 20))),
         ],
       ),
     );
@@ -244,7 +255,7 @@ class AdminReportScreen extends StatelessWidget {
                     Text(
                       store['store_name']?.toString() ?? '매장명 없음',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -252,7 +263,7 @@ class AdminReportScreen extends StatelessWidget {
                     Text(
                       '사업자번호: ${store['store_business_num']?.toString() ?? '정보 없음'}',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 15,
                         color: Colors.grey[600],
                       ),
                     ),
@@ -260,7 +271,7 @@ class AdminReportScreen extends StatelessWidget {
                     Text(
                       store['store_address']?.toString() ?? '주소 정보 없음',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 15,
                         color: Colors.grey[600],
                       ),
                       maxLines: 1,
@@ -272,7 +283,7 @@ class AdminReportScreen extends StatelessWidget {
                         child: Text(
                           '📞 ${store['store_phone']}',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 15,
                             color: Colors.grey[500],
                           ),
                         ),
@@ -289,9 +300,9 @@ class AdminReportScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  store['store_state']?.toString() ?? '상태 불명',
+                  store['store_state']?.toString() ?? '연결 안됨',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 15,
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
@@ -333,7 +344,7 @@ class AdminReportScreen extends StatelessWidget {
                       child: Text(
                         '선택된 매장: ${selectedStore['store_name']}',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF8B4513),
                         ),
@@ -351,14 +362,14 @@ class AdminReportScreen extends StatelessWidget {
                   Obx(() => Text(
                     '리뷰 수: ${controller.filteredReviews.length}개',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
                   )),
                   Obx(() => Text(
                     '선택된 리뷰: ${controller.selectedReviews.length}개',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: Colors.red[700],
                     ),
@@ -536,7 +547,7 @@ class AdminReportScreen extends StatelessWidget {
                                   child: Container(
                                     padding: EdgeInsets.all(2),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.6),
+                                      color: Colors.black.withAlpha(20),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -580,25 +591,25 @@ class AdminReportScreen extends StatelessWidget {
                           Text(
                             '${review['user_nickname']?.toString() ?? '익명'} (${review['user_id']?.toString() ?? ''})',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 20,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: _getReviewStateColor(review['review_state']?.toString()),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              review['review_state']?.toString() ?? '상태없음',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
+                          // Container(
+                          //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          //   decoration: BoxDecoration(
+                          //     color: _getReviewStateColor(review['review_state']?.toString()),
+                          //     borderRadius: BorderRadius.circular(10),
+                          //   ),
+                          //   child: Text(
+                          //     review['review_state']?.toString() ?? '상태없음',
+                          //     style: TextStyle(
+                          //       fontSize: 15,
+                          //       color: Colors.white,
+                          //       fontWeight: FontWeight.w500,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(height: 4),
@@ -607,7 +618,7 @@ class AdminReportScreen extends StatelessWidget {
                       Text(
                         '매장: ${review['store_name']?.toString() ?? '알수없는 매장'}',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 15,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -617,7 +628,7 @@ class AdminReportScreen extends StatelessWidget {
                       Text(
                         '구매번호: ${review['purchase_num']?.toString() ?? '정보없음'}',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 15,
                           color: Colors.grey[500],
                         ),
                       ),
@@ -627,7 +638,7 @@ class AdminReportScreen extends StatelessWidget {
                       Text(
                         review['review_content']?.toString() ?? '',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 20,
                           color: Colors.grey[800],
                         ),
                         maxLines: 3,
@@ -639,7 +650,7 @@ class AdminReportScreen extends StatelessWidget {
                       Text(
                         '작성일: ${_formatReviewDate(review['review_date'])}',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 15,
                           color: Colors.grey[500],
                         ),
                       ),
@@ -662,6 +673,7 @@ class AdminReportScreen extends StatelessWidget {
         '제재할 리뷰를 선택해주세요.',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
+        
       );
       return;
     }
@@ -675,7 +687,7 @@ class AdminReportScreen extends StatelessWidget {
         title: Text(
           '리뷰 제재',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Color(0xFF8B4513),
           ),
@@ -698,7 +710,7 @@ class AdminReportScreen extends StatelessWidget {
                   child: Text(
                     '선택된 리뷰: ${controller.selectedReviews.length}개',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: Colors.red[700],
                     ),
@@ -710,7 +722,7 @@ class AdminReportScreen extends StatelessWidget {
                 Text(
                   '제재 단계',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -741,7 +753,7 @@ class AdminReportScreen extends StatelessWidget {
                 Text(
                   '제재 사유',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -749,7 +761,7 @@ class AdminReportScreen extends StatelessWidget {
                 Text(
                   '입력한 제재 사유는 제재 내역에 기록됩니다.',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: Colors.grey[600],
                   ),
                 ),
@@ -845,7 +857,7 @@ class AdminReportScreen extends StatelessWidget {
                     ? '제재 건수: $totalCount건'
                     : '${controller.selectedSanctionType.value}: $filteredCount건 (전체: $totalCount건)',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.red[700],
                   ),
@@ -865,7 +877,7 @@ class AdminReportScreen extends StatelessWidget {
                   items: ['전체', '1차 제재', '2차 제재']
                       .map((type) => DropdownMenuItem(
                             value: type,
-                            child: Text(type, style: TextStyle(fontSize: 12)),
+                            child: Text(type, style: TextStyle(fontSize: 14)),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -895,7 +907,7 @@ class AdminReportScreen extends StatelessWidget {
                         '제재 내역을 불러오는 중...',
                         style: TextStyle(
                           color: Colors.grey[600],
-                          fontSize: 14,
+                          fontSize: 15,
                         ),
                       ),
                     ],
@@ -977,7 +989,7 @@ class AdminReportScreen extends StatelessWidget {
                   Text(
                     '제재 날짜: ${sanction.sanctionDate != null ? _formatDate(sanction.sanctionDate!) : "미설정"}',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 15,
                       color: Colors.grey[600],
                       fontWeight: FontWeight.w500,
                     ),
@@ -992,7 +1004,7 @@ class AdminReportScreen extends StatelessWidget {
                     child: Text(
                       _getSanctionType(sanction.sanctionContent ?? ''),
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1035,14 +1047,14 @@ class AdminReportScreen extends StatelessWidget {
                         Text(
                           '${sanction.userNickname ?? '알수없음'} (${sanction.userId})',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 22,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           '상태: ${sanction.userState ?? '알수없음'}',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 15,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -1064,7 +1076,7 @@ class AdminReportScreen extends StatelessWidget {
                       '해제',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1088,7 +1100,7 @@ class AdminReportScreen extends StatelessWidget {
                     Text(
                       '제재 내용:',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 20,
                         color: Colors.grey[700],
                         fontWeight: FontWeight.w500,
                       ),
@@ -1097,7 +1109,7 @@ class AdminReportScreen extends StatelessWidget {
                     Text(
                       sanction.sanctionContent ?? '',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 20,
                         color: Colors.red[800],
                         fontWeight: FontWeight.w600,
                       ),
@@ -1182,18 +1194,18 @@ class AdminReportScreen extends StatelessWidget {
                     Text(
                       '사용자: ${sanction.userNickname ?? '알수없음'} (${sanction.userId})',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       '제재 내용: ${sanction.sanctionContent ?? ''}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                     ),
                     Text(
                       '제재 날짜: ${sanction.sanctionDate != null ? _formatDate(sanction.sanctionDate!) : "미설정"}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                     ),
                   ],
                 ),
@@ -1202,7 +1214,7 @@ class AdminReportScreen extends StatelessWidget {
               Text(
                 '제재가 해제되면 해당 사용자는 다시 정상적으로 서비스를 이용할 수 있습니다.',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: Colors.orange[700],
                 ),
               ),
@@ -1265,7 +1277,7 @@ class AdminReportScreen extends StatelessWidget {
                     '매장 관리',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1292,7 +1304,7 @@ class AdminReportScreen extends StatelessWidget {
                     '문의 관리',
                     style: TextStyle(
                       color: Colors.white.withAlpha(25),
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

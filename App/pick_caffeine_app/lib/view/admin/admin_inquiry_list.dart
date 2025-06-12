@@ -10,19 +10,18 @@
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.05 v1.0.1  : 관리자 문의내역 첫 작성
+  - 2025.06.11 v1.0.1  : 관리자 문의내역(문의목록 리스트뷰, 답변목록 리스트뷰, 답변수정 기능 추가 중)
 // ----------------------------------------------------------------- //
 */
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart'; 
+import 'package:get_storage/get_storage.dart';
+import 'package:pick_caffeine_app/vm/kwonhyoung/admin_controller.dart';
+import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart';
 
-
-import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart'; 
-
-// 관리자 문의내역역 페이지 (25.06.10. 수정된 버전)
+// 관리자 문의내역 페이지 (25.06.11 수정된 버전2)
 class InquiryReport extends StatelessWidget {
   InquiryReport({super.key});
 
@@ -30,6 +29,13 @@ class InquiryReport extends StatelessWidget {
 
   // 현재 탭 상태를 나타내는 Rx 변수 (0: 문의내역, 1: 답변내역)
   final RxInt tabIndex = 0.obs;
+  final box = GetStorage();
+
+  late final String adminId; // 관리자 로그인 정보 변수
+
+  AdminReportScreen({Key? key}){
+    adminId = box.read('loginId') ?? '__';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +119,7 @@ class InquiryReport extends StatelessWidget {
               style: TextStyle(
                 color: tabIndex.value == 0 ? Colors.white : Colors.grey[700],
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: 20,
               ),
             ),
           ),
@@ -131,7 +137,7 @@ class InquiryReport extends StatelessWidget {
               style: TextStyle(
                 color: tabIndex.value == 1 ? Colors.white : Colors.grey[700],
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: 20,
               ),
             ),
           ),
@@ -156,7 +162,7 @@ class InquiryReport extends StatelessWidget {
                 '문의 목록을 불러오는 중...',
                 style: TextStyle(
                   color: Colors.grey[600],
-                  fontSize: 14,
+                  fontSize: 15,
                 ),
               ),
             ],
@@ -260,10 +266,10 @@ class InquiryReport extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Color(0xFFFFF8F0),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFF8B4513).withOpacity(0.1)),
+                  border: Border.all(color: Color(0xFF8B4513).withAlpha(20)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withAlpha(20),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),
@@ -286,7 +292,7 @@ class InquiryReport extends StatelessWidget {
                           inquiry.inquiryState,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 10,
+                            fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -297,7 +303,7 @@ class InquiryReport extends StatelessWidget {
                       Text(
                         inquiry.inquiryContent,
                         style: TextStyle(
-                          fontSize: 16, 
+                          fontSize: 20, 
                           fontWeight: FontWeight.w600,
                           color: Colors.grey[800],
                         ),
@@ -308,7 +314,7 @@ class InquiryReport extends StatelessWidget {
                       
                       // ID + 닉네임 + 작성일 표시
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.grey[100],
                           borderRadius: BorderRadius.circular(6),
@@ -320,7 +326,7 @@ class InquiryReport extends StatelessWidget {
                               'ID: ${inquiry.userId}',
                               style: TextStyle(
                                 color: Colors.grey[700], 
-                                fontSize: 12,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -328,7 +334,7 @@ class InquiryReport extends StatelessWidget {
                               '닉네임: ${inquiry.userNickname}',
                               style: TextStyle(
                                 color: Colors.grey[700], 
-                                fontSize: 12,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -336,7 +342,7 @@ class InquiryReport extends StatelessWidget {
                               '작성일: ${_formatDate(inquiry.inquiryDate)}',
                               style: TextStyle(
                                 color: Colors.grey[600], 
-                                fontSize: 11,
+                                fontSize: 15,
                               ),
                             ),
                           ],
@@ -357,7 +363,7 @@ class InquiryReport extends StatelessWidget {
                     ),
                     child: Text(
                       '답변 처리',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -371,6 +377,8 @@ class InquiryReport extends StatelessWidget {
 
   // 답변 내역 리스트 (response가 null이 아닌 항목만 표시) - 수정된 버전
   Widget _buildAnswerList() {
+    TextEditingController inquiryAnswer = TextEditingController();
+
     return Obx(() {
       if (controller.isLoading.value) {
         return Center(
@@ -444,7 +452,7 @@ class InquiryReport extends StatelessWidget {
                             '답변완료',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -452,7 +460,7 @@ class InquiryReport extends StatelessWidget {
                         // 답변일 (responseDate가 있으면 사용, 없으면 현재 날짜)
                         Text(
                           '답변일: ${inquiry.responseDate != null ? _formatDate(inquiry.responseDate!) : _formatDate(DateTime.now())}',
-                          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                         ),
                       ],
                     ),
@@ -468,12 +476,12 @@ class InquiryReport extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.person, size: 16, color: Colors.grey[600]),
+                          Icon(Icons.person, size: 18, color: Colors.grey[600]),
                           SizedBox(width: 4),
                           Text(
                             'ID: ${inquiry.userId} | 닉네임: ${inquiry.userNickname}',
                             style: TextStyle(
-                              fontSize: 12, 
+                              fontSize: 22, 
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[700],
                             ),
@@ -502,7 +510,7 @@ class InquiryReport extends StatelessWidget {
                               Text(
                                 '문의 내용',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.blue[700],
                                 ),
@@ -513,7 +521,7 @@ class InquiryReport extends StatelessWidget {
                           Text(
                             inquiry.inquiryContent,
                             style: TextStyle(
-                              fontSize: 14, 
+                              fontSize: 20, 
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[800],
                             ),
@@ -524,41 +532,87 @@ class InquiryReport extends StatelessWidget {
                     SizedBox(height: 8),
                     
                     // 답변 내용
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.green[50],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.green[200]!),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.reply, size: 16, color: Colors.green[700]),
-                              SizedBox(width: 4),
-                              Text(
-                                '답변 내용',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.green[700],
-                                ),
+                    GestureDetector(
+                      onTap: () {
+                        Get.defaultDialog(
+                          title: '답변 수정',
+                          content: TextField(
+                            controller: inquiryAnswer,
+                            decoration: InputDecoration(
+                              hintText: '수정할 답변을 작성하세요',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ],
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            inquiry.response ?? '',
-                            style: TextStyle(
-                              fontSize: 14, 
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                          backgroundColor: Colors.amberAccent,
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                Get.back();
+                                
+                                await Future.delayed(Duration(milliseconds: 100));
+                                try {
+                                  await controller.updateResponse(
+                                    inquiry.inquiryNum, 
+                                    inquiryAnswer.text.trim(), 
+                                    DateTime.now()
+                                  );
+                                } catch (e, st) {
+                                  print('에러: $e\n$st');
+                                  Get.snackbar(
+                                    '오류',
+                                    '답변 수정 중 오류가 발생했습니다.',
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white24,
+                              ),
+                              child: Text('수정')
+                            )
+                          ]
+                        );
+                      },
+
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.green[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.green[200]!),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.reply, size: 16, color: Colors.green[700]),
+                                SizedBox(width: 4),
+                                Text(
+                                  '답변 내용',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.green[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              inquiry.response ?? '',
+                              style: TextStyle(
+                                fontSize: 20, 
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -590,7 +644,7 @@ class InquiryReport extends StatelessWidget {
         ),
         content: Text(
           '이 문의를 반려하시겠습니까?\n반려된 문의는 복구할 수 없습니다.',
-          style: TextStyle(fontSize: 14),
+          style: TextStyle(fontSize: 15),
         ),
         actions: [
           TextButton(
@@ -641,59 +695,61 @@ class InquiryReport extends StatelessWidget {
         ),
         content: SizedBox(
           width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 문의 내용 표시
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '문의 내용:',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      inquiry.inquiryContent,
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              
-              // 답변 입력 필드
-              Text(
-                '답변 내용:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 8),
-              TextField(
-                controller: responseController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: '고객에게 전달할 답변을 입력해주세요...',
-                  border: OutlineInputBorder(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 문의 내용 표시
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  contentPadding: EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '문의 내용:',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        inquiry.inquiryContent,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 16),
+                
+                // 답변 입력 필드
+                Text(
+                  '답변 내용:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextField(
+                  controller: responseController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: '고객에게 전달할 답변을 입력해주세요...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: EdgeInsets.all(12),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         actions: [
@@ -706,6 +762,10 @@ class InquiryReport extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
+
+              Get.back();
+              await Future.delayed(Duration(milliseconds: 500));
+
               if (responseController.text.trim().isEmpty) {
                 Get.snackbar(
                   '알림',
@@ -715,7 +775,6 @@ class InquiryReport extends StatelessWidget {
                 );
                 return;
               }
-
               await controller.updateResponse(
                 inquiryNum,
                 responseController.text.trim(),

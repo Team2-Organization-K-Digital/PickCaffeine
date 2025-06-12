@@ -1,9 +1,9 @@
-// 주문 내역 페이지
+// 고객 주문내역 페이지
 /*
 // ----------------------------------------------------------------- //
-  - title         : Purchase List Page
-  - Description   :
-  - Author        : Jeong SeoYun
+  - title         : Purchase List Page (Customer)
+  - Description   : 
+  - Author        : Jeong seoyun
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
   - package       :
@@ -13,10 +13,14 @@
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
 */
+
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_detail.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
@@ -25,19 +29,39 @@ import 'package:pick_caffeine_app/vm/seoyun/vm_image_handler.dart';
 class CustomerPurchaseList extends StatelessWidget {
   CustomerPurchaseList({super.key});
 
+  final box = GetStorage();
+
   final TextEditingController reviewController = TextEditingController();
   final RxMap<int, bool> isReviewVisible = <int, bool>{}.obs; //후기 유무
 
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
+    
+    // order.fetchPurchase(box.read('loginId'));
+    // order.fetchStore(box.read('loginId'));
+    // order.fetchReview(box.read('loginId'));
+    // order.fetchMenu(box.read('loginId'));
+
     order.fetchPurchase('11');
     order.fetchStore('11');
     order.fetchReview('11');
     order.fetchMenu('11');
       
     return Scaffold(
-      appBar: AppBar(title: Text('주문내역')),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: AppBar(
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('주문내역', style: TextStyle(fontWeight: FontWeight.w600)),
+              SizedBox(width: 8),
+              Icon(Icons.playlist_add_check_rounded, color: AppColors.brown, size: 30,),
+            ],
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Obx(() {
@@ -57,11 +81,11 @@ class CustomerPurchaseList extends StatelessWidget {
                   // print(menu);
               
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.brown, width: 2.0),
+                        border: Border.all(color: AppColors.brown, width: 2.0),
                       ),
                       child: Column(
                         children: [
@@ -79,7 +103,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                         10,
                                       ),
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 15,
                                         color: Color.fromARGB(255, 73, 73, 73),
                                       ),
                                     ),
@@ -96,7 +120,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                       order.menu.isNotEmpty
                                           ? menu[0][0].toString()
                                           : '메뉴 정보 없음',
-                                      style: TextStyle(fontSize: 15),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                                     GestureDetector(
                                       onTap: () {
@@ -113,10 +137,10 @@ class CustomerPurchaseList extends StatelessWidget {
                                         );
                                       },
                                       child: Text(
-                                        '주문 상세정보 보기',
+                                        '주문 상세정보 보기 ▶︎',
                                         style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.grey,
+                                          fontSize: 13,
+                                          color: AppColors.grey,
                                         ),
                                       ),
                                     ),
@@ -125,7 +149,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                           ? menu[0][3].toString()
                                           : '메뉴 정보 없음',
                                       style: TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -136,13 +160,13 @@ class CustomerPurchaseList extends StatelessWidget {
                                 padding: EdgeInsets.fromLTRB(0, 0, 30, 40),
                                 child: Column(
                                   children: [
-                                    Text(
-                                      purchaseList.purchase_num.toString(),
-                                      style: TextStyle(
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   purchaseList.purchase_num.toString(),
+                                    //   style: TextStyle(
+                                    //     fontSize: 40,
+                                    //     fontWeight: FontWeight.w400,
+                                    //   ),
+                                    // ),
                                     Text(
                                       state == -1
                                           ? '주문취소'
@@ -153,6 +177,10 @@ class CustomerPurchaseList extends StatelessWidget {
                                           : state == 2
                                           ? '제조완료'
                                           : '수령완료',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -172,12 +200,8 @@ class CustomerPurchaseList extends StatelessWidget {
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color.fromARGB(
-                                        255,
-                                        238,
-                                        200,
-                                        130,
-                                      ),
+                                      backgroundColor:AppColors.lightbrown,
+                                      minimumSize: Size(330, 40)
                                     ),
                                     child: Text(
                                       '작성완료',
@@ -200,7 +224,8 @@ class CustomerPurchaseList extends StatelessWidget {
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.brown,
+                                      backgroundColor: AppColors.brown,
+                                      minimumSize: Size(330, 40)
                                     ),
                                     child: Text(
                                       '후기쓰기',
@@ -253,13 +278,27 @@ class CustomerPurchaseList extends StatelessWidget {
             controller: reviewController,
             decoration: InputDecoration(
               labelText: '후기 내용',
+              labelStyle: TextStyle(color: AppColors.brown),
               border: OutlineInputBorder(),
+              enabledBorder: OutlineInputBorder(
+              borderSide:  BorderSide(
+                color: AppColors.brown,
+                width: 2
+              )
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: AppColors.brown,
+                  width: 2
+                )
+              )
             ),
             maxLines: 3,
           ),
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: () async {
+              
               final reviewText = reviewController.text.trim();
               final imageFile = vm.imageFile.value;
 
@@ -280,12 +319,13 @@ class CustomerPurchaseList extends StatelessWidget {
                 );
 
                 // 🎯 여기서 서버에서 다시 리뷰 불러오기
+                // await order.fetchReview(box.read('loginId'));
                 await order.fetchReview('11');
                 order.index.value ++;
 
                 Get.snackbar(
                   '성공',
-                  '후기가 저장되었습니다.',
+                  '후기가 저장되었습니다.☺',
                   snackPosition: SnackPosition.BOTTOM,
                 );
 
@@ -300,7 +340,14 @@ class CustomerPurchaseList extends StatelessWidget {
                 );
               }
             },
-            child: Text('작성 완료'),
+            style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.lightbrown,
+                                      minimumSize: Size(330, 40)
+                                    ),
+            child: Text('작성 완료',  style: TextStyle(
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),),
           ),
         ],
       ),
@@ -319,22 +366,51 @@ class CustomerPurchaseList extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () => vm.getImagefromGallery(ImageSource.gallery),
-                child: Text('갤러리'),
+                style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.lightpick,
+                                      minimumSize: Size(130, 40)
+                                    ),
+                child: Row(
+                  children: [
+                    Icon(Icons.photo, size: 30, color: AppColors.brown,),
+                    Text('  갤러리', style: TextStyle(
+                                        color: AppColors.brown,
+                                        fontWeight: FontWeight.bold,
+                                      ),),
+                  ],
+                ),
               ),
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () => vm.getImagefromGallery(ImageSource.camera),
-                child: Text('카메라'),
+                style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.lightpick,
+                                      minimumSize: Size(130, 40)
+                                    ),
+                child: Row(
+                  children: [
+                    Icon(Icons.photo_camera, size: 30, color: AppColors.brown,),
+                    Text('  카메라', style: TextStyle(
+                                        color: AppColors.brown,
+                                        fontWeight: FontWeight.bold,
+                                      ),),
+                  ],
+                ),
               ),
             ],
           ),
+                        SizedBox(height: 10),
+
           Container(
             width: double.infinity,
             height: 200,
-            color: Colors.grey[300],
+            color: AppColors.greyopac,
             child:
                 vm.imageFile.value == null
-                    ? Center(child: Text('이미지를 선택해 주세요'))
+                    ? Center(child: Text('이미지를 선택해 주세요', style: TextStyle(
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),))
                     : Image.file(File(vm.imageFile.value!.path)),
           ),
         ],

@@ -28,13 +28,13 @@
 			"name": "ipad",
 			"request": "launch",
 			"type": "dart",
-			"deviceId": "F86BF21A-EE22-4D1A-BF4F-F9F1B3C79010"
+			"deviceId": "C0AB5642-E7BF-4347-9076-2F5050DE8114"
 		},
 		{
 			"name": "iphone",
 			"request": "launch",
 			"type": "dart",
-			"deviceId": "A6BC8439-6360-4D78-9F1C-925C7C7C6B03"
+			"deviceId": "B3E8BDEB-821E-4B49-8B0E-83478F598B6E"
 		},
 	],
 	"compounds": [

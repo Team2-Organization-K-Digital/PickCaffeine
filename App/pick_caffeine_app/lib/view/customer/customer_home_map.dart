@@ -36,7 +36,7 @@ class CustomerHomeMap extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text('고객용 매장 지도')),
+      // appBar: AppBar(title: Text('고객용 매장 지도')),
       body: Obx(() {
         return FlutterMap(
           mapController: mapController,

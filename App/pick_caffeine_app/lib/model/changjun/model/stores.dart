@@ -4,7 +4,7 @@ class Stores {
   final int myStoreCount;
   final int reviewCount;
   final double distance;
-  final String storeState;
+  final int storeState;
   final String storeImage;
 
 // ----------------------------------------------------------- //
@@ -20,17 +20,18 @@ class Stores {
     }
   );
 // ----------------------------------------------------------- //
-// // Map -> ChartData 로 변환 (DB 조회)
-//   factory Stores.fromMap(Map<String, dynamic> map){
-//     return Stores(
-//       storeId: map['storeId'], 
-//       storeName: map['storeName'], 
-//       myStoreCount: map['myStoreCount'], 
-//       reviewCount: map['reviewCount'], 
-//       distance: map['distance'],
-//       storeImage: map['storeImage']
-//     );
-//   }
+// Map -> ChartData 로 변환 (DB 조회)
+  factory Stores.fromMap(Map<String, dynamic> map){
+    return Stores(
+      storeId: map['storeId'], 
+      storeName: map['storeName'], 
+      myStoreCount: map['myStoreCount'], 
+      reviewCount: map['reviewCount'], 
+      distance: map['distance'], 
+      storeState: map['storeState'], 
+      storeImage: map['storeImage'] ?? ''
+    );
+  }
 // ----------------------------------------------------------- //
 
 }

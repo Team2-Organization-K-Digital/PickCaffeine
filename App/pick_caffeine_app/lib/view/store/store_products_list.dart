@@ -103,7 +103,16 @@ class StoreProductsList extends StatelessWidget {
                       vmHandler.categories.isEmpty
                           ? Center(child: Text('카테고리가 없습니다.'))
                           : Expanded(
-                            child: ListView.builder(
+                            child: ReorderableListView.builder(
+                              onReorder: (oldIndex, newIndex) {
+                                if (oldIndex < newIndex) {
+                                  newIndex -= 1;
+                                }
+                                final item = vmHandler.categories.removeAt(
+                                  oldIndex,
+                                );
+                                vmHandler.categories.insert(newIndex, item);
+                              },
                               scrollDirection: Axis.horizontal,
                               itemCount: vmHandler.categories!.length + 1,
                               itemBuilder: (context, index) {
@@ -194,6 +203,8 @@ class StoreProductsList extends StatelessWidget {
                                         vmHandler.clickedCategory.value = index;
                                         print(vmHandler.categoriesMenu);
                                       },
+                                      key: Key("${index}"),
+
                                       child: Text(
                                         category.category_name,
                                         style: TextStyle(
@@ -214,6 +225,7 @@ class StoreProductsList extends StatelessWidget {
                       VerticalDivider(width: 5, thickness: 3),
                       IconButton(
                         onPressed: () {
+                          vmHandler.clearImage();
                           if (vmHandler.categoryMenuAdd.isEmpty) {
                             Get.snackbar('경고', '카테고리를 선택해주세요.');
                             return;
@@ -221,6 +233,7 @@ class StoreProductsList extends StatelessWidget {
                           Get.to(StoreAddProduct(), arguments: [storeId])!.then(
                             (_) {
                               vmHandler.categoryMenuAdd.value = "";
+                              vmHandler.clickedCategory.value = 0;
                               vmHandler.fetchMenuInCategory(storeId);
                               vmHandler.fetchCategory(storeId);
                             },
@@ -398,6 +411,7 @@ class StoreProductsList extends StatelessWidget {
                                               behavior:
                                                   HitTestBehavior.translucent,
                                               onTap: () {
+                                                vmHandler.clearImage();
                                                 Get.to(
                                                   StoreProductsUpdate(),
                                                   arguments: [
@@ -405,7 +419,14 @@ class StoreProductsList extends StatelessWidget {
                                                     category.category_name,
                                                     menu.menu_num!,
                                                   ],
-                                                );
+                                                )!.then((value) {
+                                                  vmHandler.fetchMenuInCategory(
+                                                    storeId,
+                                                  );
+                                                  vmHandler.fetchCategory(
+                                                    storeId,
+                                                  );
+                                                });
                                               },
                                               child: Row(
                                                 mainAxisAlignment:

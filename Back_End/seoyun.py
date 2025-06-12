@@ -1,6 +1,6 @@
 """
 author      : Jeong Seoyun 
-description : 
+description : 고객 / 매장 - 주문 내역과 고객의 찜한 매장 목록  
 date        : 2025.06.05
 version     : 1
 """
@@ -48,10 +48,26 @@ def connect():
         host=ip,
         user="root",
         password="qwer1234",
-        db="mydb",
+        db="pick_caffeine",
         charset="utf8"
     )
 # ----------------------------------------------------------------------------------- #
+# 주문내역 - 고객
+@router.get("/select/purchase_list/{id}")
+async def select_parchase(id:str):
+    # Connection으로 부터 Cursor 생성
+    conn = connect()
+    curs = conn.cursor()
+
+    # SQL 문장
+    sql = "SELECT * FROM purchase_list where user_id = %s"
+    curs.execute(sql,(id))
+    rows = curs.fetchall()
+    conn.close()
+    print(rows)
+
+    return {'results': rows} 
+
 # 매장정보
 @router.get("/select/store/{num}")
 async def select_store(num:str):
@@ -126,7 +142,7 @@ async def select_parchase(id:str):
 
     return {'results': rows} 
 
-# 메뉴이름 / 메뉴 + 옵션가격 / 옵션 내역
+# 메뉴이름 / 메뉴 + 옵션가격 / 옵션 내역 - 고객
 @router.get("/select/detail_menu/{id}/{num}")
 async def select_detail_menu(id:str, num:str):
     # Connection으로 부터 Cursor 생성
@@ -137,6 +153,28 @@ async def select_detail_menu(id:str, num:str):
     sql = '''SELECT m.menu_name , sm.selected_options , sm.total_price , sm.selected_quantity
     FROM purchase_list AS pl , selected_menu AS sm , menu AS m 
     WHERE pl.user_id = %s AND pl.purchase_num = %s AND pl.purchase_num = sm.purchase_num AND sm.menu_num = m.menu_num;
+    '''
+    curs.execute(sql,(id, num))
+    rows = curs.fetchall()
+    conn.close()
+    print(rows)
+
+    return {'results': rows} 
+
+# 메뉴이름 / 메뉴 + 옵션가격 / 옵션 내역 - 매장
+@router.get("/select/detail_menu/store/{id}/{num}")
+async def select_detail_menu_store(id:str, num:str):
+    # Connection으로 부터 Cursor 생성
+    conn = connect()
+    curs = conn.cursor()
+
+    # SQL 문장
+    sql = '''SELECT m.menu_name , sm.selected_options , sm.total_price , sm.selected_quantity
+    FROM purchase_list AS pl , selected_menu AS sm , menu AS m 
+    WHERE pl.store_id = %s 
+    AND pl.purchase_num = %s
+    AND pl.purchase_num = sm.purchase_num 
+    AND sm.menu_num = m.menu_num;
     '''
     curs.execute(sql,(id, num))
     rows = curs.fetchall()
@@ -238,25 +276,6 @@ async def update_state(state:int,num:int):
             print("Error :", ex)
             return {'result':'Error'}
 
-# 고객명, 고객 연락처 확인
-@router.get("/select/purchase_store/{num}")
-async def select_review(num:int):
-    # Connection으로 부터 Cursor 생성
-    conn = connect()
-    curs = conn.cursor()
-
-    # SQL 문장
-    sql = '''SELECT u.user_nickname, u.user_phone 
-    FROM users AS u, purchase_list AS pl 
-    where pl.purchase_num = %s and pl.user_id = u.user_id;
-    '''
-    curs.execute(sql, (num))
-    rows = curs.fetchall()
-    conn.close()
-    print(rows)
-
-    return {'results': rows} 
-
 # 후기작성
 @router.post("/insert/review")
 async def insert_review(
@@ -300,70 +319,37 @@ async def select_mystore(id: str):
     conn = connect()
     curs = conn.cursor()
 
-    sql = '''SELECT s.store_name, si.image_1 
-    FROM my_store AS ms, store AS s, store_image AS si 
-    WHERE ms.store_id = s.store_id AND s.store_id = si.store_id AND ms.user_id = %s;
+    sql = '''SELECT 
+        s.store_id,
+        (SELECT store_name FROM store WHERE store_id = s.store_id) AS store_name,
+        (SELECT image_1 FROM store_image WHERE store_id = s.store_id LIMIT 1) AS image_1,
+        (SELECT COUNT(*) FROM my_store WHERE store_id = s.store_id) AS store_like_count,
+        (SELECT COUNT(*) 
+        FROM purchase_list 
+        WHERE store_id = s.store_id 
+        AND purchase_num IN (SELECT purchase_num FROM review)) AS review_count
+    FROM my_store s
+    WHERE s.user_id = %s;
     '''
     curs.execute(sql, (id,))
     rows = curs.fetchall()
     conn.close()
 
-    # rows: List of tuples (store_name, image_1 as bytes)
     results = []
     for row in rows:
-        store_name = row[0]
-        image_blob = row[1]  # BLOB bytes
+        store_id, store_name, image_blob, like_count, review_count = row
 
-        # BLOB이 None이 아닐 경우 Base64로 인코딩
         if image_blob:
             image_base64 = base64.b64encode(image_blob).decode('utf-8')
         else:
             image_base64 = None
 
-        results.routerend({
+        results.append({
+            "store_id": store_id,
             "store_name": store_name,
-            "image_1": image_base64
+            "image_1": image_base64,
+            "store_like_count": like_count,
+            "review_count": review_count
         })
 
     return {"results": results}
-
-# 찜한 매장들 별 찜한 수
-@router.get("/select/my_store_count/{id}")
-async def select_mystore_count(id:int):
-    # Connection으로 부터 Cursor 생성
-    conn = connect()
-    curs = conn.cursor()
-
-    # SQL 문장
-    sql = '''
-        SELECT count(*) 
-        FROM my_store
-        WHERE store_id = %s;
-    '''
-    curs.execute(sql, (id))
-    rows = curs.fetchall()
-    conn.close()
-    print(rows)
-
-    return {'results': rows} 
-
-# 찜한 매장들 별 후기 수
-@router.get("/select/review_count/{id}")
-async def select_review_count(id:int):
-    # Connection으로 부터 Cursor 생성
-    conn = connect()
-    curs = conn.cursor()
-
-    # SQL 문장
-    sql = '''
-        SELECT count(*)
-        FROM purchase_list AS pl, review AS r
-        WHERE pl.purchase_num = r.purchase_num
-        AND pl.store_id = %s;
-    '''
-    curs.execute(sql, (id))
-    rows = curs.fetchall()
-    conn.close()
-    print(rows)
-
-    return {'results': rows} 

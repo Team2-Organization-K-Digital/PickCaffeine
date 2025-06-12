@@ -19,16 +19,17 @@
   -                    : 일치하는 값이 없는 경우 - 로그인 실패 snackbar
 // ----------------------------------------------------------------- //
 */
-
+// ----------------------------------------------------------------- //
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/view/login/create_account_store.dart';
 import 'package:pick_caffeine_app/view/login/create_account_user.dart';
 import 'package:pick_caffeine_app/vm/changjun/account_handler.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
 import 'package:pick_caffeine_app/widget_class/utility/custom_text_field.dart';
-
+// ----------------------------------------------------------------- //
 class Login extends StatelessWidget {
   Login({super.key});
   final idController = TextEditingController();
@@ -56,11 +57,14 @@ class Login extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
+// textfield : id
               SizedBox(height: 100),
               SizedBox(width: 300, child: CustomTextField(label: "ID", controller: idController)),
               SizedBox(height: 20,),
+// textfield : pw
               SizedBox(width: 300, child: CustomTextField(label: "PW", controller: pwController, obscureText: true,)),
               SizedBox(height: 20,),
+// button : login
               ButtonBrown(text: '로그인',  
               onPressed: () async{
                 if (
@@ -76,8 +80,9 @@ class Login extends StatelessWidget {
                 }
               }
             ),
+// create account
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 300, 0, 0),
+                padding: const EdgeInsets.fromLTRB(0, 200, 0, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -89,6 +94,7 @@ class Login extends StatelessWidget {
                     SizedBox(
                       width: 5,
                     ),
+// button : show create account dialogue
                     TextButton(
                       onPressed: () {
                         _showDialogue();
@@ -109,6 +115,8 @@ class Login extends StatelessWidget {
       ),
     );
   }
+// ------------------------------- Functions ------------------------------------ //
+// 고객 및 매장 회원가입 페이지로 이동하기 위한 button 이 나타날 dialogue
 _showDialogue(){
   Get.defaultDialog(
     title: '회원가입',
@@ -121,24 +129,28 @@ _showDialogue(){
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+// button : go to create account user page
           SizedBox(height: 35, child: ButtonBrown(text: '고객 가입', onPressed: () {
             Get.back();
             Get.to(()=> CreateAccountUser());
             
           },)),
+// button : go to create account store page
           SizedBox(width: 20),
           SizedBox(height: 35, child: ButtonBrown(text: '매장 가입', onPressed: () {
             Get.back();
-            Get.to(()=> CreateAccountUser());
+            Get.to(()=> CreateAccountStore());
           },)),
           ],
         )
       ],
     ),
+// button : go back
     actions: [
       TextButton(onPressed: () => Get.back(), child: Text('돌아가기',style: TextStyle(color: AppColors.brown),))
     ],
     barrierDismissible: false
   );
 }
+// ----------------------------------------------------------------------------- //
 }

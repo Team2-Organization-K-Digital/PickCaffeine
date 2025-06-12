@@ -5,15 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
 import 'package:pick_caffeine_app/model/kwonhyoung/inquiry_model.dart';
 
-
-// 개선된 버전(25.06.10.)
+// 개선된 버전(25.06.11.) - 수정 버전2
 
 // =====================================================================================
-// 신고 및 매장 관리 컨트롤러 (Declaration과 Store 관리 통합) - 개선된 버전
+// 신고 및 매장 관리 컨트롤러 (Declaration과 Store 관리 통합) - 수정
 // =====================================================================================
 class DeclarationController extends GetxController with GetSingleTickerProviderStateMixin {
   // =================== 기본 설정 ===================
-  static String baseUrl = 'http://192.168.50.236:8000'; // 백엔드 서버 주소
+  static String baseUrl = 'http://192.168.50.236:8000/kwonhyoung'; // 백엔드 서버 주소
   
   // =================== UI 컨트롤러 ===================
   late TabController tabController; // 탭바 컨트롤러 (매장리스트/매장리뷰/제재내역)
@@ -114,7 +113,6 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
     selectedReviewNums.clear();
     // 해당 매장의 리뷰 새로고침
     fetchStoreReviews(storeId);
-    print('매장 선택: $storeId, 해당 매장 리뷰 수: ${filteredReviews.length}');
   }
 
   /// 리뷰 선택/해제를 토글합니다
@@ -122,17 +120,14 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   void toggleReviewSelection(int reviewNum) {
     if (selectedReviewNums.contains(reviewNum)) {
       selectedReviewNums.remove(reviewNum);
-      print('리뷰 선택 해제: $reviewNum');
     } else {
       selectedReviewNums.add(reviewNum);
-      print('리뷰 선택: $reviewNum');
     }
   }
 
   /// 모든 리뷰 선택을 해제합니다
   void clearAllReviewSelections() {
     selectedReviewNums.clear();
-    print('모든 리뷰 선택 해제');
   }
 
   /// 선택된 모든 리뷰들에 대해 제재를 처리합니다 (제재 사유와 레벨 포함)
@@ -337,11 +332,14 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        storeCount.value = data['store_count'] ?? 0;
-        userCount.value = data['user_count'] ?? 0;
-        reviewCount.value = data['review_count'] ?? 0;
-        sanctionedUserCount.value = data['sanctioned_user_count'] ?? 0;
+        final result = json.decode(utf8.decode(response.bodyBytes));
+        if (result['status'] == 'success' && result['data'] != null) {
+          final data = result['data'];
+          storeCount.value = data['store_count'] ?? 0;
+          userCount.value = data['user_count'] ?? 0;
+          reviewCount.value = data['review_count'] ?? 0;
+          sanctionedUserCount.value = data['sanctioned_user_count'] ?? 0;
+        }
       } else {
         print('통계 정보 가져오기 실패: ${response.statusCode}');
       }
@@ -363,9 +361,9 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        if (data['stores'] != null) {
-          stores.value = List<Map<String, dynamic>>.from(data['stores']);
+        final result = json.decode(utf8.decode(response.bodyBytes));
+        if (result['status'] == 'success' && result['data'] != null) {
+          stores.value = List<Map<String, dynamic>>.from(result['data']);
           print('매장 목록 로드 완료: ${stores.length}개');
         } else {
           stores.value = [];
@@ -391,9 +389,9 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        if (data['reviews'] != null) {
-          reviews.value = List<Map<String, dynamic>>.from(data['reviews']);
+        final result = json.decode(utf8.decode(response.bodyBytes));
+        if (result['status'] == 'success' && result['data'] != null) {
+          reviews.value = List<Map<String, dynamic>>.from(result['data']);
           print('리뷰 목록 로드 완료: ${reviews.length}개');
         } else {
           reviews.value = [];
@@ -420,10 +418,9 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        if (data['reviews'] != null) {
-          // 전체 리뷰 목록에서 해당 매장 리뷰만 업데이트
-          List<Map<String, dynamic>> storeReviews = List<Map<String, dynamic>>.from(data['reviews']);
+        final result = json.decode(utf8.decode(response.bodyBytes));
+        if (result['status'] == 'success' && result['data'] != null) {
+          List<Map<String, dynamic>> storeReviews = List<Map<String, dynamic>>.from(result['data']);
           
           // 기존 리뷰에서 해당 매장 리뷰 제거 후 새 데이터 추가
           reviews.removeWhere((review) => review['store_id']?.toString() == storeId);
@@ -452,13 +449,13 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       print('📡 declarations 응답 코드: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
+        final result = json.decode(utf8.decode(response.bodyBytes));
         List<Declaration> declarationList = [];
         
-        print('📊 받은 declarations 데이터 수: ${data['declarations']?.length ?? 0}');
-        
-        if (data['declarations'] != null) {
-          for (var item in data['declarations']) {
+        if (result['status'] == 'success' && result['data'] != null) {
+          print('📊 받은 declarations 데이터 수: ${result['data'].length}');
+          
+          for (var item in result['data']) {
             try {
               final declaration = Declaration.fromJson(item);
               declarationList.add(declaration);
@@ -518,13 +515,13 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       print('sanctioned_users 응답 코드: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
+        final result = json.decode(utf8.decode(response.bodyBytes));
         List<Declaration> sanctionedList = [];
         
-        print('받은 sanctioned_users 데이터 수: ${data['sanctioned_users']?.length ?? 0}');
-        
-        if (data['sanctioned_users'] != null) {
-          for (var item in data['sanctioned_users']) {
+        if (result['status'] == 'success' && result['data'] != null) {
+          print('받은 sanctioned_users 데이터 수: ${result['data'].length}');
+          
+          for (var item in result['data']) {
             try {
               final sanctionedUser = Declaration.fromJson(item);
               sanctionedList.add(sanctionedUser);
@@ -583,7 +580,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
             fetchStats(),
           ]);
         } else {
-          throw Exception(data['result'] ?? '알 수 없는 오류');
+          throw Exception(data['message'] ?? '알 수 없는 오류');
         }
       } else {
         throw Exception('서버 오류: ${response.statusCode}');
@@ -635,7 +632,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
           _refreshAllDataAfterSanctionRelease();
           
         } else {
-          throw Exception('제재 해제 실패: ${data['result'] ?? '알 수 없는 오류'}');
+          throw Exception('제재 해제 실패: ${data['message'] ?? '알 수 없는 오류'}');
         }
       } else {
         throw Exception('서버 오류: ${response.statusCode}');
@@ -695,7 +692,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       isLoading.value = true;
       
       final response = await http.delete(
-        Uri.parse('$baseUrl/declarations_delete/$reviewNum'),
+        Uri.parse('$baseUrl/declarations/$reviewNum'), // URL 수정
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -705,7 +702,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
           _showSuccessSnackbar('신고가 삭제되었습니다.');
           await fetchDeclarations();
         } else {
-          throw Exception(data['result'] ?? '알 수 없는 오류');
+          throw Exception(data['message'] ?? '알 수 없는 오류');
         }
       } else {
         throw Exception('서버 오류: ${response.statusCode}');
@@ -885,7 +882,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
 // =====================================================================================
 class InquiryController extends GetxController {
   // =================== 기본 설정 ===================
-  final String baseUrl = 'http://192.168.50.236:8000';
+  final String baseUrl = 'http://192.168.50.236:8000/kwonhyoung'; // prefix 추가
 
   // =================== 반응형 변수들 ===================
   var inquiryList = <Inquiry>[].obs; // 문의 목록
@@ -909,9 +906,13 @@ class InquiryController extends GetxController {
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
-        List data = json.decode(utf8.decode(response.bodyBytes))["inquiries"];
-        inquiryList.value = data.map((e) => Inquiry.fromJson(e)).toList();
-        print('문의 목록 로드 완료: ${inquiryList.length}개');
+        final result = json.decode(utf8.decode(response.bodyBytes));
+        if (result['status'] == 'success' && result['data'] != null) {
+          inquiryList.value = result['data'].map<Inquiry>((e) => Inquiry.fromJson(e)).toList();
+          print('문의 목록 로드 완료: ${inquiryList.length}개');
+        } else {
+          errorMessage.value = '데이터가 없습니다';
+        }
       } else {
         errorMessage.value = '서버 오류: ${response.statusCode}';
       }
@@ -928,13 +929,13 @@ class InquiryController extends GetxController {
   /// @return 문의 객체 또는 null
   Future<Inquiry?> getInquiry(int inquiryNum) async {
     try {
-      var url = Uri.parse('$baseUrl/inquiries_indi/$inquiryNum');
+      var url = Uri.parse('$baseUrl/inquiries/$inquiryNum'); // URL 수정
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
-        var data = json.decode(utf8.decode(response.bodyBytes));
-        if (data.containsKey('결과')) {
-          return Inquiry.fromJson(data['결과']);
+        var result = json.decode(utf8.decode(response.bodyBytes));
+        if (result['status'] == 'success' && result['data'] != null) {
+          return Inquiry.fromJson(result['data']);
         }
       }
       return null;
@@ -970,7 +971,7 @@ class InquiryController extends GetxController {
 
       if (httpResponse.statusCode == 200) {
         var result = json.decode(httpResponse.body);
-        if (result['result'] == '문의 등록 성공') {
+        if (result['status'] == 'success') {
           fetchInquiries(); // 목록 새로고침
           return true;
         }
@@ -993,7 +994,7 @@ class InquiryController extends GetxController {
     String? responseDate,
   }) async {
     try {
-      var url = Uri.parse('$baseUrl/inquiry/$inquiryNum');
+      var url = Uri.parse('$baseUrl/inquiries/$inquiryNum'); // URL 수정
       var httpResponse = await http.put(
         url,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -1009,7 +1010,7 @@ class InquiryController extends GetxController {
 
       if (httpResponse.statusCode == 200) {
         var result = json.decode(httpResponse.body);
-        if (result['result'] == '문의 수정 완료') {
+        if (result['status'] == 'success') {
           fetchInquiries(); 
           return true;
         }
@@ -1022,9 +1023,9 @@ class InquiryController extends GetxController {
   }
 
   /// 문의에 답변을 등록합니다 (수정된 버전)
-  /// @param inquiryNum 문의 번호
-  /// @param responseText 답변 내용
-  /// @param responseDate 답변 날짜
+  /// inquiryNum 문의 번호
+  /// responseText 답변 내용
+  /// responseDate 답변 날짜
   Future<void> updateResponse(int inquiryNum, String responseText, DateTime? responseDate) async {
     int index = inquiryList.indexWhere((i) => i.inquiryNum == inquiryNum);
     if (index != -1) {
@@ -1040,7 +1041,14 @@ class InquiryController extends GetxController {
         response: responseText,
         responseDate: responseDate?.toIso8601String().split('T')[0],
       );
-
+      if(responseText.isEmpty){
+               Get.snackbar(
+          '오류', 
+          '내용을 입력하세요.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        ); 
+      }
       if (success) {
         Get.snackbar(
           '성공', 
@@ -1064,12 +1072,12 @@ class InquiryController extends GetxController {
   /// @return 삭제 성공 여부
   Future<bool> deleteInquiry(int inquiryNum) async {
     try {
-      var url = Uri.parse('$baseUrl/inquirise/$inquiryNum'); // 백엔드 오타 그대로 사용
+      var url = Uri.parse('$baseUrl/inquiries/$inquiryNum'); // URL 수정
       var response = await http.delete(url);
 
       if (response.statusCode == 200) {
         var result = json.decode(response.body);
-        if (result['result'] == 'OK') {
+        if (result['status'] == 'success') {
           inquiryList.removeWhere((i) => i.inquiryNum == inquiryNum);
           Get.snackbar(
             '성공', 
