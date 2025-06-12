@@ -1,6 +1,6 @@
 """
 author      : Jeong Seoyun 
-description : 고객 / 매장 - 주문 내역 과 고객의 찜한 매장 목록  
+description : 고객 / 매장 - 주문 내역과 고객의 찜한 매장 목록  
 date        : 2025.06.05
 version     : 1
 """
@@ -48,7 +48,7 @@ def connect():
         host=ip,
         user="root",
         password="qwer1234",
-        db="mydb",
+        db="pick_caffeine",
         charset="utf8"
     )
 # ----------------------------------------------------------------------------------- #
@@ -344,7 +344,7 @@ async def select_mystore(id: str):
         else:
             image_base64 = None
 
-        results.routerend({
+        results.append({
             "store_id": store_id,
             "store_name": store_name,
             "image_1": image_base64,

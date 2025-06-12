@@ -20,14 +20,19 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerPurchaseDetail extends StatelessWidget {
-   CustomerPurchaseDetail({super.key});
+  CustomerPurchaseDetail({super.key});
+
   final box = GetStorage();
+
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     final args = Get.arguments ?? '__';
-    order.fetchStore(box.read('login_Id'));
-    order.fetchDetailMenu(box.read('login_Id'), args[0].toString());
+    // order.fetchStore(box.read('login_Id'));
+    // order.fetchDetailMenu(box.read('login_Id'), args[0].toString());
+
+    order.fetchStore('11');
+    order.fetchDetailMenu('11', args[0].toString());
     return Scaffold(
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
