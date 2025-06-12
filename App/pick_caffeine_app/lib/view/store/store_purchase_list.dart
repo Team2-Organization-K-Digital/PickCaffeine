@@ -34,8 +34,8 @@ class StorePurchaseList extends StatelessWidget {
     // order.fetchMenuStore(box.read('loginId'));
 
     order.fetchPurchaseStore('111');
-    order.fetchUserDetail('11');
-    order.fetchMenuStore('11');
+    order.fetchUserDetail('111');
+    order.fetchMenuStore('111');
 
     return Scaffold(
       body: Column(

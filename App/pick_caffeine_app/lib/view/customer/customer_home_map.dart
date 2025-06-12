@@ -22,7 +22,7 @@ import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 class CustomerHomeMap extends StatelessWidget {
   CustomerHomeMap({super.key});
 
-  final vmgpshandleer = Get.find<VmStoreUpdate>();
+  final vmgpshandleer = Get.find<Vmgamseong>();
   final mapController = MapController();
 
 

@@ -20,8 +20,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
-class MyAccountAndReviewPage extends StatelessWidget {
-  MyAccountAndReviewPage({super.key});
+class CustomerAccount extends StatelessWidget {
+  CustomerAccount({super.key});
 
   final vm = Get.put(Vmgamseong());
 
