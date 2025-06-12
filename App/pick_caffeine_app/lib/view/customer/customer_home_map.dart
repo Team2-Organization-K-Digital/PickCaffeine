@@ -22,7 +22,7 @@ import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 class CustomerHomeMap extends StatelessWidget {
   CustomerHomeMap({super.key});
 
-  final vmgpshandleer = Get.find<VmStoreUpdate>();
+  final vm = Get.find<Vmgamseong>();
   final mapController = MapController();
 
 
@@ -30,8 +30,8 @@ class CustomerHomeMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
-      vmgpshandleer.loadStoresAndMarkers();
-      vmgpshandleer.checkLocationPermission();
+      vm.loadStoresAndMarkers();
+      vm.checkLocationPermission();
       // vmgpshandleer.loadlikeMarkers();
     });
 
@@ -44,7 +44,7 @@ class CustomerHomeMap extends StatelessWidget {
             onTap:(tapPosition, point) {
           
           },
-            initialCenter: vmgpshandleer.targetLocation.value ?? LatLng(37.5665, 126.9780),
+            initialCenter: vm.targetLocation.value ?? LatLng(37.5665, 126.9780),
             initialZoom: 13,
           ),
           children: [
@@ -53,7 +53,7 @@ class CustomerHomeMap extends StatelessWidget {
               userAgentPackageName: 'com.example.app',
             ),
             MarkerLayer(
-              markers: vmgpshandleer.markers,
+              markers: vm.markers,
             ),
             // MarkerLayer(markers: vmgpshandleer.loadlikeMarkers,
             // ),
