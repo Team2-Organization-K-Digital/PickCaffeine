@@ -28,7 +28,7 @@ class StorePurchaseDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     final args = Get.arguments ?? '__';
-    // order.fetchDetailMenuStore(box.read('login_Id'), args[0].toString());
+    // order.fetchDetailMenuStore(box.read('loginId'), args[0].toString());
     order.fetchDetailMenuStore('111', args[0].toString());
 
     return Scaffold(

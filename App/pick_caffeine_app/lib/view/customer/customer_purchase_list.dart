@@ -2,7 +2,7 @@
 /*
 // ----------------------------------------------------------------- //
   - title         : Purchase List Page (Customer)
-  - Description   :
+  - Description   : 
   - Author        : Jeong seoyun
   - Created Date  : 2025.06.05
   - Last Modified : 2025.06.05
