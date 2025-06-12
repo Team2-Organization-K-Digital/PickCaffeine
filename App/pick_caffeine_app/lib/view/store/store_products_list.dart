@@ -103,7 +103,16 @@ class StoreProductsList extends StatelessWidget {
                       vmHandler.categories.isEmpty
                           ? Center(child: Text('카테고리가 없습니다.'))
                           : Expanded(
-                            child: ListView.builder(
+                            child: ReorderableListView.builder(
+                              onReorder: (oldIndex, newIndex) {
+                                if (oldIndex < newIndex) {
+                                  newIndex -= 1;
+                                }
+                                final item = vmHandler.categories.removeAt(
+                                  oldIndex,
+                                );
+                                vmHandler.categories.insert(newIndex, item);
+                              },
                               scrollDirection: Axis.horizontal,
                               itemCount: vmHandler.categories!.length + 1,
                               itemBuilder: (context, index) {
@@ -194,6 +203,8 @@ class StoreProductsList extends StatelessWidget {
                                         vmHandler.clickedCategory.value = index;
                                         print(vmHandler.categoriesMenu);
                                       },
+                                      key: Key("${index}"),
+
                                       child: Text(
                                         category.category_name,
                                         style: TextStyle(

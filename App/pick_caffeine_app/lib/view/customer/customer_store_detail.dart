@@ -35,11 +35,13 @@ class CustomerStoreDetail extends StatelessWidget {
   CustomerStoreDetail({super.key});
   final handler = Get.find<VmHandlerTemp>();
   final storeId = "111";
-  final user_id = "11";
+
   final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
+    final user_id = box.read('loginId');
+    final storeId = box.read('storeId');
     handler.fetchValue = false;
     handler.storeImages.clear();
     handler.fetchStore(storeId);
