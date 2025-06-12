@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/model/Eunjun/purchase.dart';
 import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
@@ -99,9 +100,43 @@ class CustomerShoppingCart extends StatelessWidget {
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        "${shoppingMenu.total_price} 원",
-                                        style: TextStyle(fontSize: 15),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 150,
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  shoppingMenu
+                                                      .selected_options!
+                                                      .length,
+                                              itemBuilder: (context, i) {
+                                                final optionTitle =
+                                                    shoppingMenu
+                                                        .selected_options!
+                                                        .keys
+                                                        .toList();
+                                                final optionName =
+                                                    shoppingMenu
+                                                        .selected_options!
+                                                        .values
+                                                        .toList();
+
+                                                return Text(
+                                                  '${optionTitle[i]} : ${optionName[i]}',
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          Text(
+                                            "${shoppingMenu.total_price} 원",
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Row(

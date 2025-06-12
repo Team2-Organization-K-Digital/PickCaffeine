@@ -23,6 +23,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/retry.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/view/customer/customer_store_review.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
@@ -330,7 +331,7 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                         },
                         body: IndexedStack(
                           index: handler.infoReivewTabIndex.value,
-                          children: [StoreHomeInfo(), StoreHomeReview()],
+                          children: [StoreHomeInfo(), CustomerStoreReview()],
                         ),
                       ),
                       Positioned(

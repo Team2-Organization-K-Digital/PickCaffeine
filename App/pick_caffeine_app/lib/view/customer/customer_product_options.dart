@@ -33,6 +33,8 @@ class CustomerProductOptions extends StatelessWidget {
     final value = Get.arguments;
     final menuNum = value[1];
     final menuCategory = value[0];
+    final purchaseNum = box.read('purchaseNum');
+    vmHandler.fetchShoppingMenus(purchaseNum);
     vmHandler.fetchSelectMenu(menuNum);
     vmHandler.fetchOptions(menuNum);
     vmHandler.fetchOptionTitle(menuNum);
@@ -627,7 +629,7 @@ class CustomerProductOptions extends StatelessWidget {
                         onPressed: () {
                           insertAction();
                           vmHandler.quantity.value = 1;
-
+                          vmHandler.selectedOptions.value = {};
                           vmHandler.selectedOptionsValue.value = {};
                           Get.back();
                           Get.to(CustomerShoppingCart());
@@ -650,6 +652,7 @@ class CustomerProductOptions extends StatelessWidget {
                         onPressed: () {
                           insertAction();
                           vmHandler.quantity.value = 1;
+                          vmHandler.selectedOptions.value = {};
                           vmHandler.selectedOptionsValue.value = {};
                           Get.back();
                         },
@@ -672,7 +675,37 @@ class CustomerProductOptions extends StatelessWidget {
 
   insertAction() async {
     final value = Get.arguments ?? "__";
+    final purchaseNum = box.read('purchaseNum');
+    int i = 0;
+    bool existValue = false;
 
+    final shoppingMenu =
+        vmHandler.shoppingMenus
+            .where(
+              (sm) => sm.purchase_num == purchaseNum && sm.menu_num == value[1],
+            )
+            .toList();
+    print(shoppingMenu);
+
+    print(vmHandler.selectedOptions.toString());
+    if (shoppingMenu.isNotEmpty) {
+      for (i = 0; i < shoppingMenu.length; i++) {
+        print(vmHandler.shoppingMenus[i].selected_options.toString());
+        if (shoppingMenu[i].selected_options.toString() ==
+            vmHandler.selectedOptions.toString()) {
+          existValue = true;
+          break;
+        }
+      }
+    }
+    print(existValue);
+    if (existValue) {
+      return vmHandler.updateSelectMenu(
+        shoppingMenu[i].selected_num!,
+        shoppingMenu[i].selected_quantity + vmHandler.quantity.value,
+        shoppingMenu[i].total_price + vmHandler.totalPrice.toInt(),
+      );
+    }
     final selectedMenu = SelectedMenu(
       menu_num: value[1],
       selected_options: vmHandler.selectedOptions,
@@ -680,6 +713,6 @@ class CustomerProductOptions extends StatelessWidget {
       purchase_num: box.read('purchaseNum'),
       selected_quantity: vmHandler.quantity.value,
     );
-    vmHandler.insertSelecMenu(selectedMenu);
+    return vmHandler.insertSelecMenu(selectedMenu);
   }
 }
