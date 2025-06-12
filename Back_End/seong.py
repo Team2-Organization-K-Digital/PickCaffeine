@@ -10,6 +10,7 @@ import pymysql
 import json
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime
 # -------------------------------- Property  ---------------------------------------- #
 #선언될 ip 권형님 , py 창준님 어드민변경햇음 525
 ip = "127.0.0.1"
@@ -25,6 +26,8 @@ def connect():
         charset="utf8"
     )
 # ----------------------------------------------------------------------------------- #
+# 로그인 할떄 스토어를 하나만드는것. 로그인시 입력하는데이터값만 따로저장. 
+# 저장후 아래 업데이트스토어등에서는 기본표시로
 class Createstore(BaseModel):
     store_id:str
     store_password:str
@@ -34,6 +37,9 @@ class Createstore(BaseModel):
     store_address:str
     store_address_detail:str
 
+# ** //  이부분은 은준님이 맡으신파트 개인db에만저장용 //  **
+#  로그인후 스토어를만들어서 가는스토어 . 로그인시 입력받은데이터는 기본데이터로 들어가게하고
+#  로그인에없던데이터는 아래쪽에서 추가할것.
 class StoreHome(BaseModel):
     store_id:str
     store_password:str
@@ -50,7 +56,185 @@ class StoreHome(BaseModel):
     store_temporary_holiday:str
     store_business_hour:str
 
+# 리뷰 기본 겟 . 리뷰에만 데이터가 잘 들어가는걸 단순히 보는용도
+# 
+class review_model(BaseModel):
+    review_num:int
+    purchase_num:int
+    review_content:str
+    review_date:str
+    review_state:str
+    review_image:Optional[str] = None
 
+# 내정보에있는 리뷰
+class informationreview(BaseModel):
+    user_nickname:str
+    user_image:Optional[str] = None
+    review_num:int
+    purchase_num:int
+    review_content:str
+    review_date:str
+    review_state:str
+    review_image:Optional[str] = None
+
+class userinformation(BaseModel):
+    user_id: str
+    user_nickname: str
+    user_password: str
+    user_phone: str
+    user_email: str
+    user_state: str
+    user_create_date: datetime
+    user_image: Optional[str] = None
+    
+# # 고객과 매장 화면에서 보이는정보. get방식으로 매장에서는 보이게만.
+# # 고객화면에서는 보이는것하나. 작성하나. 작성은 post방식을사용함.
+# class review_mainview_model(BaseModel):
+#     user_nickname:str
+#     user_image:Optional[str] = None
+#     store_id:str
+#     review_num:int
+#     purchase_num:int
+#     purchase_date:str
+#     review_content:str
+#     review_date:str
+#     review_state:str
+#     review_image:Optional[str] = None
+
+
+@router.get("/users/information")
+async def information(user_id:str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        sql = """
+            select user_id, user_nickname, user_password, user_phone, 
+                user_email, user_state, user_create_date, user_image
+            from users
+            where user_id = %s
+        """
+        curs.execute(sql, (user_id,))
+        row = curs.fetchone()
+        print(row)
+        return {"result": "OK", "data": row}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+
+# 디비확인용. 
+@router.get("selectreview")
+async def selectreview():
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        sql =   """
+                select review_num,purchase_num,review_content,
+                review_image,review_date,review_state from review
+                """
+        curs.execute(sql)
+        rows = curs.fetchall()
+        return {"result": "OK", "data": rows}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+
+# 매장 유저 내정보에 올라가는 기본리뷰
+# 유저리뷰
+@router.get("/users/informationreview")
+async def informationreview(user_id: str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        sql =   """
+                select u.user_nickname, u.user_image,
+                r.review_num, r.purchase_num, r.review_content,
+                r.review_image, r.review_date, r.review_state
+                from review r
+                join purchase_list p on r.purchase_num = p.purchase_num
+                join users u on p.user_id = u.user_id
+                where p.user_id =%s
+                order by r.review_date desc
+                """
+        curs.execute(sql, (user_id,))
+        rows = curs.fetchall()
+        return {"result": "OK", "data": rows}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+
+# # 스토어에서 보는화면.
+# @router.get("/store/storeview")
+# async def storeview(store_id:str):
+#     conn = connect()
+#     curs = conn.cursor()
+#     try:
+#         sql =   """
+#                 select user_nickname,user_image,store_id,
+#                 review_num,purchase_num,purchase_list.purchase_date,review_content,review_image,review_date,review_state
+#                 from review
+#                 join user on review.user_id = user.user_id
+#                 join purchase_list on review.purchase_num = purchase_list.purchase_num
+#                 where review.store_id =%s
+#                 """
+#         curs.execute(sql, (store_id,))
+#         rows = curs.fetchall()
+#         return {"result": "OK", "data": rows}
+#     except Exception as e:
+#         return {"result": "Error", "detail": str(e)}
+#     finally:
+#         conn.close()
+
+# # 고객 리뷰작성
+# @router.post("/store/custumreview")
+# async def custumreview(purchase_num: int, user_id: str):
+#     try:
+#         sql = """
+#             select u.user_nickname, u.user_image
+#             from purchase_list p
+#             join user u on p.user_id = u.user_id
+#             where p.purchase_num = %s and p.user_id = %s
+#         """
+#         curs.execute(sql, (purchase_num, user_id))
+#         result = curs.fetchone()
+#         return {"result": "OK", "data": result}
+#     except Exception as e:
+#         return {"result": "Error", "detail": str(e)}
+
+
+
+# # 고객이 보는화면
+# @router.get("/user/storeview")
+# async def storeview(store_id:str):
+#     conn = connect()
+#     curs = conn.cursor()
+#     try:
+#         sql =   """
+#                 select user_nickname,user_image,store_id,
+#                 review_num,purchase_num,review_content,
+#                 review_image,review_date,review_state
+#                 from review
+#                 join user on review.user_id = user.user_id
+#                 where review.store_id =%s
+#                 """
+#         curs.execute(sql, (store_id,))
+#         rows = curs.fetchall()
+#         return {"result": "OK", "data": rows}
+#     except Exception as e:
+#         return {"result": "Error", "detail": str(e)}
+#     finally:
+#         conn.close()
+
+
+
+
+
+# ** //  새로운스토어만들기 //  **
+# 로그인시 나오는데이터를 기본베이스로 만들어서 Text로만표기햇고. 포스나머지 0.0 '' 등은 
+# sql문에맞춰서 순서만만든것 . 포스트방식이기때문에 기본 null값으로잡고 페이지를 하나만들어서넣음.
+# 빈페이지. 껍데기만있는페이지에 로그인시넣는데이터만들어간상태로 페이지를하나만듬.
 @router.post("/createstore")
 async def createstore(createstore:Createstore):
     conn = connect()
@@ -81,6 +265,7 @@ async def createstore(createstore:Createstore):
     finally:
         conn.close()
     
+    #회원가입할떄 아이디를 Db에있는지 체크하는용도. 중복확인
 @router.get("/checkid/{store_id}")
 def checkid(store_id: str):
     conn = connect()
@@ -95,7 +280,8 @@ def checkid(store_id: str):
         conn.close()
 
 
-
+# **// 이부분도 은준님이 맡으신파트 개인db저장용 // **
+# 스토어에 있는정보를 순서대로넣기위해서 만든스토어용
 @router.get("/selectstore")
 async def selectstore():
     conn = connect()
@@ -123,6 +309,8 @@ async def selectstore():
 
     return {"results": result}
 
+# 스토어 업데이트용. 스토어 아이디 Pk값안에있는 내용들을불러옴.
+# 패스워드 네임등 회원가입시만든페이지에 있는 것들은text로 리드온리로표현할것.
 @router.post("/updatestore")
 async def updatestore(store: StoreHome):
     conn = connect()
@@ -137,12 +325,13 @@ async def updatestore(store: StoreHome):
     finally:
         conn.close()
 
+# 찜목록모델설정. 모델설정후 찜한목록이 지도예뜨나 확인용
 @router.get("/mystore")
 async def mystore():
     try:  
         conn = connect()
         curs = conn.cursor()
-        sql = "select user_id,store_id from my_store"
+        sql = "select u.name AS user_name, s.store_name, m.selected_date from my_store m join users u  m.user_id = u.user_id join store s on m.store_id = s.store_id"
         curs.execute(sql)
         rows = curs.fetchall()
         conn.close()
@@ -151,4 +340,16 @@ async def mystore():
     finally:
         conn.close()
 
+# @router.get("myinforrmation")
+# async def myinformation():
+#     try:  
+#        conn = connect()
+#        curs = conn.cursor()
+#       sql = "select u.name AS user_name, s.store_name, m.selected_date from my_store m join user u  m.user_id = u.user_id join store s on m.store_id = s.store_id;"
+#      curs.execute(sql)
+#     rows = curs.fetchall()
+#except Exception as e:
+#   return {"result": "Error", "detail": str(e)}
+    #finally:
+#   conn.close()
 

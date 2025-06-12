@@ -47,6 +47,8 @@ Future<String> createStore(CreateStore store) async { // db에스토어넣기
     return result == true;
   }
 
+
+
   Future<void> fetchStoreById(String id) async {
   final url = Uri.parse("$baseUrl/getstore/$id");
   final response = await http.get(url);
