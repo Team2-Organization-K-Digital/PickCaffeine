@@ -67,7 +67,7 @@ class CustomerPurchaseList extends StatelessWidget {
                               order.storeMap
                                   .where((s) => s[2] == purchaseList.store_id)
                                   .toList()
-                                  .first;
+                                  [0];
                           final List menu =
                               order.menu
                                   .where((m) => m[1] == purchaseNum)

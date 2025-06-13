@@ -47,8 +47,8 @@ class CustomerHomeTabbar extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(width: 15),
-                  SizedBox(
-                    width: 310,
+                  Expanded(
+                    // width: 310,
                     child: SearchBar(
                       surfaceTintColor: MaterialStatePropertyAll(
                         Colors.white,
@@ -61,7 +61,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                       controller: searchController,
                     ),
                   ),
-                  SizedBox(width: 20),
+                  SizedBox(width: 10),
 // button : for search
                   ButtonBrown(
                     text: '검색',
@@ -69,6 +69,8 @@ class CustomerHomeTabbar extends StatelessWidget {
                       //
                     },
                   ),
+                                    SizedBox(width: 10),
+
                 ],
               ),
 // body tabbar

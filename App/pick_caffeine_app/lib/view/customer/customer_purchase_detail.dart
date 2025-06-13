@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerPurchaseDetail extends StatelessWidget {
@@ -34,7 +35,8 @@ class CustomerPurchaseDetail extends StatelessWidget {
     // order.fetchStore('11');
     // order.fetchDetailMenu('11', args[0].toString());
     return Scaffold(
-      appBar: AppBar(title: Text('주문 상세 정보')),
+      appBar: AppBar(title: Text('주문 상세 정보'), backgroundColor: AppColors.white,),
+      backgroundColor: AppColors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -46,6 +48,7 @@ class CustomerPurchaseDetail extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                color: AppColors.lightpick,
                 elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -71,6 +74,7 @@ class CustomerPurchaseDetail extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                color: AppColors.lightpick,
                 elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -168,9 +172,9 @@ class CustomerPurchaseDetail extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           SizedBox(width: 8),
-          Expanded(child: Text(value, overflow: TextOverflow.ellipsis)),
+          Expanded(child: Text(value, overflow: TextOverflow.ellipsis,)),
         ],
       ),
     );
