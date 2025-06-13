@@ -19,13 +19,11 @@ class VmHandlerPurchase extends MenuController {
     final String results = datas['results'][0].toString();
     if (results == "null") {
       purchaseNum.value =
-          100000000000000 +
-          (int.parse(DateFormat('yyyyMMddHHmmss').format(DateTime.now())));
+          10000 + (int.parse(DateFormat('mmss').format(DateTime.now())));
     } else {
       purchaseNum.value =
-          (((int.parse(results.substring(0, results.length - 14)) + 1) *
-                  100000000000000) +
-              (int.parse(DateFormat('yyyyMMddHHmmss').format(DateTime.now()))));
+          (((int.parse(results.substring(0, results.length - 4)) + 1) * 10000) +
+              (int.parse(DateFormat('mmss').format(DateTime.now()))));
     }
   }
 
