@@ -20,7 +20,7 @@ import 'package:get/get.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
-import 'package:pick_caffeine_app/vm/kwonhyoung/admin_controller.dart';
+import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart';
 
 // 관리자 문의내역 페이지 (25.06.12 수정된 버전)

@@ -21,8 +21,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
-import 'package:pick_caffeine_app/vm/kwonhyoung/admin_controller.dart';
 import 'dart:convert';
+import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 
 // 관리자 매장 관리 페이지 (25.06.12. 수정된 버전)
 class AdminReportScreen extends StatelessWidget {
