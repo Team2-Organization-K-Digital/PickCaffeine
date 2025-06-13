@@ -18,6 +18,7 @@ import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/gamseong/create_store.dart';
 import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
+import 'package:pick_caffeine_app/view/login/login.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 class CreateAccountStore extends StatelessWidget {
@@ -97,7 +98,11 @@ class CreateAccountStore extends StatelessWidget {
             _createstore(context);
           },
           child: Text("등록"),
-        ),
+        ),ElevatedButton(
+          onPressed:() => Get.to(Login()),
+  
+          
+          child: Text("로그인"))
       ],
     ),
   ),
@@ -165,10 +170,10 @@ class CreateAccountStore extends StatelessWidget {
       );
       Get.defaultDialog(
         title: "가입 완료",
-        middleText: "가입이 등록 되었습니다.",
+        middleText: "매장이 등록 되었습니다.",
         actions: [
           TextButton(
-            onPressed: () => Get.to(()),
+            onPressed: () => Get.back(),
             child: Text("확인"),
       ),
     ],

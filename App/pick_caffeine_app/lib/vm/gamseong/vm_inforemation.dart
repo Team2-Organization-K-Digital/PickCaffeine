@@ -8,49 +8,60 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:pick_caffeine_app/model/gamseong/user_information.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_review.dart';
 
-class VmInformation extends GetxController{
-
-final baseUrl = "http://127.0.0.1:8000/seong";
-var user = {}.obs;            
-  var myreviews = [].obs;      
-  var error = ''.obs;
-  var isLoading = false.obs;
+class VmInformation extends VmReview{
+final baseUrl = "http://127.0.0.1:8000/seong";        
+  final RxInt nicknameCheck = 0.obs;
+  final RxBool nickReadOnly = false.obs;
 
 
-// 내정보에 리뷰 불러오기
-Future<void> informationreview(String userId)async{
-  Map<String, dynamic>? map;
-  try {
-    final response = await http.get(
-      Uri.parse('$baseUrl/users/informationreview?user_id=$userId'),
-    );
-    map = json.decode(utf8.decode(response.bodyBytes));
-  } catch (e) {
-    error.value = e.toString();
-  } finally {
-    if (map != null && map['result'] == 'OK') {
-      myreviews.value = map['data'];
+  final user = <String, dynamic>{}.obs;
+
+
+
+
+Future<void> information()async{
+try{
+  final res = await http.get(Uri.parse("$baseUrl/user/information"));
+  final decoded = json.decode(utf8.decode(res.bodyBytes));
+  if (decoded['result'] == 'OK') {
+      user.value = decoded['data'][0];
+  }
+} catch(e) {
+  print("오류 : $e");
+}
+  
+}
+
+// 내정보 업데이트
+Future<String> updateUserInformation(UserInformation info) async {
+  final response = await http.put(
+    Uri.parse("$baseUrl/update/user/information"),
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode(info.toMap()),
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(utf8.decode(response.bodyBytes));
+    if (data['result'] == 'OK') {
+      return '성공';
+    } else {
+      return '실패: ${data['detail']}';
     }
+  } else {
+    return '서버 오류';
   }
 }
 
-// 내정보확인 
-  Future<void> information(String userId)async{
-    Map<String, dynamic>? data;
-try {
-    final response = await http.get(
-    Uri.parse('$baseUrl/users/information?user_id=$userId'),
-    );
-    data = json.decode(utf8.decode(response.bodyBytes));
-  } catch (e) {
-    error.value = e.toString();
-  } finally {
-    if (data != null && data['result'] == 'OK') {
-      myreviews.value = data['data'];
-    }
-  }
-  }
+  //닉네임 중복체크
+  Future<dynamic> usernicknamecheck(String nickname)async{
+  nicknameCheck.value = 0;
+  final res = await http.get(Uri.parse("$baseUrl/myinformation/checknickname/$nickname"));
+  final data = json.decode(utf8.decode(res.bodyBytes))['data'];
+  return nicknameCheck.value = int.parse(data[0]['count'].toString());
+}
 
 }
   

@@ -22,7 +22,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
-import 'package:pick_caffeine_app/view/customer/customer_account.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_tabbar.dart';
 import 'package:pick_caffeine_app/view/customer/customer_my_pick.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_list.dart';
@@ -42,7 +41,7 @@ class CustomerBottomTabbar extends StatelessWidget {
           CustomerHomeTabbar(),
           CustomerPurchaseList(),
           CustomerMyPick(),
-          CustomerAccount(),
+          // CustomerAccount(),
           ],
       ),
 // bottom tabbar : decoration

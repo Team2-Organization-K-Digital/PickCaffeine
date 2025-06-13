@@ -8,10 +8,11 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
-import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
+
+import 'package:pick_caffeine_app/vm/gamseong/vm_inforemation.dart';
 
 
-class VmGpsHandller extends ImageModel {
+class VmGpsHandller extends VmInformation{
 
   final baseUrl = "http://127.0.0.1:8000/seong";
   final latitude = ''.obs;

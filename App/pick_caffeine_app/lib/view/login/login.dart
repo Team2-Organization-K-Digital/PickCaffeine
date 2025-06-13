@@ -73,9 +73,11 @@ class Login extends StatelessWidget {
                   ) {
                   Get.snackbar('에러 발생', 'id 혹은 pw 값을 입력 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
                 } else{
+                  print("👉 로그인 시도 중");
                   await accountHandler.userLoginCheck(
                     idController.text.trim(), 
                     pwController.text.trim()
+                    
                   );
                 }
               }

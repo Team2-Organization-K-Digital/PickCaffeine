@@ -1,0 +1,307 @@
+// 내 정보 수정 페이지
+/*
+// ----------------------------------------------------------------- //
+  - title         : Update Account Page
+  - Description   :
+  - Author        : Gam Sung
+  - Created Date  : 2025.06.05
+  - Last Modified : 2025.06.05
+  - package       :
+
+// ----------------------------------------------------------------- //
+  [Changelog]
+  - 2025.06.05 v1.0.0  :
+// ----------------------------------------------------------------- //
+*/
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+import 'package:pick_caffeine_app/widget_class/utility/button_light_brown.dart';
+import 'package:pick_caffeine_app/widget_class/utility/custom_text_field.dart';
+class CustomerUpdateAccount extends StatelessWidget {
+  CustomerUpdateAccount({super.key});
+
+  final vm = Get.put(Vmgamseong());
+
+  final nicknamecontroller = TextEditingController();
+  final idcontroller = TextEditingController();
+  final pwcontroller = TextEditingController();
+  final checkpwcontroller = TextEditingController();
+  final phonecontroller = TextEditingController();
+  final emailcontroller = TextEditingController();
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Obx(() => 
+      Center(
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              width: 200,
+            ),
+            CustomTextField(
+              label: '닉네임', 
+              controller: nicknamecontroller),
+              SizedBox(height: 10,),
+              ButtonLightBrown(
+                text: '닉네임 중복확인', onPressed: () async {
+                  if (nicknamecontroller.text.trim().isEmpty) {
+                  Get.snackbar('오류 발생', '값을 입력 한 뒤 확인 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
+                }else{
+                  await vm.usernicknamecheck(nicknamecontroller.text.trim().toString());
+                  vm.nicknameCheck.value == 0
+                  ? _shownicknameDialogue('닉네임', nicknamecontroller.text.trim())
+                  : Get.snackbar('닉네임 중복', '다른 닉네임를 이용 해주세요.');
+                }
+              },),
+              SizedBox(height: 30),
+              CustomTextField(label: "비밀번호를입력해주세요", controller: pwcontroller),
+              
+              SizedBox(height: 30),
+              CustomTextField(label: "비밀번호를확안해주세요", controller: checkpwcontroller),
+              SizedBox(height: 10,),
+              ButtonLightBrown(text: "비밀번호확인", onPressed: () async{
+                if(pwcontroller.text.trim() == checkpwcontroller.text.trim()){
+                  Get.snackbar("성공", "비밀번호가 일치합니다.",backgroundColor: AppColors.red, colorText: AppColors.white);
+
+                }else{
+                  Get.snackbar("불일치", "비밀번호가 일치하지 않습니다.", backgroundColor: AppColors.red, colorText: AppColors.white);
+                  
+                }
+              },)
+
+          ],
+        ),
+
+      )  
+      )
+
+    );
+    
+
+    
+  }
+
+_shownicknameDialogue(String type,String input){
+  Get.defaultDialog(
+    title: '확인 완료',
+    middleText: 
+    '''
+    입력된 $type : $input 입니다.
+    입력하신 값을 사용 하시겠습니까?
+    ''',
+    actions: [
+      TextButton(
+        onPressed: () => Get.back(), 
+        child: Text('돌아가기',style: TextStyle(color: AppColors.brown))
+      ),
+      TextButton(
+        onPressed: () {
+          vm.nickReadOnly.value = true;
+          Get.back();
+        }, 
+        child: Text('사용하기',style: TextStyle(color: AppColors.brown))
+      ),
+    ]
+  );
+}
+
+}
+///////---------------------커스텀 업데이트 어카운트
+
+// 매장 상세 페이지 (리뷰)
+/*
+// ----------------------------------------------------------------- //
+  - title         : Store Detail Page (Review)
+  - Description   :
+  - Author        : gamseong
+  - Created Date  : 2025.06.05
+  - Last Modified : 2025.06.05
+  - package       :
+
+// ----------------------------------------------------------------- //
+  [Changelog]
+  - 2025.06.05 v1.0.0  :
+// ----------------------------------------------------------------- //
+*/import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+
+class CustomerStoreReview extends StatelessWidget {
+  CustomerStoreReview({super.key});
+
+  final vm = Get.find<Vmgamseong>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Obx(() => Text('에러: ${vm.error.value}')), 
+          Expanded(
+            child: Obx(() {
+              if (vm.myreviews.isEmpty) {
+                return Center(child: Text('작성한 리뷰가 없습니다.'));
+              }
+              return ListView.builder(
+                itemCount: vm.myreviews.length,
+                itemBuilder: (context, index) {
+                  final review = vm.myreviews[index];
+                  return Card(
+                    child: ListTile(
+                      leading: review['user_image'] != null
+                          ? Image.memory(
+                              base64Decode(review['user_image']),
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            )
+                          : Icon(Icons.person),
+                      title: Text(review['user_nickname'] ?? ''),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('내용: ${review['review_content']}'),
+                          Text('작성일: ${review['review_date']}'),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//---------------------------------------------- 커스텀 스토어리뷰
+// // 내 정보 페이지
+// /*
+// // ----------------------------------------------------------------- //
+//   - title         : My Account Page
+//   - Description   :
+//   - Author        : Gam Seong
+//   - Created Date  : 2025.06.05
+//   - Last Modified : 2025.06.05
+//   - package       :
+
+// // ----------------------------------------------------------------- //
+//   [Changelog]
+//   - 2025.06.05 v1.0.0  :
+// // ----------------------------------------------------------------- //
+//* 
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+import 'package:pick_caffeine_app/widget_class/utility/button_light_brown.dart';
+
+class CustomerAccount extends StatelessWidget {
+  CustomerAccount({super.key});
+  final vm = Get.find<Vmgamseong>();
+  final box = GetStorage();
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final id = box.read('loginId');
+      if (id != null && vm.user.isEmpty) {
+        vm.getInformation();
+        vm.getMyReviews(id);
+      }
+    });
+
+    return Scaffold(
+      appBar: AppBar(title: Text('내 정보 & 리뷰')),
+      body: Obx(() {
+        if (vm.user.isEmpty) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final user = vm.user;
+
+        return Column(
+          children: [
+            Row(
+              children: [
+                user['user_image'] != null && user['user_image'] != ''
+                    ? ClipOval(
+                        child: Image.memory(
+                          base64Decode(user['user_image']),
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Icon(Icons.person, size: 80),
+                ButtonLightBrown(
+                  text: "내정보수정",
+                  onPressed: () => Get.to(() => CustomerAccount()),
+                ),
+                SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("👤 닉네임: ${user['user_nickname'] ?? ''}"),
+                    Text("📞 연락처: ${user['user_phone'] ?? ''}"),
+                    Text("📧 이메일: ${user['user_email'] ?? ''}"),
+                  ],
+                ),
+              ],
+            ),
+            Expanded(
+              child: Obx(() {
+                if (vm.myreviews.isEmpty) {
+                  return Center(child: Text("작성한 리뷰가 없습니다."));
+                }
+                return ListView.builder(
+                  itemCount: vm.myreviews.length,
+                  itemBuilder: (context, index) {
+                    final review = vm.myreviews[index];
+                    return Card(
+                      margin: EdgeInsets.all(10),
+                      child: ListTile(
+                        leading: review['user_image'] != null &&
+                                review['user_image'] != ''
+                            ? Image.memory(
+                                base64Decode(review['user_image']),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(Icons.person),
+                        title: Text(review['user_nickname'] ?? ''),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("내용: ${review['review_content']}"),
+                            Text("작성일: ${review['review_date']}"),
+                            Text("상태: ${review['review_state']}"),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+}
+//-- 커스텀 어카운트----------------------------------------
