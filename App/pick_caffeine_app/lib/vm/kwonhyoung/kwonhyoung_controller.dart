@@ -12,7 +12,7 @@ import 'package:pick_caffeine_app/model/kwonhyoung/inquiry_model.dart';
 // =====================================================================================
 class DeclarationController extends GetxController with GetSingleTickerProviderStateMixin {
   // =================== 기본 설정 ===================
-  static String baseUrl = 'http://192.168.50.236:8000/kwonhyoung'; // 백엔드 서버 주소
+  static String baseUrl = 'http://127.0.0.1:8000/kwonhyoung'; // 백엔드 서버 주소
   
   // =================== UI 컨트롤러 ===================
   late TabController tabController; // 탭바 컨트롤러 (매장리스트/매장리뷰/제재내역)

@@ -13,33 +13,27 @@
   - 2025.06.05 v1.0.0  : 사진과 리뷰 제외 화면 구성 완료, 버튼 연결 스위치 연결
 // ----------------------------------------------------------------- //
 */
-
-import 'dart:convert';
-
+// ----------------------------------------------------------------- //
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:http/retry.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
+// ----------------------------------------------------------------- //
 class StoreHomeBodyTabbar extends StatelessWidget {
   StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
-
   final box = GetStorage();
-
+// ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
     final storeId = box.read("loginId");
     handler.fetchStore(storeId);
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(

@@ -31,7 +31,7 @@ class CreateAccountStore extends StatelessWidget {
   final addresscontroller = TextEditingController();
   final addressdetailcontroller = TextEditingController();
 
-  final createProvider = Get.find<VmStoreUpdate>();
+  final createProvider = Get.find<Vmgamseong>();
 
   @override
   Widget build(BuildContext context) {

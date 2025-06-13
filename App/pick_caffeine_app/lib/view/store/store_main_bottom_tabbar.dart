@@ -17,22 +17,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/view/store/store_chart_duration.dart';
 import 'package:pick_caffeine_app/view/store/store_home_body_tabbar.dart';
 import 'package:pick_caffeine_app/view/store/store_purchase_list.dart';
+import 'package:pick_caffeine_app/vm/changjun/chart_handler.dart';
+import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 
 class StoreMainBottomTabbar extends StatelessWidget {
   StoreMainBottomTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
+// ----------------------------------------------------- //
+// ChangJun : Chart handler
+  final chartHandler = Get.find<JunTemp>();
+  final DateTime now = DateTime.now();
+// ----------------------------------------------------- //
 
   @override
   Widget build(BuildContext context) {
+// ----------------------------------------------------- //
+// ChangJun : Chart funtions
+    // chartHandler.fetchChart();
+    chartHandler.fetchDuration();
+    chartHandler.fetchYearDuration();
+    // chartHandler.fetchProductChart(now.year, now.month);
+    // chartHandler.fetchQuantityChart(now.year, now.month);
+// ----------------------------------------------------- //
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         body: TabBarView(
           controller: handler.storeMainController,
-          children: [StoreHomeBodyTabbar(), StorePurchaseList()],
+          children: [StoreHomeBodyTabbar(), StorePurchaseList(),StoreChartDuration()],
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(

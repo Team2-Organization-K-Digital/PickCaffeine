@@ -27,7 +27,7 @@ import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
 class StoreUpdate extends StatelessWidget {
   StoreUpdate({super.key});
 
-  final vm = Get.find<VmStoreUpdate>();
+  final vm = Get.find<Vmgamseong>();
   final image = Get.find<ImageModel>();
 
   final mapController = MapController();
