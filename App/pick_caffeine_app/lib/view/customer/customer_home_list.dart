@@ -57,6 +57,7 @@ class CustomerHomeList extends StatelessWidget {
                 _buildText('찜이 많은 매장'),
                 SizedBox(height: 5),
                 _listView(storeHandler.sortedByZzim),
+                SizedBox(height: 350)
               ],
             ),
           ),
@@ -74,8 +75,8 @@ class CustomerHomeList extends StatelessWidget {
         itemCount: storeList.length > 6 ? 6 : storeList.length,
         itemBuilder: (context, index) {
           final store = storeList[index];
-          Uint8List? imageBytes = store.storeImage.isNotEmpty
-          ? base64Decode(store.storeImage)
+          final imageBytes = store.storeImage!.isNotEmpty
+          ?  store.storeImage!
           : null;
           return GestureDetector(
             onTap: () async {
@@ -89,7 +90,7 @@ class CustomerHomeList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-// Text : store_state
+// Text : store_states
                     Text(
                       store.storeState == -1
                       ? "영업 종료"
@@ -103,7 +104,7 @@ class CustomerHomeList extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: 
                       imageBytes != null
-                      ? Image.memory(imageBytes, width: 150, height: 150, fit: BoxFit.fill)
+                      ? Image.memory( base64Decode(imageBytes), width: 150, height: 150, fit: BoxFit.fill)
                       :Icon(Icons.image_not_supported, size:100),
                     ),
                     SizedBox(height: 5),

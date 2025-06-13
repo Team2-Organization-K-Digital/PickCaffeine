@@ -135,59 +135,61 @@ class StoreChartDuration extends StatelessWidget {
                         height: 600,
 // ------------------ //
 // Chart : Bar Chart
-                        child: SfCartesianChart(
-                          title: ChartTitle(
-                            text: chartHandler.chartType.value == 'yearly'
-                            ?'연간 제품 별 판매액'
-                            :chartHandler.chartType.value == 'monthly'
-                            ?'월간 제품 별 매출'
-                            :chartHandler.chartType.value == 'daily'
-                            ?'일간 제품 별 매출'
-                            :'연도 별 매출',
-                            textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
-                          ),
-                          tooltipBehavior: tooltipBehavior,
-                          palette: <Color>[AppColors.brown],
-// 가로형 수평 그래프로 변환 - 안해도 되는 상황이라 주석처리
-                          // isTransposed: true,
-                          series: [
-                            BarSeries<ChartProductsList, String>(
-                              dataSource: chartHandler.chartProductData,
-// Bar Chart : X value
-                              xValueMapper: (ChartProductsList data, _) => data.productName,
-// Bar Chart : Y value
-                              yValueMapper: (ChartProductsList data, _) => data.total,
-                              dataLabelSettings: DataLabelSettings(isVisible: true),
-                            )
-                          ],
-// Bar Chart : X Axis
-                          primaryXAxis: CategoryAxis(
-                            isInversed: true,
-                            title: AxisTitle(
-                              text: '제품 명',
-                              textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
+                        child: Expanded(
+                          child: SfCartesianChart(
+                            title: ChartTitle(
+                              text: chartHandler.chartType.value == 'yearly'
+                              ?'연간 제품 별 판매액'
+                              :chartHandler.chartType.value == 'monthly'
+                              ?'월간 제품 별 매출'
+                              :chartHandler.chartType.value == 'daily'
+                              ?'일간 제품 별 매출'
+                              :'연도 별 매출',
+                              textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                             ),
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
+                            tooltipBehavior: tooltipBehavior,
+                            palette: <Color>[AppColors.brown],
+                          // 가로형 수평 그래프로 변환 - 안해도 되는 상황이라 주석처리
+                            // isTransposed: true,
+                            series: [
+                              BarSeries<ChartProductsList, String>(
+                                dataSource: chartHandler.chartProductData,
+                          // Bar Chart : X value
+                                xValueMapper: (ChartProductsList data, _) => data.productName,
+                          // Bar Chart : Y value
+                                yValueMapper: (ChartProductsList data, _) => data.total,
+                                dataLabelSettings: DataLabelSettings(isVisible: true),
+                              )
+                            ],
+                          // Bar Chart : X Axis
+                            primaryXAxis: CategoryAxis(
+                              isInversed: true,
+                              title: AxisTitle(
+                                text: '제품 명',
+                                textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
+                              ),
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20
+                              ),
                             ),
-                          ),
-// Bar Chart : Y Axis
-                          primaryYAxis: NumericAxis(
-                            title: AxisTitle(text: '매출 (원)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
+                          // Bar Chart : Y Axis
+                            primaryYAxis: NumericAxis(
+                              title: AxisTitle(text: '매출 (원)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
+                              ),
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20
+                              ),
+                              numberFormat: NumberFormat('#,##0', 'ko_KR'),
+                              interval: chartHandler.chartType.value == 'yearly'
+                              ? 5000000
+                              :chartHandler.chartType.value == 'monthly'
+                              ? 500000
+                              :chartHandler.chartType.value == 'daily'
+                              ? 50000
+                              : 5000000
                             ),
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
-                            ),
-                            numberFormat: NumberFormat('#,##0', 'ko_KR'),
-                            interval: chartHandler.chartType.value == 'yearly'
-                            ? 5000000
-                            :chartHandler.chartType.value == 'monthly'
-                            ? 500000
-                            :chartHandler.chartType.value == 'daily'
-                            ? 50000
-                            : 5000000
                           ),
                         ),
                   )

@@ -32,54 +32,54 @@ def connect():
 # 1. 기간 (연도, 월, 일, 시간) 별의 해당 매장 매출을 chart 화 하기 위한 data 를 불러오는 함수
 #    연도 : 전체 연도, 월 : 해당 날짜의 연도 전체 월, 일 : 해당 날짜 월의 전체 일, 시간 : 해당 날짜 일의 전체 시간 을 기준으로 불러온다.
 
-@router.get('/select/{chartState}/{store_id}')
-async def selectChartData(chartState : str,store_id : str):
-# ---------------------------------------------- #
-    # 연도, 월, 일 별 chartState 폼
-    state_format = {
-    "year": "%%Y",
-    "month": "%%Y-%%m",
-    "day": "%%Y-%%m-%%d",
-    "hour": "%%Y-%%m-%%d-%%H"
-    }
-    selectedState = state_format[chartState]
-# ---------------------------------------------- #
-# 현재 날짜를 기준으로 chart 로 불러올 data 의 기준을 정하기 위한 변수
-    now = datetime.now()
-    year = now.year
-    month = now.month
-    day = now.day
+# @router.get('/select/{chartState}/{store_id}')
+# async def selectChartData(chartState : str,store_id : str):
+# # ---------------------------------------------- #
+#     # 연도, 월, 일 별 chartState 폼
+#     state_format = {
+#     "year": "%%Y",
+#     "month": "%%Y-%%m",
+#     "day": "%%Y-%%m-%%d",
+#     "hour": "%%Y-%%m-%%d-%%H"
+#     }
+#     selectedState = state_format[chartState]
+# # ---------------------------------------------- #
+# # 현재 날짜를 기준으로 chart 로 불러올 data 의 기준을 정하기 위한 변수
+#     now = datetime.now()
+#     year = now.year
+#     month = now.month
+#     day = now.day
 
-    date_filter = ""
-    if chartState == "month":
-        date_filter = f"AND YEAR(purchase_date) = {year}"
-    elif chartState == "day":
-        date_filter = f"AND YEAR(purchase_date) = {year} AND MONTH(purchase_date) = {month}"
-    elif chartState == "hour":
-        date_filter = f"AND DATE(purchase_date) = '{year}-{str(month).zfill(2)}-{str(day).zfill(2)}'"
+#     date_filter = ""
+#     if chartState == "month":
+#         date_filter = f"AND YEAR(purchase_date) = {year}"
+#     elif chartState == "day":
+#         date_filter = f"AND YEAR(purchase_date) = {year} AND MONTH(purchase_date) = {month}"
+#     elif chartState == "hour":
+#         date_filter = f"AND DATE(purchase_date) = '{year}-{str(month).zfill(2)}-{str(day).zfill(2)}'"
 
-# ---------------------------------------------- #
-    try:
-        conn = connect()
-        curs = conn.cursor()
-        curs.execute(
-            f"""
-            SELECT DATE_FORMAT(purchase_date, '{selectedState}')AS hourly, SUM(total_price)
-            FROM purchase_list, selected_menu
-            WHERE purchase_list.purchase_num=selected_menu.purchase_num
-            AND purchase_list.store_id = %s
-            AND purchase_state = '수령완료'
-            {date_filter}
-            GROUP BY hourly
-            order BY hourly
-            """, (store_id,)
-            )
-        row = curs.fetchall()
-        conn.close()
-        return{'results': row}
-    except Exception as e:
-        print("Error :", e)
-        return{'result' : 'Error'}
+# # ---------------------------------------------- #
+#     try:
+#         conn = connect()
+#         curs = conn.cursor()
+#         curs.execute(
+#             f"""
+#             SELECT DATE_FORMAT(purchase_date, '{selectedState}')AS hourly, SUM(total_price)
+#             FROM purchase_list, selected_menu
+#             WHERE purchase_list.purchase_num=selected_menu.purchase_num
+#             AND purchase_list.store_id = %s
+#             AND purchase_state = '수령완료'
+#             {date_filter}
+#             GROUP BY hourly
+#             order BY hourly
+#             """, (store_id,)
+#             )
+#         row = curs.fetchall()
+#         conn.close()
+#         return{'results': row}
+#     except Exception as e:
+#         print("Error :", e)
+#         return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
 # 1-1. 사용자의 전체 연별 총 매출 data 를 연도별로 추출하는 함수
 @router.get('/select/year/{store_id}')
@@ -437,16 +437,18 @@ async def selectStore():
             """
             )
         rows = curs.fetchall()
-        desc = [col[0] for col in curs.description]
-        # results = []
-        # for row in rows:
-            # row_dict = dict(zip(desc, row))
-            # # image_1이 있다면 base64로 인코딩
-            # if row_dict['image_1']:
-            #     row_dict['image_1'] = base64.b64encode(row_dict['image_1']).decode('utf-8')
-            # results.append(row_dict)
+        
+        results = []
+        for row in rows:
+            store_id,store_name,store_latitude,store_longitude,zzim,review,store_state,image_1 = row
+            # image_1이 있다면 base64로 인코딩
+            if image_1:
+                storeimage = base64.b64encode(image_1).decode('utf-8')
+            else:
+                storeimage = None
+            results.append({'store_id':store_id,'store_name':store_name,'store_latitude':store_latitude,'store_longitude':store_longitude,'zzim':zzim,'review':review,'store_state':store_state,'storeimage':storeimage})
         conn.close()
-        return{'results': rows}
+        return{'results': results}
     except Exception as e:
         print("Error :", e)
         return{'result' : 'Error'}
@@ -524,4 +526,95 @@ async def selectAdmin(adminId : str, adminPw : str):
     conn.close()
     result = [{'count':row[0]} for row in rows]
     return {'results' : result}
+# ----------------------------------------------------------------------------------- #
+
+
+# ------------------------------ admin_chart.dart ----------------------------------- #
+# 1. admin chart page 에서 보여 줄 전체 매장의 전체 매출 총액을 추출하는 함수 
+@router.get('/select/admins/totalPrice')
+async def selectAdminTotalPrice():
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            """
+            SELECT SUM(total_price)
+            FROM selected_menu AS s, purchase_list As p
+            WHERE s.purchase_num = p.purchase_num
+            AND purchase_state = '수령완료'
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 1-1. 연도 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/totalPrice/{year}')
+async def selectAdminYearTotalPrice(year : str):
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT SUM(total_price)
+            FROM selected_menu AS s, purchase_list As p
+            WHERE s.purchase_num = p.purchase_num
+            AND purchase_state = '수령완료'
+            AND YEAR(purchase_date) = {year}
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 1-2. 월 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/totalPrice/{year}/{month}')
+async def selectAdminMonthTotalPrice(year : str, month : str):
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT SUM(total_price)
+            FROM selected_menu AS s, purchase_list As p
+            WHERE s.purchase_num = p.purchase_num
+            AND purchase_state = '수령완료'
+            AND YEAR(purchase_date) = {year}
+            AND MONTH(purchase_date) = {month}
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 1-3. 일 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/totalPrice/{year}/{month}/{day}')
+async def selectAdminDayTotalPrice(year : str, month : str, day : str):
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT SUM(total_price)
+            FROM selected_menu AS s, purchase_list As p
+            WHERE s.purchase_num = p.purchase_num
+            AND purchase_state = '수령완료'
+            AND DATE(purchase_date) = '{year}-{month}-{day}'
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #

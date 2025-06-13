@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class Stores {
   final String storeId;
   final String storeName;
