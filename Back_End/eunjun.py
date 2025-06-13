@@ -655,3 +655,34 @@ async def delete(store_id:str):
     conn.commit()
     conn.close()
     return {'result':'OK'}
+
+
+
+# 카테고리 순서 변경
+# =========================================
+
+
+
+# @router.post("/update/store{store_id}/state{store_state}")
+# async def updateMenuState(store_id: str, store_state:int):
+#     # Connection으로 부터 Cursor 생성
+#     conn = connect()
+#     curs = conn.cursor()
+#     # SQL 문장
+#     try:
+#         sql = """UPDATE menu_category
+#                     SET category_name = 
+#                     CASE category_num
+#                     WHEN 24 THEN 'Dasani'
+#                     WHEN 25 THEN 'aaa'
+#                     ELSE category_name
+#                     END
+#                 WHERE category_num IN (24, 25);"""
+#         curs.execute(sql, (store_state,store_id))
+#         conn.commit()
+#         conn.close()
+#         return {'result':'OK'}
+#     except Exception as ex:
+#         conn.close()
+#         print("Error :", ex)
+#         return {'result':'Error'}

@@ -114,111 +114,136 @@ class StoreProductsList extends StatelessWidget {
                                 vmHandler.categories.insert(newIndex, item);
                               },
                               scrollDirection: Axis.horizontal,
-                              itemCount: vmHandler.categories!.length + 1,
+                              itemCount: vmHandler.categories!.length,
+                              header: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  5,
+                                  10,
+                                  2,
+                                  10,
+                                ),
+                                child: TextButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        vmHandler.clickedCategory.value != -1
+                                            ? null
+                                            : AppColors.brown,
+                                    shape: ContinuousRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    vmHandler.categoryMenuAdd.value = "";
+                                    vmHandler.clickedCategory.value = -1;
+                                    // vmHandler.clickedCategory.value = index;
+                                    await vmHandler.fetchMenuInCategory(
+                                      storeId,
+                                    );
+                                    await vmHandler.fetchCategory(storeId);
+                                  },
+                                  child: Text(
+                                    '전체 메뉴',
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      color:
+                                          vmHandler.clickedCategory.value != -1
+                                              ? AppColors.black
+                                              : AppColors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               itemBuilder: (context, index) {
-                                if (index == 0) {
-                                  return Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      5,
-                                      10,
-                                      2,
-                                      10,
-                                    ),
-                                    child: TextButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            vmHandler.clickedCategory.value !=
-                                                    index
-                                                ? null
-                                                : AppColors.brown,
-                                        shape: ContinuousRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            15,
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        vmHandler.categoryMenuAdd.value = "";
-                                        vmHandler.clickedCategory.value = index;
-                                        await vmHandler.fetchMenuInCategory(
-                                          storeId,
-                                        );
-                                        await vmHandler.fetchCategory(storeId);
-                                      },
-                                      child: Text(
-                                        '전체 메뉴',
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color:
-                                              vmHandler.clickedCategory.value !=
-                                                      index
-                                                  ? AppColors.black
-                                                  : AppColors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  final category =
-                                      vmHandler.categories![index - 1];
+                                // if (index == 0) {
+                                //   return Padding(
+                                //     key: ValueKey(index),
+                                //     padding: const EdgeInsets.fromLTRB(
+                                //       5,
+                                //       10,
+                                //       2,
+                                //       10,
+                                //     ),
+                                //     child: TextButton(
+                                //       style: ElevatedButton.styleFrom(
+                                //         backgroundColor:
+                                //             vmHandler.clickedCategory.value !=
+                                //                     index
+                                //                 ? null
+                                //                 : AppColors.brown,
+                                //         shape: ContinuousRectangleBorder(
+                                //           borderRadius: BorderRadius.circular(
+                                //             15,
+                                //           ),
+                                //         ),
+                                //       ),
+                                //       onPressed: () async {
+                                //         vmHandler.categoryMenuAdd.value = "";
+                                //         vmHandler.clickedCategory.value = index;
+                                //         await vmHandler.fetchMenuInCategory(
+                                //           storeId,
+                                //         );
+                                //         await vmHandler.fetchCategory(storeId);
+                                //       },
+                                //       child: Text(
+                                //         '전체 메뉴',
+                                //         style: TextStyle(
+                                //           fontSize: 25,
+                                //           color:
+                                //               vmHandler.clickedCategory.value !=
+                                //                       index
+                                //                   ? AppColors.black
+                                //                   : AppColors.white,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   );
+                                // } else {
+                                final category = vmHandler.categories![index];
 
-                                  return Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      2,
-                                      10,
-                                      2,
-                                      10,
-                                    ),
-                                    child: TextButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            vmHandler.clickedCategory.value !=
-                                                    index
-                                                ? null
-                                                : AppColors.brown,
+                                return TextButton(
+                                  key: ValueKey(vmHandler.categories[index]),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        vmHandler.clickedCategory.value != index
+                                            ? null
+                                            : AppColors.brown,
 
-                                        shape: ContinuousRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            15,
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        await vmHandler.fetchMenuInCategory(
-                                          storeId,
-                                        );
-                                        await vmHandler.fetchCategory(storeId);
-                                        vmHandler.categoryMenuAdd.value =
-                                            category.category_name;
-                                        vmHandler.categoriesMenu.value =
-                                            vmHandler.categories.value;
-                                        vmHandler.categoriesMenu.value =
-                                            vmHandler.categoriesMenu
-                                                .where(
-                                                  (c) =>
-                                                      c.category_name ==
-                                                      category.category_name,
-                                                )
-                                                .toList();
-                                        vmHandler.clickedCategory.value = index;
-                                        print(vmHandler.categoriesMenu);
-                                      },
-                                      key: Key("${index}"),
-
-                                      child: Text(
-                                        category.category_name,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color:
-                                              vmHandler.clickedCategory.value !=
-                                                      index
-                                                  ? AppColors.black
-                                                  : AppColors.white,
-                                        ),
-                                      ),
+                                    shape: ContinuousRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
-                                  );
-                                }
+                                  ),
+                                  onPressed: () async {
+                                    await vmHandler.fetchMenuInCategory(
+                                      storeId,
+                                    );
+                                    await vmHandler.fetchCategory(storeId);
+                                    vmHandler.categoryMenuAdd.value =
+                                        category.category_name;
+                                    vmHandler.categoriesMenu.value =
+                                        vmHandler.categories.value;
+                                    vmHandler.categoriesMenu.value =
+                                        vmHandler.categoriesMenu
+                                            .where(
+                                              (c) =>
+                                                  c.category_name ==
+                                                  category.category_name,
+                                            )
+                                            .toList();
+                                    vmHandler.clickedCategory.value = index;
+                                    print(vmHandler.categoriesMenu);
+                                  },
+                                  child: Text(
+                                    category.category_name,
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      color:
+                                          vmHandler.clickedCategory.value !=
+                                                  index
+                                              ? AppColors.black
+                                              : AppColors.white,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ),

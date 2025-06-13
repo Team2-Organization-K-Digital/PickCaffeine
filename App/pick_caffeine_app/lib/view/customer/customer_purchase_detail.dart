@@ -21,18 +21,13 @@ import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class CustomerPurchaseDetail extends StatelessWidget {
   CustomerPurchaseDetail({super.key});
-
   final box = GetStorage();
-
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
     final args = Get.arguments ?? '__';
-    // order.fetchStore(box.read('loginId'));
-    // order.fetchDetailMenu(box.read('loginId'), args[0].toString());
-
-    order.fetchStore('11');
-    order.fetchDetailMenu('11', args[0].toString());
+    order.fetchStore(box.read('login_Id'));
+    order.fetchDetailMenu(box.read('login_Id'), args[0].toString());
     return Scaffold(
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
@@ -46,54 +41,36 @@ class CustomerPurchaseDetail extends StatelessWidget {
                 children: [
                   Text(
                     '주문 번호 ${args[0]}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   Text(
                     '주문 시간 ${args[1].toString().substring(11, 16)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ],
               ),
               Text(
                 '주문 매장 ${args[2]}',
-                style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               Text(
                 '매장 연락처 ${args[3]}',
-                style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18
-                ),
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                  '메뉴',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                      fontSize: 20
+                    '메뉴',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
-                  ), 
                   Text(
                     '수량',
-                    style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                      fontSize: 20
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
-                  )
                 ],
               ),
-          
+
               //////////////////////////////////////////////////////////////////
               Obx(() {
                 return ListView.builder(
@@ -102,17 +79,18 @@ class CustomerPurchaseDetail extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final item = order.detailMenu[index];
-          
+
                     return ListTile(
                       title: Text(item['menu']),
                       subtitle: Text('옵션 : ${item['option'] ?? '__'} '),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                        Text(('${item['price']}원')),
-                        SizedBox(width: 10),
-                        Text(('${item['quantity']}개')),
-                      ]),
+                          Text(('${item['price']}원')),
+                          SizedBox(width: 10),
+                          Text(('${item['quantity']}개')),
+                        ],
+                      ),
                     );
                   },
                 );

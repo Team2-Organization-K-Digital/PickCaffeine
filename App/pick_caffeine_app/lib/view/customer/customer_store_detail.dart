@@ -25,6 +25,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/Eunjun/store.dart';
 import 'package:pick_caffeine_app/view/customer/customer_products_list.dart';
+import 'package:pick_caffeine_app/view/customer/customer_store_review.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 
@@ -204,7 +205,7 @@ class CustomerStoreDetail extends StatelessWidget {
 
                         body: TabBarView(
                           controller: handler.storeInfoController,
-                          children: [StoreHomeInfo(), StoreHomeReview()],
+                          children: [StoreHomeInfo(), CustomerStoreReview()],
                         ),
                       ),
                       Positioned(
