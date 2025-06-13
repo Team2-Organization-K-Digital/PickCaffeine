@@ -9,6 +9,7 @@ import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_image_handler.dart';
 
 void main() {
   // ------------------- //
@@ -20,7 +21,9 @@ void main() {
   Get.put(InquiryController());
   Get.put(DeclarationController());
   Get.put(Order());
+  Get.put(VmImageHandler());
   Get.put(Vmgamseong());
+
   runApp(const MyApp());
 }
 

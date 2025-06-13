@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_detail.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
@@ -34,12 +35,18 @@ class CustomerPurchaseList extends StatelessWidget {
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
 
-    order.fetchPurchase(box.read('login_Id'));
-    order.fetchStore(box.read('login_Id'));
-    order.fetchReview(box.read('login_Id'));
-    order.fetchMenu(box.read('login_Id'));
+    order.fetchPurchase(box.read('loginId'));
+    order.fetchStore(box.read('loginId'));
+    order.fetchReview(box.read('loginId'));
+    order.fetchMenu(box.read('loginId'));
+
+    // order.fetchPurchase('11');
+    // order.fetchStore('11');
+    // order.fetchReview('11');
+    // order.fetchMenu('11');
 
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(title: Text('주문내역')),
       body: Column(
         children: [
@@ -47,7 +54,7 @@ class CustomerPurchaseList extends StatelessWidget {
             return Expanded(
               child:
                   order.index.value < 0
-                      ? CircularProgressIndicator()
+                      ? Center(child: CircularProgressIndicator())
                       : ListView.builder(
                         itemCount: order.purchase.length,
                         itemBuilder: (context, index) {
@@ -55,7 +62,11 @@ class CustomerPurchaseList extends StatelessWidget {
                           final state = int.parse(purchaseList.purchase_state);
                           final purchaseNum = purchaseList.purchase_num;
                           // 매 카드마다 해당 주문번호에 맞는 매장 정보를 가져옴
-                          final storeInfo = order.storeMap[index];
+                          final storeInfo =
+                              order.storeMap
+                                  .where((s) => s[2] == purchaseList.store_id)
+                                  .toList()
+                                  .first;
                           final List menu =
                               order.menu
                                   .where((m) => m[1] == purchaseNum)
@@ -63,14 +74,15 @@ class CustomerPurchaseList extends StatelessWidget {
                           // print(menu);
 
                           return Padding(
-                            padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+                            padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Colors.brown,
+                                  color: AppColors.brown,
                                   width: 2.0,
                                 ),
+                                color: AppColors.white,
                               ),
                               child: Column(
                                 children: [
@@ -107,7 +119,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                                   ? "${storeInfo[0]} "
                                                   : "매장 정보 불러오는 중...",
                                               style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 23,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -137,16 +149,17 @@ class CustomerPurchaseList extends StatelessWidget {
                                                 '주문 상세정보 보기 ▶︎',
                                                 style: TextStyle(
                                                   fontSize: 13,
-                                                  color: Colors.grey,
+                                                  color: AppColors.grey,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             Text(
                                               order.menu.isNotEmpty
-                                                  ? menu[0][3].toString()
+                                                  ? '${menu[0][3]}원'
                                                   : '메뉴 정보 없음',
                                               style: TextStyle(
-                                                fontSize: 18,
+                                                fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -157,31 +170,40 @@ class CustomerPurchaseList extends StatelessWidget {
                                         padding: EdgeInsets.fromLTRB(
                                           0,
                                           0,
-                                          30,
-                                          40,
+                                          20,
+                                          70,
                                         ),
                                         child: Column(
                                           children: [
-                                            // Text(
-                                            //   purchaseList.purchase_num.toString(),
-                                            //   style: TextStyle(
-                                            //     fontSize: 40,
-                                            //     fontWeight: FontWeight.w400,
-                                            //   ),
-                                            // ),
-                                            Text(
-                                              state == -1
-                                                  ? '주문취소'
-                                                  : state == 0
-                                                  ? '주문확인 중'
-                                                  : state == 1
-                                                  ? '제조 중'
-                                                  : state == 2
-                                                  ? '제조완료'
-                                                  : '수령완료',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 13,
+                                                vertical: 7,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    AppColors
+                                                        .lightbrownopac, // 배경색
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      15,
+                                                    ), // 모서리 둥글게
+                                              ),
+                                              child: Text(
+                                                state == -1
+                                                    ? '주문취소'
+                                                    : state == 0
+                                                    ? '주문확인 중'
+                                                    : state == 1
+                                                    ? '제조 중'
+                                                    : state == 2
+                                                    ? '제조완료'
+                                                    : '수령완료',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.brown[800],
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -198,25 +220,83 @@ class CustomerPurchaseList extends StatelessWidget {
                                           ? ElevatedButton(
                                             onPressed: () {
                                               Get.defaultDialog(
-                                                title: '알림',
-                                                middleText:
-                                                    '이미 작성하신 후기가 존재합니다.',
+                                                title: "알림",
+                                                titleStyle: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                backgroundColor: Colors.white,
+                                                radius: 20,
+                                                contentPadding:
+                                                    EdgeInsets.fromLTRB(
+                                                      18,
+                                                      10,
+                                                      18,
+                                                      0,
+                                                    ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch, // 여기 중요!
+                                                  children: [
+                                                    Text(
+                                                      "리뷰가 이미 작성되었습니다!",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          Get.back();
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.brown,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          padding:
+                                                              EdgeInsets.symmetric(
+                                                                vertical: 12,
+                                                              ),
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  12,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          "확인",
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Color.fromARGB(
-                                                255,
-                                                238,
-                                                200,
-                                                130,
-                                              ),
-                                              minimumSize: Size(100, 40),
+                                              backgroundColor:
+                                                  AppColors.lightbrown,
+                                              minimumSize: Size(320, 45),
                                             ),
                                             child: Text(
                                               '작성완료',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 18,
                                               ),
                                             ),
                                           )
@@ -227,20 +307,82 @@ class CustomerPurchaseList extends StatelessWidget {
                                                     true;
                                               } else {
                                                 Get.defaultDialog(
-                                                  title: '알림',
-                                                  middleText:
-                                                      '수령완료된 주문만 후기를 작성할 수 있습니다.',
+                                                  title: "알림",
+                                                  titleStyle: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  backgroundColor: Colors.white,
+                                                  radius: 20,
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(
+                                                        18,
+                                                        10,
+                                                        18,
+                                                        0,
+                                                      ),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch, // 여기 중요!
+                                                    children: [
+                                                      Text(
+                                                        "수령완료된 주문 건만 리뷰 작성이 가능합니다!",
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 20),
+                                                      SizedBox(
+                                                        width: double.infinity,
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            Get.back();
+                                                          },
+                                                          style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors.brown,
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                            padding:
+                                                                EdgeInsets.symmetric(
+                                                                  vertical: 12,
+                                                                ),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    12,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          child: Text(
+                                                            "확인",
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 15,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               }
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.brown,
+                                              backgroundColor: AppColors.brown,
+                                              minimumSize: Size(320, 45),
                                             ),
                                             child: Text(
-                                              '후기쓰기',
+                                              '리뷰 작성하기',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 18,
                                               ),
                                             ),
                                           ),
@@ -276,18 +418,38 @@ class CustomerPurchaseList extends StatelessWidget {
     final vm = Get.find<VmImageHandler>();
 
     return Padding(
-      padding: EdgeInsets.all(10.0),
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Column(
         children: [
-          Text('후기 작성하기', style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  isReviewVisible[purchaseNum] = false;
+                },
+                child: Icon(
+                  Icons.cancel_outlined,
+                  size: 25,
+                  color: AppColors.brown,
+                ),
+              ),
+            ],
+          ),
           buildImagePicker(context),
           SizedBox(height: 10),
           TextField(
             controller: reviewController,
             decoration: InputDecoration(
-              labelText: '후기 내용',
+              labelText: '리뷰 내용',
+              labelStyle: TextStyle(color: AppColors.brown),
               border: OutlineInputBorder(),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.brown, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.brown, width: 2),
+              ),
             ),
             maxLines: 3,
           ),
@@ -314,13 +476,30 @@ class CustomerPurchaseList extends StatelessWidget {
                 );
 
                 // 🎯 여기서 서버에서 다시 리뷰 불러오기
-                await order.fetchReview(box.read('login_Id'));
+                await order.fetchReview(box.read('loginId'));
+                // await order.fetchReview('11');
                 order.index.value++;
 
                 Get.snackbar(
-                  '성공',
-                  '후기가 저장되었습니다.',
-                  snackPosition: SnackPosition.BOTTOM,
+                  // '성공',
+                  // '후기가 저장되었습니다.☺',
+                  '',
+                  '',
+                  titleText: Text(
+                    '리뷰 작성 완료',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  messageText: Text(
+                    '리뷰가 성공적으로 작성되었습니다.',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  backgroundColor: Colors.white,
+                  borderRadius: 12,
+                  snackPosition: SnackPosition.TOP,
                 );
 
                 // UI 상태 갱신
@@ -330,11 +509,29 @@ class CustomerPurchaseList extends StatelessWidget {
                 Get.snackbar(
                   '오류',
                   '후기 저장에 실패했습니다.',
-                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: AppColors.white,
+                  colorText: AppColors.black,
+                  snackPosition: SnackPosition.TOP,
+                  borderRadius: 15,
+                  margin: EdgeInsets.all(16),
+                  icon: Icon(Icons.check_circle, color: AppColors.brown),
+                  shouldIconPulse: false,
+                  duration: Duration(seconds: 3),
                 );
               }
             },
-            child: Text('작성 완료'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.lightbrown,
+              minimumSize: Size(320, 45),
+            ),
+            child: Text(
+              '작성 완료',
+              style: TextStyle(
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
           ),
         ],
       ),
@@ -351,24 +548,58 @@ class CustomerPurchaseList extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              TextButton(
                 onPressed: () => vm.getImagefromGallery(ImageSource.gallery),
-                child: Text('갤러리'),
+                style: TextButton.styleFrom(minimumSize: Size(130, 40)),
+                child: Row(
+                  children: [
+                    Icon(Icons.photo, size: 30, color: AppColors.brown),
+                    Text(
+                      '  갤러리',
+                      style: TextStyle(
+                        color: AppColors.brown,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(width: 10),
-              ElevatedButton(
+              TextButton(
                 onPressed: () => vm.getImagefromGallery(ImageSource.camera),
-                child: Text('카메라'),
+                style: TextButton.styleFrom(minimumSize: Size(130, 40)),
+                child: Row(
+                  children: [
+                    Icon(Icons.photo_camera, size: 30, color: AppColors.brown),
+                    Text(
+                      '  카메라',
+                      style: TextStyle(
+                        color: AppColors.brown,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
+          SizedBox(height: 10),
+
           Container(
             width: double.infinity,
             height: 200,
-            color: Colors.grey[300],
+            color: AppColors.greyopac,
             child:
                 vm.imageFile.value == null
-                    ? Center(child: Text('이미지를 선택해 주세요'))
+                    ? Center(
+                      child: Text(
+                        '이미지를 선택해 주세요',
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
                     : Image.file(File(vm.imageFile.value!.path)),
           ),
         ],
