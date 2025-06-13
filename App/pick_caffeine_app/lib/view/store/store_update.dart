@@ -93,7 +93,7 @@ class StoreUpdate extends StatelessWidget {
                 )),
             const SizedBox(height: 16),
 
-            Text(store.store_name ?? "",
+            Text(store.store_name,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
 
             const SizedBox(height: 16),

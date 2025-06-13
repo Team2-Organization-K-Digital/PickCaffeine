@@ -48,7 +48,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                 children: [
                   SizedBox(width: 15),
                   SizedBox(
-                    width: 310,
+                    width: 260,
                     child: SearchBar(
                       surfaceTintColor: MaterialStatePropertyAll(
                         Colors.white,
