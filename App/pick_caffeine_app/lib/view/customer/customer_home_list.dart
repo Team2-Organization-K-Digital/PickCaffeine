@@ -57,6 +57,7 @@ class CustomerHomeList extends StatelessWidget {
                 _buildText('찜이 많은 매장'),
                 SizedBox(height: 5),
                 _listView(storeHandler.sortedByZzim),
+                SizedBox(height: 350)
               ],
             ),
           ),

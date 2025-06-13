@@ -87,7 +87,7 @@ Future<dynamic> userLoginCheck(String id, String pw)async{
   }
 // admin 테이블 대조
   loginCheck.value = 0;
-  final resAdmin = await http.get(Uri.parse("$baseUrl/select/loginStore/$id/$pw"));
+  final resAdmin = await http.get(Uri.parse("$baseUrl/select/loginAdmin/$id/$pw"));
   final dataAdmin = json.decode(utf8.decode(resAdmin.bodyBytes))['results'];
   loginCheck.value = int.parse(dataAdmin[0]['count'].toString());
   if (loginCheck.value == 1) {
