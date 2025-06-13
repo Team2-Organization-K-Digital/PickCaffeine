@@ -22,6 +22,7 @@
 // ----------------------------------------------------------------- //
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/login/create_account_store.dart';
 import 'package:pick_caffeine_app/view/login/create_account_user.dart';
@@ -70,7 +71,9 @@ class Login extends StatelessWidget {
                 if (
                   idController.text.trim().isEmpty||
                   pwController.text.trim().isEmpty
-                  ) {
+                  )
+                  
+                  {
                   Get.snackbar('에러 발생', 'id 혹은 pw 값을 입력 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
                 } else{
                   print("👉 로그인 시도 중");
@@ -79,6 +82,8 @@ class Login extends StatelessWidget {
                     pwController.text.trim()
                     
                   );
+
+
                 }
               }
             ),

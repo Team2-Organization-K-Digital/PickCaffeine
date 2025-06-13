@@ -28,7 +28,7 @@ class StoreUpdate extends StatelessWidget {
   StoreUpdate({super.key});
 
   final vm = Get.find<Vmgamseong>();
-  final image = Get.find<ImageModel>();
+  final image = Get.find<ImageModelgamseong>();
 
   final mapController = MapController();
   final contentController = TextEditingController();

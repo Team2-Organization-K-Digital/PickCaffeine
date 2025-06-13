@@ -8,7 +8,7 @@ class UserInformation {
 
 
 
-  UserInformation({
+  UserInformation({ 
     required this.user_id,
     required this.user_nickname,
     required this.user_password,

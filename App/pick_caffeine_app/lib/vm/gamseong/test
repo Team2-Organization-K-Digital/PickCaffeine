@@ -305,3 +305,12 @@ class CustomerAccount extends StatelessWidget {
   }
 }
 //-- 커스텀 어카운트----------------------------------------
+
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final id = box.read('loginId');
+      if (id != null && vm.user.isEmpty) {
+        vm.getInformation();
+        vm.getMyReviews(id);
+      }
+    });

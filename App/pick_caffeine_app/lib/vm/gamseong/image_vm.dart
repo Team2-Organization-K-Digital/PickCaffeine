@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_inforemation.dart';
 
 
-class ImageModel extends VmInformation{
+class ImageModelgamseong extends VmInformation{
   final imageFileList = <XFile>[].obs;
   final imageFile = Rx<XFile?>(null);
   final ImagePicker picker = ImagePicker();

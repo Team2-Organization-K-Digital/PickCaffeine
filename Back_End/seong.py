@@ -5,7 +5,7 @@ date        : 2025.06.05
 version     : 1
 """
 # ----------------------------------------------------------------------------------- #
-from fastapi import APIRouter
+from fastapi import APIRouter, Path
 import pymysql
 import json
 from pydantic import BaseModel
@@ -37,7 +37,6 @@ class Createstore(BaseModel):
     store_business_num:int
     store_address:str
     store_address_detail:str
-
 
 
 class StoreHome(BaseModel):
@@ -77,18 +76,20 @@ class informationreview(BaseModel):
     review_state:str
     review_image:Optional[str] = None
 
-
 # 내정보
 class information(BaseModel):
+    user_id:str
     user_nickname:str
-    user_image:Optional[str] = None
+    user_password:str
     user_phone:str
     user_email:str
+    user_state:str
+    user_create_date:datetime
+    user_image:Optional[str] = None
 
-
-#업데이트 유저인포
+#업데이트 유저정보
 class updateinformation(BaseModel):
-    user_id: str
+    user_id: str #리드온리
     user_nickname: Optional[str] = None
     user_password: Optional[str] = None
     user_phone: Optional[str] = None
@@ -96,19 +97,19 @@ class updateinformation(BaseModel):
     user_image: Optional[str] = None
 
     
-
-
+# 유저정보들이 들어있는인포
 @router.get("/user/information")
 async def information():
     conn = connect()
     curs = conn.cursor()
     try:
         sql =   """
-                select user_nickname,user_image,user_phone,
-                user_email
+                select user_id,user_nickname,user_password,
+                user_phone,user_email,user_state,user_create_date,
+                user_image
                 from users
                 """
-        curs.execute(sql)
+        curs.execute(sql,)
         rows = curs.fetchall()
         return {"result": "OK", "data": rows}
     except Exception as e:
@@ -116,6 +117,26 @@ async def information():
     finally:
         conn.close()
 
+@router.get("/user/information/{user_id}")
+async def informationuserid(user_id: str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+            sql =   """
+            select user_id,user_nickname,user_password,
+            user_phone,user_email,user_state,user_create_date,
+            user_image
+            from users
+            where user_id = %s
+            """
+            curs.execute(sql, (user_id,))
+            rows = curs.fetchall()
+            return {"result": "OK", "data": rows}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+    
 
 
 # 업데이틍 유저 정보
@@ -158,8 +179,33 @@ async def selectreview():
         sql =   """
                 select review_num,purchase_num,review_content,
                 review_image,review_date,review_state from review
+                
                 """
         curs.execute(sql)
+        rows = curs.fetchall()
+        return {"result": "OK", "data": rows}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+
+@router.get("/user/reviews/{user_id}")
+async def userreviews(user_id: str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        sql = """
+            SELECT r.review_num,
+                r.review_content,
+                r.review_image,
+                r.review_date,
+                r.review_state,
+                p.store_id
+            FROM review r
+            JOIN purchase_list p ON r.purchase_num = p.purchase_num
+            WHERE p.user_id = %s
+        """
+        curs.execute(sql, (user_id,))
         rows = curs.fetchall()
         return {"result": "OK", "data": rows}
     except Exception as e:
