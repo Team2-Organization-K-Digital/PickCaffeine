@@ -11,7 +11,7 @@ class VmHanderStore extends VmHandlerMenu {
   final RxList<MyStores> myStores = <MyStores>[].obs;
   final RxList<Widget> storeImages = <Widget>[].obs;
   var activeIndex = 0.obs;
-  var fetchValue = false;
+  var fetchValue = false.obs;
 
   Future<void> fetchLoginStore(String storeid) async {
     final res = await http.get(Uri.parse('$baseUrl/select/store/${storeid}'));
@@ -59,12 +59,13 @@ class VmHanderStore extends VmHandlerMenu {
   }
 
   fetchStore(String storeId) async {
-    if (fetchValue) {
+    if (fetchValue.value) {
       return;
     }
+    storeImages.clear();
     await fetchStoreImage(storeId);
     await fetchLoginStore(storeId);
-    fetchValue = true;
+    fetchValue.value = true;
   }
 
   Future<void> fetchMyStores(String user_id) async {

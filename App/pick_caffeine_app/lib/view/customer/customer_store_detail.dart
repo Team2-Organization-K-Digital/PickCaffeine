@@ -43,7 +43,7 @@ class CustomerStoreDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final user_id = box.read('loginId');
     final storeId = box.read('storeId');
-    handler.fetchValue = false;
+    handler.fetchValue.value = false;
     handler.storeImages.clear();
     handler.fetchStore(storeId);
     handler.fetchMyStores(user_id);

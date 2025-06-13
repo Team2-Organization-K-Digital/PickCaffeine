@@ -27,28 +27,32 @@ import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 class StoreMainBottomTabbar extends StatelessWidget {
   StoreMainBottomTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
-// ----------------------------------------------------- //
-// ChangJun : Chart handler
+  // ----------------------------------------------------- //
+  // ChangJun : Chart handler
   final chartHandler = Get.find<JunTemp>();
   final DateTime now = DateTime.now();
-// ----------------------------------------------------- //
+  // ----------------------------------------------------- //
 
   @override
   Widget build(BuildContext context) {
-// ----------------------------------------------------- //
-// ChangJun : Chart funtions
+    // ----------------------------------------------------- //
+    // ChangJun : Chart funtions
     // chartHandler.fetchChart();
     chartHandler.fetchDuration();
     chartHandler.fetchYearDuration();
     // chartHandler.fetchProductChart(now.year, now.month);
     // chartHandler.fetchQuantityChart(now.year, now.month);
-// ----------------------------------------------------- //
+    // ----------------------------------------------------- //
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         body: TabBarView(
           controller: handler.storeMainController,
-          children: [StoreHomeBodyTabbar(), StorePurchaseList(),StoreChartDuration()],
+          children: [
+            StoreHomeBodyTabbar(),
+            StorePurchaseList(),
+            StoreChartDuration(),
+          ],
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(

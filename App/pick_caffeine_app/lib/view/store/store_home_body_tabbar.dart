@@ -25,16 +25,18 @@ import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 // ----------------------------------------------------------------- //
 class StoreHomeBodyTabbar extends StatelessWidget {
   StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
   final box = GetStorage();
-// ----------------------------------------------------------------- //
+  // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
     final storeId = box.read("loginId");
     handler.fetchStore(storeId);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(

@@ -595,6 +595,7 @@ async def select(storeId : str):
     sql = "SELECT * from store_image where store_id = %s"
     curs.execute(sql,(storeId,))
     rows = curs.fetchone()
+
     conn.close()
     return {'results': rows}
 
