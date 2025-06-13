@@ -62,70 +62,67 @@ class StoreChartDuration extends StatelessWidget {
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-// Button : 연도 별 매출
-                        IpodButtonBrown(
-                          text: '연도 별 매출',
-                          onPressed: () {
-                            chartHandler.chartType.value = 'all';
-                            chartHandler.fetchYearChart();
-                            chartHandler.fetchProductsYearlyChart();
-                          },
-                        ),
-// Button : 연간 매출
-                        SizedBox(width: 10),
-                        IpodButtonBrown(
-                          text: '연간 매출',
-                          onPressed: () {
-                            chartHandler.chartType.value = 'yearly';
-                            chartHandler.fetchYearlyChart();
-                            chartHandler.fetchProductsYearlyChart();
-                          } 
-                        ),
-// Button : 월간 매출
-                        SizedBox(width: 10),
-                        IpodButtonBrown(
-                          text: '월간 매출',
-                          onPressed: () {
-                            chartHandler.chartType.value = 'monthly';
-                            chartHandler.fetchMonthlyChart();
-                            chartHandler.fetchProductsMonthlyChart();
-                          }
-                        ),
-// Button : 일간 매출
-                        SizedBox(width: 10),
-                        IpodButtonBrown(
-                          text: '일간 매출',
-                          onPressed: () {
-                            chartHandler.chartType.value = 'daily';
-                            chartHandler.fetchdailyChart();
-                            chartHandler.fetchProductsDailyChart();
-                          } 
-                        ),
-                      ],
-                    ),
-                  ),
-// Button : Chart Type Change (Line Chart :duration / Bar Chart : products)
-                  SizedBox(height: 20),
+// ----------------- //
+                  Divider(height: 30,thickness: 3,color: Colors.black,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+// Button : 연도 별 매출
+                      IpodButtonBrown(
+                        text: '전체 기간',
+                        onPressed: () {
+                          chartHandler.chartType.value = 'all';
+                          chartHandler.fetchYearChart();
+                          chartHandler.fetchProductsYearlyChart();
+                        },
+                      ),
+// Button : 연간 매출
+                      IpodButtonBrown(
+                        text: '연간 차트',
+                        onPressed: () {
+                          chartHandler.chartType.value = 'yearly';
+                          chartHandler.fetchYearlyChart();
+                          chartHandler.fetchProductsYearlyChart();
+                        } 
+                      ),
+// Button : 월간 매출
+                      IpodButtonBrown(
+                        text: '월간 차트',
+                        onPressed: () {
+                          chartHandler.chartType.value = 'monthly';
+                          chartHandler.fetchMonthlyChart();
+                          chartHandler.fetchProductsMonthlyChart();
+                        }
+                      ),
+// Button : 일간 매출
+                      IpodButtonBrown(
+                        text: '일간 차트',
+                        onPressed: () {
+                          chartHandler.chartType.value = 'daily';
+                          chartHandler.fetchdailyChart();
+                          chartHandler.fetchProductsDailyChart();
+                        } 
+                      ),
+                    ],
+                  ),
+                  Divider(height: 30,thickness: 3,color: Colors.black,),
+// ----------------- //
+// Button : Chart Type Change (Line Chart :duration / Bar Chart : products)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IpodButtonLightBrown(text: '기간 별 매출', onPressed: () {
                         chartHandler.typeOfChart.value = 'duration';
                       },),
-                      SizedBox(width: 10,),
                       IpodButtonLightBrown(text: '제품 별 매출', onPressed: () {
                         chartHandler.typeOfChart.value = 'products';
                       },),
-                      SizedBox(width: 10,),
                       IpodButtonLightBrown(text: '제품 별 판매수량', onPressed: () {
                         chartHandler.typeOfChart.value = 'quantity';
                       },),
                     ],
                   ),
+                  Divider(height: 30,thickness: 3,),
 // ---------------------------------------------------------------------- //
 // Chart 
                   chartHandler.typeOfChart.value == 'products'
@@ -395,7 +392,8 @@ class StoreChartDuration extends StatelessWidget {
                   onPressed:() {
                     //
                     }, 
-                  )
+                  ),
+                  SizedBox(height: 200,)
                 ],
               ),
             ),

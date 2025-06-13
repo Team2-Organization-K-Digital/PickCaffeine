@@ -536,7 +536,7 @@ async def selectAdminTotalPrice():
         curs = conn.cursor()
         curs.execute(
             """
-            SELECT SUM(total_price)
+            SELECT SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
             AND purchase_state = '수령완료'
@@ -549,7 +549,30 @@ async def selectAdminTotalPrice():
         print("Error :", e)
         return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
-# 1-1. 연도 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
+# 1-1. admin chart page 에서 보여 줄 전체 매장의 연도 별 매출 총액을 추출하는 함수 
+@router.get('/select/admins/totalPrice/yearly')
+async def selectAdminTotalPrice():
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT DATE_FORMAT(purchase_date, '%Y') AS hourly, SUM(total_price), Count(selected_quantity)
+            FROM selected_menu AS s, purchase_list As p
+            WHERE s.purchase_num = p.purchase_num
+            AND purchase_state = '수령완료'
+            GROUP BY hourly
+            ORDER BY hourly
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 1-2. 연간 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
 @router.get('/select/admin/totalPrice/{year}')
 async def selectAdminYearTotalPrice(year : str):
     try:
@@ -557,11 +580,13 @@ async def selectAdminYearTotalPrice(year : str):
         curs = conn.cursor()
         curs.execute(
             f"""
-            SELECT SUM(total_price)
+            SELECT DATE_FORMAT(purchase_date, '%m') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
             AND purchase_state = '수령완료'
             AND YEAR(purchase_date) = {year}
+            GROUP BY hourly
+            ORDER BY hourly
             """
             )
         row = curs.fetchall()
@@ -571,7 +596,7 @@ async def selectAdminYearTotalPrice(year : str):
         print("Error :", e)
         return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
-# 1-2. 월 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
+# 1-3.  월간 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
 @router.get('/select/admin/totalPrice/{year}/{month}')
 async def selectAdminMonthTotalPrice(year : str, month : str):
     try:
@@ -579,12 +604,14 @@ async def selectAdminMonthTotalPrice(year : str, month : str):
         curs = conn.cursor()
         curs.execute(
             f"""
-            SELECT SUM(total_price)
+            SELECT DATE_FORMAT(purchase_date, '%d') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
             AND purchase_state = '수령완료'
             AND YEAR(purchase_date) = {year}
             AND MONTH(purchase_date) = {month}
+            GROUP BY hourly
+            ORDER BY hourly
             """
             )
         row = curs.fetchall()
@@ -594,7 +621,7 @@ async def selectAdminMonthTotalPrice(year : str, month : str):
         print("Error :", e)
         return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
-# 1-3. 일 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
+# 1-4. 시간 별 전체 매장의 총 매출 변화량을 보여주기 위한 data 를 추출하는 함수
 @router.get('/select/admin/totalPrice/{year}/{month}/{day}')
 async def selectAdminDayTotalPrice(year : str, month : str, day : str):
     try:
@@ -602,11 +629,160 @@ async def selectAdminDayTotalPrice(year : str, month : str, day : str):
         curs = conn.cursor()
         curs.execute(
             f"""
-            SELECT SUM(total_price)
+            SELECT DATE_FORMAT(purchase_date, '%H') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
             AND purchase_state = '수령완료'
             AND DATE(purchase_date) = '{year}-{month}-{day}'
+            GROUP BY hourly
+            ORDER BY hourly
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 2. 관리자의 차트 페이지 에서 user (고객)의 선택 성별 혹은 전체 수를 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/users/{gender}')
+async def selectAdminUserCount(gender : str):
+    gender_sql = ''
+    if gender == '남성':
+        gender_sql = "user_gender = '남성'"
+    elif gender == '여성':
+        gender_sql = "user_gender = '여성'"
+    elif gender == '전체':
+        gender_sql = "user_gender = '남성' OR user_gender = '여성'"
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT Count(user_id)
+            FROM users
+            WHERE {gender_sql}
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 2-1. 관리자의 차트 페이지 에서 user (고객)의 선택 성별 혹은 전체 수를 연도 별로 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admins/users/{gender}yearly')
+async def selectAdminTotalPrice(gender : str):
+    gender_sql = ''
+    if gender == '남성':
+        gender_sql = "user_gender = '남성'"
+    elif gender == '여성':
+        gender_sql = "user_gender = '여성'"
+    elif gender == '전체':
+        gender_sql = "user_gender = '남성' OR user_gender = '여성'"
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT DATE_FORMAT(purchase_date, '%Y') AS hourly, Count(user_id)
+            FROM users
+            WHERE {gender_sql}
+            GROUP BY hourly
+            ORDER BY hourly
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 2-2. 관리자의 차트 페이지 에서 user (고객)의 선택 성별 혹은 전체 수를 월 별로 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/users/{gender}/{year}')
+async def selectAdminYearTotalPrice(gender : str, year : str):
+    gender_sql = ''
+    if gender == '남성':
+        gender_sql = "user_gender = '남성'"
+    elif gender == '여성':
+        gender_sql = "user_gender = '여성'"
+    elif gender == '전체':
+        gender_sql = "user_gender = '남성' OR user_gender = '여성'"
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT DATE_FORMAT(purchase_date, '%m') AS hourly, Count(user_id)
+            FROM users
+            WHERE {gender_sql}
+            AND YEAR(purchase_date) = {year}
+            GROUP BY hourly
+            ORDER BY hourly
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 2-3. 관리자의 차트 페이지 에서 user (고객)의 선택 성별 혹은 전체 수를 일 별로 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/users/{gender}/{year}/{month}')
+async def selectAdminMonthTotalPrice(gender : str, year : str, month : str):
+    gender_sql = ''
+    if gender == '남성':
+        gender_sql = "user_gender = '남성'"
+    elif gender == '여성':
+        gender_sql = "user_gender = '여성'"
+    elif gender == '전체':
+        gender_sql = "user_gender = '남성' OR user_gender = '여성'"
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT DATE_FORMAT(purchase_date, '%d') AS hourly,Count(user_id)
+            FROM users
+            WHERE {gender_sql}
+            AND YEAR(purchase_date) = {year}
+            AND MONTH(purchase_date) = {month}
+            GROUP BY hourly
+            ORDER BY hourly
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
+# 2-4. 관리자의 차트 페이지 에서 user (고객)의 선택 성별 혹은 전체 수를 시간 별로 보여주기 위한 data 를 추출하는 함수
+@router.get('/select/admin/users/{gender}/{year}/{month}/{day}')
+async def selectAdminDayTotalPrice(gender : str, year : str, month : str, day : str):
+    gender_sql = ''
+    if gender == '남성':
+        gender_sql = "user_gender = '남성'"
+    elif gender == '여성':
+        gender_sql = "user_gender = '여성'"
+    elif gender == '전체':
+        gender_sql = "user_gender = '남성' OR user_gender = '여성'"
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT DATE_FORMAT(purchase_date, '%H') AS hourly, Count(user_id)
+            FROM users
+            WHERE {gender_sql}
+            AND DATE(purchase_date) = '{year}-{month}-{day}'
+            GROUP BY hourly
+            ORDER BY hourly
             """
             )
         row = curs.fetchall()

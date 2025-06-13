@@ -40,6 +40,24 @@ class ChartHandler extends AccountHandler{
   final RxString chartType = 'daily'.obs;
 // ------- Admin ------ //
   final RxList<AdminTotalPrice> adminTotalChartList = <AdminTotalPrice>[].obs;
+
+// 사용자가 선택한 chart 의 유형 (기간 별 매출 : duration / 해당 기간의 제품 별 매출 : products)
+  final RxString adminTypeOfChart = 'duration'.obs;
+// 연도 별 매출 : 선택 년도
+  final RxString adminSelectedChartYear = DateTime.now().year.toString().obs;
+  final RxString adminSelectedDateYear = '연도 선택'.obs;
+// 월 별 매출 : 선택 연도-월
+  final RxString adminSelectedChartMonthYear = DateTime.now().year.toString().obs;
+  final RxString adminSelectedChartMonth = DateTime.now().month.toString().obs;
+  final RxString adminSelectedDateMonth = '월 선택'.obs;
+  // 일 별 매출 : 선택 연도-월-일
+  final RxString adminSelectedChartDayYear = DateTime.now().year.toString().obs;
+  final RxString adminSelectedChartDayMonth = DateTime.now().month.toString().obs;
+  final RxString adminSelectedChartDay = DateTime.now().day.toString().obs;
+  final RxString adminSelectedDateDay = "일 선택".obs;
+// 선택된 chart 의 state 를 반영할 변수
+  final RxString adminChartType = 'daily'.obs;
+  
 // ---------------------------------------------------------------------------------- //
 // 1. 매장의 전체 매출을 연도 별로 보여주는 chart 에 삽입할 연도 별 매출 data 를 불러오는 함수
   Future<void> fetchYearChart()async{
@@ -299,6 +317,95 @@ addDurationYearList(int storeYear){
             return AdminTotalPrice(
               date: '전체', 
               total: data[0],
+              quantity: data[1]
+            );
+          }).toList();
+          adminTotalChartList.value = returnResult;
+  }catch(e){
+    print("Error : $e");
+    // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 6-1. 관리자 페이징 에서 앱을 이용하는 매장의 연도 별 매출과 거래 량을 추출하는 함수
+  Future<void> fetchAdminYearlyTotalPrice()async{
+    try{
+      chartData.clear();
+      final res = await http.get(Uri.parse("$baseUrl/select/admin/totalPrice/yearly"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+      final List <AdminTotalPrice> returnResult =
+          results.map((data) {
+            return AdminTotalPrice(
+              date: data[0], 
+              total: data[1],
+              quantity: data[2]
+            );
+          }).toList();
+          adminTotalChartList.value = returnResult;
+  }catch(e){
+    print("Error : $e");
+    // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 6-2. 관리자 페이징 에서 앱을 이용하는 매장의 월 별 매출과 거래 량을 추출하는 함수
+  Future<void> fetchAdminYearTotalPrice()async{
+    try{
+      chartData.clear();
+      final res = await http.get(Uri.parse("$baseUrl/select/admin/totalPrice/$adminSelectedChartYear"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+      final List <AdminTotalPrice> returnResult =
+          results.map((data) {
+            return AdminTotalPrice(
+              date: data[0], 
+              total: data[1],
+              quantity: data[2]
+            );
+          }).toList();
+          adminTotalChartList.value = returnResult;
+  }catch(e){
+    print("Error : $e");
+    // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 6-3. 관리자 페이징 에서 앱을 이용하는 매장의 일 별 매출과 거래 량을 추출하는 함수
+  Future<void> fetchAdminMonthlyTotalPrice()async{
+    try{
+      chartData.clear();
+      final res = await http.get(Uri.parse("$baseUrl/select/admin/totalPrice/$adminSelectedChartMonthYear/$adminSelectedChartMonth"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+      final List <AdminTotalPrice> returnResult =
+          results.map((data) {
+            return AdminTotalPrice(
+              date: data[0], 
+              total: data[1],
+              quantity: data[2]
+            );
+          }).toList();
+          adminTotalChartList.value = returnResult;
+  }catch(e){
+    print("Error : $e");
+    // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 6-4. 관리자 페이징 에서 앱을 이용하는 매장의 시간 별 매출과 거래 량을 추출하는 함수
+  Future<void> fetchAdminDayilyTotalPrice()async{
+    try{
+      chartData.clear();
+      final res = await http.get(Uri.parse("$baseUrl/select/admin/totalPrice/$adminSelectedChartDayYear/$adminSelectedChartDayMonth/$adminSelectedChartDay"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+      final List <AdminTotalPrice> returnResult =
+          results.map((data) {
+            return AdminTotalPrice(
+              date: data[0], 
+              total: data[1],
+              quantity: data[2]
             );
           }).toList();
           adminTotalChartList.value = returnResult;
