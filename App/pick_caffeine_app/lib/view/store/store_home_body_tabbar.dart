@@ -25,16 +25,18 @@ import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 // ----------------------------------------------------------------- //
 class StoreHomeBodyTabbar extends StatelessWidget {
   StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
   final box = GetStorage();
-// ----------------------------------------------------------------- //
+  // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
     final storeId = box.read("loginId");
     handler.fetchStore(storeId);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -50,6 +52,18 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                     children: [
                       NestedScrollView(
                         headerSliverBuilder: (context, innerBoxIsScrolled) {
+                          if (handler.loginStore[0].store_state == 1) {
+                            handler.openCloseValue.value = true;
+                            handler.closeForeverValue.value = true;
+                          }
+                          if (handler.loginStore[0].store_state == 0) {
+                            handler.openCloseValue.value = false;
+                            handler.closeForeverValue.value = true;
+                          }
+                          if (handler.loginStore[0].store_state == -1) {
+                            handler.openCloseValue.value = false;
+                            handler.closeForeverValue.value = false;
+                          }
                           return [
                             SliverToBoxAdapter(
                               child: Padding(

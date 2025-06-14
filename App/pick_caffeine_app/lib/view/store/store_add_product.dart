@@ -371,9 +371,14 @@ class StoreAddProduct extends StatelessWidget {
   }
 
   insert() async {
-    File imageFile1 = File(menuProvier.imageFile.value!.path);
-    Uint8List getImage = await imageFile1.readAsBytes();
-    String base64Image = base64Encode(getImage);
+    final value = Get.arguments;
+    final storeId = value[0];
+    String base64Image = '';
+    if (menuProvier.imageFile.value != null) {
+      File imageFile1 = File(menuProvier.imageFile.value!.path);
+      Uint8List getImage = await imageFile1.readAsBytes();
+      base64Image = base64Encode(getImage);
+    }
 
     final menu = Menu(
       category_num: menuProvier.categoryNum.value,
@@ -387,7 +392,8 @@ class StoreAddProduct extends StatelessWidget {
       menu_state: 0,
     );
     await menuProvier.insertMenu(menu);
-    await menuProvier.fetchLastMenu(111);
+
+    await menuProvier.fetchLastMenu(storeId);
     for (
       int optLength = 0;
       optLength < menuProvier.optionControllers.length;

@@ -31,6 +31,7 @@ class CustomerShoppingCart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = box.read('loginId');
     final store = box.read('storeId');
     final purchaseNum = box.read('purchaseNum');
     handler.fetchShoppingMenus(purchaseNum);
@@ -369,7 +370,7 @@ class CustomerShoppingCart extends StatelessWidget {
                                 onPressed: () async {
                                   final purchase = Purchase(
                                     purchase_num: purchaseNum,
-                                    user_id: 11.toString(),
+                                    user_id: userId,
                                     store_id: store,
                                     purchase_date: DateTime.now().toString(),
                                     purchase_request: "",

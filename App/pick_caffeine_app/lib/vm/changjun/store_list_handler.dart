@@ -27,23 +27,24 @@ class StoreHandler extends ChartHandler {
       final List results = data['results'];
       final List<Stores> returnResult =
           results.map((data) {
-            double storeLat = data[2];
-            double storeLng = data[3];
+            double storeLat = data['store_latitude'];
+            double storeLng = data['store_longitude'];
             double distanceKm = Distance().as(
               LengthUnit.Kilometer,
               LatLng(storeLat, storeLng),
               LatLng(currentLatitude, currentLongitude),
             );
             return Stores(
-              storeId: data[0].toString(),
-              storeName: data[1],
-              myStoreCount: data[4],
-              reviewCount: data[5],
+              storeId: data['store_id'],
+              storeName: data['store_name'],
+              myStoreCount: data['zzim'],
+              reviewCount: data['review'],
               distance: distanceKm,
-              storeState: data[6],
-              storeImage: data[7]
+              storeState: data['store_state'],
+              storeImage: data['storeimage']
             );
           }).toList();
+          print(returnResult);
       storeData.value = returnResult;
       sortAllStoreLists();
     } catch (e, stack) {

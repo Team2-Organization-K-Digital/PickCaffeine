@@ -38,7 +38,7 @@ class StoreHomeInfo extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 100,
+                      height: 200,
                       child: Text(
                         vmHandler.loginStore.first.store_content,
                         style: TextStyle(fontSize: 30),
@@ -47,9 +47,11 @@ class StoreHomeInfo extends StatelessWidget {
                     Row(
                       children: [
                         Text("영업시간 : ", style: TextStyle(fontSize: 30)),
-                        Text(
-                          vmHandler.loginStore.first.store_business_hour,
-                          style: TextStyle(fontSize: 30),
+                        Flexible(
+                          child: Text(
+                            vmHandler.loginStore.first.store_business_hour,
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ),
                       ],
                     ),
@@ -57,9 +59,11 @@ class StoreHomeInfo extends StatelessWidget {
                     Row(
                       children: [
                         Text("정기 휴무 : ", style: TextStyle(fontSize: 30)),
-                        Text(
-                          vmHandler.loginStore.first.store_regular_hoilday,
-                          style: TextStyle(fontSize: 30),
+                        Flexible(
+                          child: Text(
+                            vmHandler.loginStore.first.store_regular_hoilday,
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ),
                       ],
                     ),
@@ -67,9 +71,11 @@ class StoreHomeInfo extends StatelessWidget {
                     Row(
                       children: [
                         Text("임시 휴무 : ", style: TextStyle(fontSize: 30)),
-                        Text(
-                          vmHandler.loginStore.first.store_temporary_holiday,
-                          style: TextStyle(fontSize: 30),
+                        Flexible(
+                          child: Text(
+                            vmHandler.loginStore.first.store_temporary_holiday,
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ),
                       ],
                     ),
@@ -77,9 +83,11 @@ class StoreHomeInfo extends StatelessWidget {
                     Row(
                       children: [
                         Text("전화번호: ", style: TextStyle(fontSize: 30)),
-                        Text(
-                          vmHandler.loginStore.first.store_phone,
-                          style: TextStyle(fontSize: 30),
+                        Flexible(
+                          child: Text(
+                            vmHandler.loginStore.first.store_phone,
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ),
                       ],
                     ),
@@ -122,38 +130,52 @@ class StoreHomeInfo extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 100,
-                    child: Text(
-                      vmHandler.loginStore.first.store_content,
-                      style: TextStyle(fontSize: 15),
+                    height: 150,
+                    child: Flexible(
+                      child: Text(
+                        vmHandler.loginStore.first.store_content,
+                        style: TextStyle(fontSize: 15),
+                      ),
                     ),
                   ),
                   Row(
                     children: [
-                      Text("영업시간 : ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_business_hour,
-                        style: TextStyle(fontSize: 15),
+                      Flexible(
+                        child: Text("영업시간 : ", style: TextStyle(fontSize: 15)),
+                      ),
+                      Flexible(
+                        child: Text(
+                          vmHandler.loginStore.first.store_business_hour,
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ],
                   ),
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Text("정기 휴무 : ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_regular_hoilday,
-                        style: TextStyle(fontSize: 15),
+                      Flexible(
+                        child: Text("정기 휴무 : ", style: TextStyle(fontSize: 15)),
+                      ),
+                      Flexible(
+                        child: Text(
+                          vmHandler.loginStore.first.store_regular_hoilday,
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ],
                   ),
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Text("임시 휴무 : ", style: TextStyle(fontSize: 15)),
-                      Text(
-                        vmHandler.loginStore.first.store_temporary_holiday,
-                        style: TextStyle(fontSize: 15),
+                      Flexible(
+                        child: Text("임시 휴무 : ", style: TextStyle(fontSize: 15)),
+                      ),
+                      Flexible(
+                        child: Text(
+                          vmHandler.loginStore.first.store_temporary_holiday,
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ],
                   ),
@@ -170,8 +192,8 @@ class StoreHomeInfo extends StatelessWidget {
                   SizedBox(height: 30),
                   Center(
                     child: SizedBox(
-                      height: 500,
-                      width: 400,
+                      height: 400,
+                      width: 300,
                       child: MenuUtility().flutterMap(vmHandler),
                     ),
                   ),

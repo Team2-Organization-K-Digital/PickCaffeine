@@ -44,18 +44,22 @@ class VmHandlerMenu extends VmHandlerPurchase {
     return result;
   }
 
-  Future<void> fetchLastMenu(int storeid) async {
+  Future<void> fetchLastMenu(String storeid) async {
     lastMenuNum.value = 0;
     final res = await http.get(Uri.parse('$baseUrl/selectMax/${storeid}'));
     final data = json.decode(utf8.decode(res.bodyBytes));
     final List results = data['results'];
-    lastMenuNum.value = results[0]['max'];
+    if (results[0]['max'] == null) {
+      lastMenuNum.value = 0;
+    } else {
+      lastMenuNum.value = results[0]['max'];
+    }
   }
 
   Future<void> fetchCategoryNum(String name, String storeid) async {
     categoryNum.value = 0;
     final res = await http.get(
-      Uri.parse('$baseUrl/select/categoryNum/name=${name}store=${storeid}'),
+      Uri.parse('$baseUrl/select/categoryNum/${name}/${storeid}'),
     );
     final data = json.decode(utf8.decode(res.bodyBytes));
     final List results = data['results'];
@@ -74,6 +78,7 @@ class VmHandlerMenu extends VmHandlerPurchase {
             category_name: data['category_name'],
           );
         }).toList();
+    print(returnResult);
     categories.value = returnResult;
     categoriesMenu.value = returnResult;
   }
@@ -88,7 +93,7 @@ class VmHandlerMenu extends VmHandlerPurchase {
             menu_num: data["menu_num"],
             category_num: data["category_num"],
             menu_name: data["menu_name"],
-            menu_content: data["menu_content"],
+            menu_content: data["menu_content"] ?? "",
             menu_price: data["menu_price"],
             menu_image: data["menu_image"] ?? "",
             menu_state: data["menu_state"],
@@ -107,7 +112,7 @@ class VmHandlerMenu extends VmHandlerPurchase {
             menu_num: data["menu_num"],
             category_num: data["category_num"],
             menu_name: data["menu_name"],
-            menu_content: data["menu_content"],
+            menu_content: data["menu_content"] ?? "",
             menu_price: data["menu_price"],
             menu_image: data["menu_image"] ?? "",
             menu_state: data["menu_state"],

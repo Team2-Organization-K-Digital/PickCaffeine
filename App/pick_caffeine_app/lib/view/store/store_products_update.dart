@@ -76,11 +76,19 @@ class StoreProductsUpdate extends StatelessWidget {
                               width: 400,
                               child:
                                   menuProvier.imageFile.value == null
-                                      ? Center(
-                                        child: Image.memory(
-                                          base64Decode(sMenu.menu_image),
-                                        ),
-                                      )
+                                      ? sMenu.menu_image.isEmpty
+                                          ? Center(
+                                            child: Icon(
+                                              Icons
+                                                  .image_not_supported_outlined,
+                                              size: 200,
+                                            ),
+                                          )
+                                          : Center(
+                                            child: Image.memory(
+                                              base64Decode(sMenu.menu_image),
+                                            ),
+                                          )
                                       : Image.file(
                                         File(menuProvier.imageFile.value!.path),
                                       ),

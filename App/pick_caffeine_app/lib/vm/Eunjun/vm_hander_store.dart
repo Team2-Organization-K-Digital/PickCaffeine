@@ -11,7 +11,7 @@ class VmHanderStore extends VmHandlerMenu {
   final RxList<MyStores> myStores = <MyStores>[].obs;
   final RxList<Widget> storeImages = <Widget>[].obs;
   var activeIndex = 0.obs;
-  var fetchValue = false;
+  var fetchValue = false.obs;
 
   Future<void> fetchLoginStore(String storeid) async {
     final res = await http.get(Uri.parse('$baseUrl/select/store/${storeid}'));
@@ -46,7 +46,7 @@ class VmHanderStore extends VmHandlerMenu {
     );
     final datas = json.decode(utf8.decode(res.bodyBytes));
 
-    final List results = datas['results'];
+    final List results = datas['results'][0];
 
     for (int i = 1; i < results.length; i++) {
       if (results[i] == null) {
@@ -59,12 +59,14 @@ class VmHanderStore extends VmHandlerMenu {
   }
 
   fetchStore(String storeId) async {
-    if (fetchValue) {
+    if (fetchValue.value) {
       return;
     }
+    loginStore.clear();
+    storeImages.clear();
     await fetchStoreImage(storeId);
     await fetchLoginStore(storeId);
-    fetchValue = true;
+    fetchValue.value = true;
   }
 
   Future<void> fetchMyStores(String user_id) async {

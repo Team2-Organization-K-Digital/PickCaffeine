@@ -109,7 +109,7 @@ async def select():
 
 
 @router.get("/selectMax/{storeid}")
-async def selectMax(storeid:int):
+async def selectMax(storeid:str):
     conn = connect()
     curs = conn.cursor()
     sql = "select max(menu_num) from menu m, menu_category mc, store s where m.category_num = mc.category_num and mc.store_id = s.store_id and s.store_id=%s"
@@ -128,6 +128,7 @@ async def select(store:str):
     rows = curs.fetchall()
     conn.close()
     result = [{"category_num":row[0],"store_id":row[1],"category_name":row[2]} for row in rows]
+    print(result)
     return {'results':result}
 
 
@@ -172,8 +173,8 @@ async def selectMenu(menu_num: int):
     return {'results':results}
 
 
-@router.get("/select/categoryNum/name={categoryname}store={storeid}")
-async def selectCategoryNum(categoryname:str, storeid:int):
+@router.get("/select/categoryNum/{categoryname}/{storeid}")
+async def selectCategoryNum(categoryname:str, storeid:str):
     conn = connect()
     curs = conn.cursor()
     sql = "select mc.category_num from menu_category mc, store s where mc.store_id = s.store_id and s.store_id = %s and mc.category_name = %s"
@@ -594,9 +595,36 @@ async def select(storeId : str):
     # SQL 문장
     sql = "SELECT * from store_image where store_id = %s"
     curs.execute(sql,(storeId,))
-    rows = curs.fetchone()
+    rows = curs.fetchall()
+    
+    results = []
+    for row in rows:
+            store_id,image_1,image_2,image_3,image_4,image_5 = row
+            # image_1이 있다면 base64로 인코딩
+            if image_1:
+                store_image_1 = base64.b64encode(image_1).decode('utf-8')
+            else:
+                store_image_1 = None
+            if image_2:
+                store_image_2 = base64.b64encode(image_2).decode('utf-8')
+            else:
+                store_image_2 = None
+            if image_3:
+                store_image_3 = base64.b64encode(image_3).decode('utf-8')
+            else:
+                store_image_3 = None
+            if image_4:
+                store_image_4 = base64.b64encode(image_4).decode('utf-8')
+            else:
+                store_image_4 = None
+            if image_5:
+                store_image_5 = base64.b64encode(image_5).decode('utf-8')
+            else:
+                store_image_5 = None
+            
+            results.append([store_id,store_image_1,store_image_2,store_image_3,store_image_4,store_image_5])
     conn.close()
-    return {'results': rows}
+    return {'results': results}
 
 
 # customer 장바구니 번호

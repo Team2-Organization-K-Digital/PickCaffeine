@@ -22,79 +22,86 @@ import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_map.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
+
 // ----------------------------------------------------------------- //
 class CustomerHomeTabbar extends StatelessWidget {
   CustomerHomeTabbar({super.key});
   final tabHandler = Get.find<CustomerTabbar>();
   final storeHandler = Get.find<JunTemp>();
   final TextEditingController searchController = TextEditingController();
+
+  final vmgpshandleer = Get.find<Vmgamseong>();
   // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
-  // ----------------------------------------------------------------- //
+    // vmgpshandleer.checkLocationPermission();
+    vmgpshandleer.fetchLikeStore("Jayhope12");
+    vmgpshandleer.loadStoresAndMarkers();
+    // ----------------------------------------------------------------- //
     return Obx(
       () =>
-      storeHandler.isLoading.value
-      ? Center(child: CircularProgressIndicator())
-      : Scaffold(
-        appBar: AppBar(toolbarHeight: 0),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-// textfield : for search
-              Row(
-                children: [
-                  SizedBox(width: 15),
-                  SizedBox(
-                    width: 260,
-                    child: SearchBar(
-                      surfaceTintColor: MaterialStatePropertyAll(
-                        Colors.white,
+          storeHandler.isLoading.value
+              ? Center(child: CircularProgressIndicator())
+              : Scaffold(
+                appBar: AppBar(toolbarHeight: 0),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // textfield : for search
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          SizedBox(
+                            width: 260,
+                            child: SearchBar(
+                              surfaceTintColor: MaterialStatePropertyAll(
+                                Colors.white,
+                              ),
+                              shadowColor: MaterialStatePropertyAll(
+                                Colors.white,
+                              ),
+                              // onTap: () => Get.to(CustomerHomeMap()),
+                              hintText: '검색',
+                              controller: searchController,
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          // button : for search
+                          ButtonBrown(
+                            text: '검색',
+                            onPressed: () {
+                              //
+                            },
+                          ),
+                        ],
                       ),
-                      shadowColor: MaterialStatePropertyAll(
-                        Colors.white,
+                      // body tabbar
+                      TabBar(
+                        controller: tabHandler.customerbodyController,
+                        onTap: (value) {
+                          tabHandler.customerbodyController.index = value;
+                          tabHandler.customerBodyIndex.value = value;
+                        },
+                        // body tabbar : list
+                        tabs: [Tab(text: '매장 리스트'), Tab(text: '지도 보기')],
                       ),
-                      // onTap: () => Get.to(CustomerHomeMap()),
-                      hintText: '검색',
-                      controller: searchController,
-                    ),
+                      // body tabbar : layout
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        // body tabbar : screen
+                        child: IndexedStack(
+                          index: tabHandler.customerBodyIndex.value,
+                          children: [CustomerHomeList(), CustomerHomeMap()],
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 20),
-// button : for search
-                  ButtonBrown(
-                    text: '검색',
-                    onPressed: () {
-                      //
-                    },
-                  ),
-                ],
-              ),
-// body tabbar
-              TabBar(
-                controller: tabHandler.customerbodyController,
-                onTap: (value) {
-                  tabHandler.customerbodyController.index = value;
-                  tabHandler.customerBodyIndex.value = value;
-                },
-// body tabbar : list
-                tabs: [Tab(text: '매장 리스트'), Tab(text: '지도 보기')],
-              ),
-// body tabbar : layout
-              SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-// body tabbar : screen
-                child: IndexedStack(
-                  index: tabHandler.customerBodyIndex.value,
-                  children: [CustomerHomeList(), CustomerHomeMap()],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

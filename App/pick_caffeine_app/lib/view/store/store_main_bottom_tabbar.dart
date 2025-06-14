@@ -27,53 +27,73 @@ import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 class StoreMainBottomTabbar extends StatelessWidget {
   StoreMainBottomTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
-// ----------------------------------------------------- //
-// ChangJun : Chart handler
+  // ----------------------------------------------------- //
+  // ChangJun : Chart handler
   final chartHandler = Get.find<JunTemp>();
   final DateTime now = DateTime.now();
-// ----------------------------------------------------- //
+  // ----------------------------------------------------- //
 
   @override
   Widget build(BuildContext context) {
-// ----------------------------------------------------- //
-// ChangJun : Chart funtions
+    // ----------------------------------------------------- //
+    // ChangJun : Chart funtions
     // chartHandler.fetchChart();
     chartHandler.fetchDuration();
     chartHandler.fetchYearDuration();
     // chartHandler.fetchProductChart(now.year, now.month);
     // chartHandler.fetchQuantityChart(now.year, now.month);
-// ----------------------------------------------------- //
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        body: TabBarView(
-          controller: handler.storeMainController,
-          children: [StoreHomeBodyTabbar(), StorePurchaseList(),StoreChartDuration()],
-        ),
-        bottomNavigationBar: Obx(
-          () => BottomNavigationBar(
-            iconSize: 35,
-            selectedFontSize: 18,
-            unselectedFontSize: 16,
-            unselectedItemColor: AppColors.white,
-            selectedItemColor: AppColors.lightbrown,
-            backgroundColor: AppColors.brown,
-            currentIndex: handler.bottomTabIndex.value,
-            onTap: (index) {
-              handler.storeMainController.index = index;
-              handler.bottomTabIndex.value = index;
-            },
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'label'),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.receipt),
-                label: '주문 내역',
+    // ----------------------------------------------------- //
+    return PopScope(
+      canPop: false,
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: handler.storeMainController,
+                children: [
+                  StoreHomeBodyTabbar(),
+                  StorePurchaseList(),
+                  StoreChartDuration(),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart),
-                label: '매출 현황',
+              Positioned(
+                top: 50,
+                left: 20,
+                child: IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(Icons.arrow_back_ios, size: 50),
+                ),
               ),
             ],
+          ),
+          bottomNavigationBar: Obx(
+            () => BottomNavigationBar(
+              iconSize: 35,
+              selectedFontSize: 18,
+              unselectedFontSize: 16,
+              unselectedItemColor: AppColors.white,
+              selectedItemColor: AppColors.lightbrown,
+              backgroundColor: AppColors.brown,
+              currentIndex: handler.bottomTabIndex.value,
+              onTap: (index) {
+                handler.storeMainController.index = index;
+                handler.bottomTabIndex.value = index;
+              },
+              items: [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'label'),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.receipt),
+                  label: '주문 내역',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart),
+                  label: '매출 현황',
+                ),
+              ],
+            ),
           ),
         ),
       ),

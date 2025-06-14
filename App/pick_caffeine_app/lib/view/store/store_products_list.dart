@@ -37,8 +37,9 @@ class StoreProductsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final storeId = box.read("storeId");
+    final storeId = box.read("loginId");
     final storeName = box.read("storeName");
+
     vmHandler.fetchMenuInCategory(storeId);
     vmHandler.fetchCategory(storeId);
     return Scaffold(
@@ -258,7 +259,7 @@ class StoreProductsList extends StatelessWidget {
                           Get.to(StoreAddProduct(), arguments: [storeId])!.then(
                             (_) {
                               vmHandler.categoryMenuAdd.value = "";
-                              vmHandler.clickedCategory.value = 0;
+                              vmHandler.clickedCategory.value = -1;
                               vmHandler.fetchMenuInCategory(storeId);
                               vmHandler.fetchCategory(storeId);
                             },
@@ -528,11 +529,16 @@ class StoreProductsList extends StatelessWidget {
                                                     child: SizedBox(
                                                       width: 200,
                                                       height: 200,
-                                                      child: Image.memory(
-                                                        base64Decode(
-                                                          menu.menu_image,
-                                                        ),
-                                                      ),
+                                                      child:
+                                                          menu
+                                                                  .menu_image
+                                                                  .isEmpty
+                                                              ? null
+                                                              : Image.memory(
+                                                                base64Decode(
+                                                                  menu.menu_image,
+                                                                ),
+                                                              ),
                                                     ),
                                                   ),
                                                 ],
