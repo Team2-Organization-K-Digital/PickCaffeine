@@ -29,7 +29,7 @@ class CustomerUpdateAccount extends StatelessWidget {
   CustomerUpdateAccount({super.key});
 
   final vm = Get.find<Vmgamseong>();
-  final image = Get.find<ImageModelgamseong>();
+  final image = Get.find<Vmgamseong>();
   final box = GetStorage();
 
   final nicknameController = TextEditingController();
@@ -110,7 +110,7 @@ class CustomerUpdateAccount extends StatelessWidget {
                     "user_image": imageBase64,
                   });
                 },
-                child: Text("정보수정",),
+                child: Text("정보수정"),
               ),
             ],
           ),
@@ -120,8 +120,12 @@ class CustomerUpdateAccount extends StatelessWidget {
   }
 
   // 텍스트 필드 생성 위젯
-  Widget _buildField(String label, TextEditingController controller,
-      {bool readOnly = false, bool obscure = false}) {
+  Widget _buildField(
+    String label,
+    TextEditingController controller, {
+    bool readOnly = false,
+    bool obscure = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -161,11 +165,12 @@ class CustomerUpdateAccount extends StatelessWidget {
           width: double.infinity,
           height: 200,
           color: Colors.grey[300],
-          child: imageFile.value != null
-              ? Image.file(File(imageFile.value!.path), fit: BoxFit.cover)
-              : (originalImage.isNotEmpty
-                  ? Image.memory(originalImage, fit: BoxFit.cover)
-                  : Icon(Icons.image_not_supported)),
+          child:
+              imageFile.value != null
+                  ? Image.file(File(imageFile.value!.path), fit: BoxFit.cover)
+                  : (originalImage.isNotEmpty
+                      ? Image.memory(originalImage, fit: BoxFit.cover)
+                      : Icon(Icons.image_not_supported)),
         ),
       ],
     );

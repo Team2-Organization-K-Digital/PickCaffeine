@@ -31,12 +31,13 @@ class VmHanderStore extends VmHandlerMenu {
             store_content: data['store_content'] ?? '',
             store_state: data['store_state'],
             store_business_num: data['store_business_num'],
-            store_regular_hoilday: data['store_regular_hoilday'] ?? "",
+            store_regular_hoilday: data['store_regular_holiday'],
             store_temporary_holiday: data['store_temporary_holiday'] ?? "",
             store_business_hour: data['store_business_hour'] ?? '',
             store_created_date: data['store_created_date'],
           );
         }).toList();
+    print(returnResult[0].store_regular_hoilday);
     loginStore.value = returnResult;
   }
 

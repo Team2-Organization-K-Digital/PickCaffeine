@@ -38,7 +38,6 @@ class CustomerHomeTabbar extends StatelessWidget {
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
     // vmgpshandleer.checkLocationPermission();
-    vmgpshandleer.fetchLikeStore("Jayhope12");
     vmgpshandleer.loadStoresAndMarkers();
     // ----------------------------------------------------------------- //
     return Obx(
@@ -47,59 +46,52 @@ class CustomerHomeTabbar extends StatelessWidget {
               ? Center(child: CircularProgressIndicator())
               : Scaffold(
                 appBar: AppBar(toolbarHeight: 0),
-                body: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // textfield : for search
-                      Row(
-                        children: [
-                          SizedBox(width: 15),
-                          SizedBox(
-                            width: 260,
-                            child: SearchBar(
-                              surfaceTintColor: MaterialStatePropertyAll(
-                                Colors.white,
-                              ),
-                              shadowColor: MaterialStatePropertyAll(
-                                Colors.white,
-                              ),
-                              // onTap: () => Get.to(CustomerHomeMap()),
-                              hintText: '검색',
-                              controller: searchController,
+                body: Column(
+                  children: [
+                    // textfield : for searchㅋ
+                    Row(
+                      children: [
+                        SizedBox(width: 15),
+                        SizedBox(
+                          width: 260,
+                          child: SearchBar(
+                            surfaceTintColor: MaterialStatePropertyAll(
+                              Colors.white,
                             ),
+                            shadowColor: MaterialStatePropertyAll(Colors.white),
+                            // onTap: () => Get.to(CustomerHomeMap()),
+                            hintText: '검색',
+                            controller: searchController,
                           ),
-                          SizedBox(width: 20),
-                          // button : for search
-                          ButtonBrown(
-                            text: '검색',
-                            onPressed: () {
-                              //
-                            },
-                          ),
-                        ],
-                      ),
-                      // body tabbar
-                      TabBar(
-                        controller: tabHandler.customerbodyController,
-                        onTap: (value) {
-                          tabHandler.customerbodyController.index = value;
-                          tabHandler.customerBodyIndex.value = value;
-                        },
-                        // body tabbar : list
-                        tabs: [Tab(text: '매장 리스트'), Tab(text: '지도 보기')],
-                      ),
-                      // body tabbar : layout
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        // body tabbar : screen
-                        child: IndexedStack(
-                          index: tabHandler.customerBodyIndex.value,
-                          children: [CustomerHomeList(), CustomerHomeMap()],
                         ),
+                        SizedBox(width: 20),
+                        // button : for search
+                        ButtonBrown(
+                          text: '검색',
+                          onPressed: () {
+                            //
+                          },
+                        ),
+                      ],
+                    ),
+                    // body tabbar
+                    TabBar(
+                      controller: tabHandler.customerbodyController,
+                      onTap: (value) {
+                        tabHandler.customerbodyController.index = value;
+                        tabHandler.customerBodyIndex.value = value;
+                      },
+                      // body tabbar : list
+                      tabs: [Tab(text: '매장 리스트'), Tab(text: '지도 보기')],
+                    ),
+                    // body tabbar : layout
+                    Expanded(
+                      child: IndexedStack(
+                        index: tabHandler.customerBodyIndex.value,
+                        children: [CustomerHomeList(), CustomerHomeMap()],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
     );

@@ -28,12 +28,13 @@ import 'package:pick_caffeine_app/model/changjun/model/stores.dart';
 import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/changjun/store_list_handler.dart';
+
 // ----------------------------------------------------------------- //
 class CustomerHomeList extends StatelessWidget {
   CustomerHomeList({super.key});
   final searchController = TextEditingController();
   final StoreHandler storeHandler = Get.find<JunTemp>();
-// ----------------------------------------------------------------- //
+  // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +58,7 @@ class CustomerHomeList extends StatelessWidget {
                 _buildText('찜이 많은 매장'),
                 SizedBox(height: 5),
                 _listView(storeHandler.sortedByZzim),
-                SizedBox(height: 350)
+                SizedBox(height: 350),
               ],
             ),
           ),
@@ -65,7 +66,8 @@ class CustomerHomeList extends StatelessWidget {
       }),
     );
   } // build
-// --------------------------------- Widget ------------------------------------- //
+
+  // --------------------------------- Widget ------------------------------------- //
   Widget _listView(List<Stores> storeList) {
     return SizedBox(
       width: double.infinity,
@@ -75,13 +77,12 @@ class CustomerHomeList extends StatelessWidget {
         itemCount: storeList.length > 6 ? 6 : storeList.length,
         itemBuilder: (context, index) {
           final store = storeList[index];
-          final imageBytes = store.storeImage!.isNotEmpty
-          ?  store.storeImage!
-          : null;
+          final imageBytes =
+              store.storeImage!.isNotEmpty ? store.storeImage! : null;
           return GestureDetector(
             onTap: () async {
               await storeHandler.box.write('storeId', store.storeId);
-              Get.to(()=>CustomerStoreDetail());
+              Get.to(() => CustomerStoreDetail());
             },
             child: Card(
               color: AppColors.white,
@@ -90,30 +91,35 @@ class CustomerHomeList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-// Text : store_states
+                    // Text : store_states
                     Text(
                       store.storeState == -1
-                      ? "영업 종료"
-                      : store.storeState == 0
-                      ? "영업 중"
-                      : "준비 중",
+                          ? "영업 종료"
+                          : store.storeState == 0
+                          ? "영업 중"
+                          : "준비 중",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-// Image : store_image
+                    // Image : store_image
                     Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: 
-                      imageBytes != null
-                      ? Image.memory( base64Decode(imageBytes), width: 150, height: 150, fit: BoxFit.fill)
-                      :Icon(Icons.image_not_supported, size:100),
+                      child:
+                          imageBytes != null
+                              ? Image.memory(
+                                base64Decode(imageBytes),
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.fill,
+                              )
+                              : Icon(Icons.image_not_supported, size: 100),
                     ),
                     SizedBox(height: 5),
-// Text : store_name
+                    // Text : store_name
                     Text(
                       store.storeName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-// Text : store_mypick & store_review - total count
+                    // Text : store_mypick & store_review - total count
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -136,7 +142,7 @@ class CustomerHomeList extends StatelessWidget {
                         Text(store.reviewCount.toString()),
                       ],
                     ),
-// Text : store_distance - from user
+                    // Text : store_distance - from user
                     Row(
                       children: [
                         Text(
@@ -157,8 +163,9 @@ class CustomerHomeList extends StatelessWidget {
         },
       ),
     );
-  }// build
-// ------------------------------- Widget -------------------------------------- //
+  } // build
+
+  // ------------------------------- Widget -------------------------------------- //
   // 매장 리스트 상단 표시 글자 위젯
   Widget _buildText(String content) {
     return Container(
@@ -180,5 +187,6 @@ class CustomerHomeList extends StatelessWidget {
       ),
     );
   }
-// ------------------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------------------ //
 }// class
