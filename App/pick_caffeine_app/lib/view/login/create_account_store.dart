@@ -131,11 +131,14 @@ class CreateAccountStore extends StatelessWidget {
   }
 
   Future<void> _createstore(BuildContext context) async {
+
     int? businessNum;
     try {
       businessNum = int.parse(businessnumcontroller.text.trim());
     } catch (e) {
+
       Get.snackbar("오류", "사업자번호는 숫자만 입력하세요");
+      
       return;
     }
 
@@ -149,8 +152,11 @@ class CreateAccountStore extends StatelessWidget {
       store_address_detail: addressdetailcontroller.text.trim(),
     );
 
+
+
       final result = await vm.createStore(store);
       if (result == 'OK') {
+
       
         vm.currentStore.value = StoreHome(
         store_id: idcontroller.text,
@@ -163,7 +169,7 @@ class CreateAccountStore extends StatelessWidget {
         store_latitude: 0.0,
         store_longitude: 0.0,
         store_content: "",
-        store_state: false,
+        store_state: 0 ,
         store_regular_holiday: "",
         store_temporary_holiday: "",
         store_business_hour: "",
@@ -173,7 +179,10 @@ class CreateAccountStore extends StatelessWidget {
         middleText: "매장이 등록 되었습니다.",
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () {
+              Get.back();
+              Get.back();
+            } ,
             child: Text("확인"),
       ),
     ],

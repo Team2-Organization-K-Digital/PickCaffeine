@@ -18,6 +18,7 @@ class VmCreateStore extends VmGpsHandller{
 
 
 Future<String> createStore(CreateStore store) async { // db에스토어넣기
+
   final url = Uri.parse("$baseUrl/createstore");
   try {
     final response = await http.post(
@@ -25,6 +26,7 @@ Future<String> createStore(CreateStore store) async { // db에스토어넣기
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(store.toMap()),
     );
+
 
     final decoded = json.decode(utf8.decode(response.bodyBytes));
     final result = decoded['result'];

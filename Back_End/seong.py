@@ -49,7 +49,7 @@ class StoreHome(BaseModel):
     store_latitude:float
     store_longitude:float
     store_content:str
-    store_state:bool
+    store_state:int
     store_business_num:int
     store_regular_holiday:str
     store_temporary_holiday:str
@@ -117,6 +117,8 @@ async def information():
     finally:
         conn.close()
 
+
+# 유저 개인정보 내정보화면
 @router.get("/user/information/{user_id}")
 async def informationuserid(user_id: str):
     conn = connect()
@@ -259,7 +261,7 @@ async def createstore(createstore:Createstore):
             0.0,                        # 위도 (기본값)
             0.0,                        # 경도 (기본값)
             '',                         # 매장 설명
-            False,                      # 상태
+            0,                         # 상태
             '',                         # 정기휴무
             '',                         # 임시휴무
             '',                         # 영업시간
@@ -268,7 +270,8 @@ async def createstore(createstore:Createstore):
         conn.commit()
         return {'result' : 'OK'}
     except Exception as ex:
-        return {'result':'Error'}
+        print("❗ INSERT 오류:", ex)
+        return {'result': 'Error', 'detail': str(ex)}
     finally:
         conn.close()
     

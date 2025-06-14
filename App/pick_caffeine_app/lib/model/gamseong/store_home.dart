@@ -8,7 +8,7 @@ class StoreHome {
   final double store_latitude; //위도
   final double store_longitude; //경도
   final String store_content; // 매장설명
-  final bool store_state; //매장상태
+  final int store_state; //매장상태
   final int store_business_num; //사업자번호
   final String store_regular_holiday; //정기휴무
   final String store_temporary_holiday; // 임시휴무
@@ -46,7 +46,7 @@ factory StoreHome.fromMap(Map<String, dynamic> map) {
     store_latitude: map['store_latitude']?.toDouble() ?? 0.0,
     store_longitude: map['store_longitude']?.toDouble() ?? 0.0,
     store_content: map['store_content'] ?? '',
-    store_state: map['store_state'] == true || map['store_state'] == 'true',
+    store_state: map['store_state']  ?? '' ,
     store_business_num: map['store_business_num'] ?? '',
     store_regular_holiday: map['store_regular_holiday'] ?? '',
     store_temporary_holiday: map['store_temporary_holiday'] ?? '',
