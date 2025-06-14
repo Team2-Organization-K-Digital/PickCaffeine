@@ -100,7 +100,8 @@ class CustomerAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    vm.informationuserid();
+    final userId = box.read('loginId');
+    vm.informationuserid(userId);
     vm.userreviews();
   
 
@@ -162,7 +163,7 @@ class CustomerAccount extends StatelessWidget {
     ],
   ),
 
-  const SizedBox(height: 20), 
+  const SizedBox(height: 10), 
 
   // 리뷰 카드
   Obx(() {

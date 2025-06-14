@@ -37,8 +37,8 @@ try{
 }
 
 
-Future<void> informationuserid() async {
-  final userId = box.read('loginId');  // 로그인 시 저장된 아이디
+Future<void> informationuserid(String userId) async {
+  // 로그인 시 저장된 아이디
   try {
     final res = await http.get(Uri.parse("$baseUrl/user/information/$userId"));
     final decoded = json.decode(utf8.decode(res.bodyBytes));

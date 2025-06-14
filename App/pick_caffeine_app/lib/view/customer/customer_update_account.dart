@@ -14,17 +14,22 @@
 // ----------------------------------------------------------------- //
 */
 
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 
 class CustomerUpdateAccount extends StatelessWidget {
   CustomerUpdateAccount({super.key});
   final vm = Get.find<Vmgamseong>();
+  final image = Get.find<ImageModelgamseong>();
   final box = GetStorage();
 
   final nicknameController = TextEditingController();
@@ -50,8 +55,9 @@ class CustomerUpdateAccount extends StatelessWidget {
   pwController.text = args[2];
   phoneController.text = args[3];
   emailController.text = args[4];
-
-    vm.informationuserid(); 
+  Uint8List originalImage = base64Decode(args[5]);
+  final userId = box.read('loginId');
+    vm.informationuserid(userId); 
 
     return Scaffold(
       body: Obx(() {
@@ -70,24 +76,26 @@ class CustomerUpdateAccount extends StatelessWidget {
                 icon: Icon(Icons.arrow_back),
                 onPressed: () => Get.back(),
               ),
-              CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(user['user_image'] ?? 'https://via.placeholder.com/150'),
-              ),
-              SizedBox(height: 20),
+              _buildImagePicker(context, originalImage),
+              SizedBox(height: 10),
               _buildField("닉네임", nicknameController),
               _buildField("ID", idController, readOnly: true),
               _buildField("PW", pwController, obscure: true),
               _buildField("PW확인", checkPwController, obscure: true),
               _buildField("전화번호", phoneController),
               _buildField("이메일", emailController),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
-                onPressed: () {
+                onPressed: () async{
                   if (pwController.text != checkPwController.text) {
                     Get.snackbar("오류", "비밀번호가 일치하지 않습니다");
                     return;
+                  }
+                  String imageBase64 = user['user_image'] ?? '';
+                  if(image.imageFile != null){
+                    final imageBytes = await File(image.imageFile.value!.path).readAsBytes();
+                    imageBase64 = base64Encode(imageBytes);
                   }
                   vm.updateUserInfo({
                     "user_id": idController.text,
@@ -95,7 +103,7 @@ class CustomerUpdateAccount extends StatelessWidget {
                     "user_password": pwController.text,
                     "user_phone": phoneController.text,
                     "user_email": emailController.text,
-                    "user_image": user['user_image']
+                    "user_image": imageBase64
                   });
                 },
                 child: Text("정보수정"),
@@ -127,7 +135,34 @@ class CustomerUpdateAccount extends StatelessWidget {
     );
   }
 
-  
+    Widget  _buildImagePicker(BuildContext context, Uint8List originalImage){
+      final imageFile = image.imageFile;
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                  onPressed: () => image.getImageFromGallery(ImageSource.gallery),
+                child: Text("갤러리")),  
+                  ElevatedButton(
+                  onPressed: () => image.getImageFromGallery(ImageSource.camera),
+                child: Text("카메라"))  
+          ],
+        ),
+        Container(
+          width: double.infinity,
+          height: 200,
+          color: Colors.grey[300],
+          child: image != null
+          ? Image.file(File(imageFile.value!.path))
+          : Image.memory(originalImage)
+          ,
+        )
+      ],
+    );
+  }
 
   
 }
