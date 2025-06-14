@@ -12,7 +12,7 @@
 // //   [Changelog]
 // //   - 2025.06.05 v1.0.0  :
 // // // ----------------------------------------------------------------- //
-// //* 
+// //*
 // import 'dart:convert';
 
 // import 'package:flutter/material.dart';
@@ -27,10 +27,7 @@
 //   CustomerAccount({super.key});
 //   final vm = Get.find<Vmgamseong>();
 //   final box = GetStorage();
-  
 
-  
-  
 //   @override
 
 // // Widget build(BuildContext context) {
@@ -77,9 +74,6 @@
 // //               ],
 // //             ),
 
-            
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -92,7 +86,7 @@ class CustomerAccount extends StatelessWidget {
   CustomerAccount({super.key});
 
   final vm = Get.find<Vmgamseong>(); // 사용자 정보 ViewModel
-  final image = Get.find<ImageModelgamseong>(); // 이미지 처리용 VM
+  final image = Get.find<Vmgamseong>(); // 이미지 처리용 VM
   final box = GetStorage(); // 로컬 저장소 (loginId)
 
   @override
@@ -116,7 +110,7 @@ class CustomerAccount extends StatelessWidget {
                 // 프로필 이미지
                 Center(child: _buildProfileImage(imageBase64)),
                 SizedBox(height: 20),
-            
+
                 // 텍스트 정보
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,43 +120,52 @@ class CustomerAccount extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("닉네임: ${user['user_nickname']}",
-                          style: TextStyle(fontWeight: FontWeight.bold),),
+                          child: Text(
+                            "닉네임: ${user['user_nickname']}",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("전화번호: ${user['user_phone']}",
-                          style: TextStyle(fontWeight: FontWeight.bold),),
+                          child: Text(
+                            "전화번호: ${user['user_phone']}",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("이메일: ${user['user_email']}",
-                          style: TextStyle(fontWeight: FontWeight.bold),),
+                          child: Text(
+                            "이메일: ${user['user_email']}",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),
                     ElevatedButton(
                       onPressed: () {
                         image.clearImage(); // 이미지 초기화
-                        Get.to(() => CustomerUpdateAccount(), arguments: [
-                          user['user_nickname'],
-                          user['user_id'],
-                          user['user_password'],
-                          user['user_phone'],
-                          user['user_email'],
-                          user['user_image'],
-                        ])?.then((_) {
+                        Get.to(
+                          () => CustomerUpdateAccount(),
+                          arguments: [
+                            user['user_nickname'],
+                            user['user_id'],
+                            user['user_password'],
+                            user['user_phone'],
+                            user['user_email'],
+                            user['user_image'],
+                          ],
+                        )?.then((_) {
                           final id = box.read('loginId');
-                          vm.informationuserid(userId); 
+                          vm.informationuserid(userId);
                         });
                       },
                       child: Text("정보수정"),
                     ),
                   ],
                 ),
-            
+
                 SizedBox(height: 20),
-            
+
                 // 리뷰 카드
                 Obx(() {
                   if (vm.review.isEmpty) {
@@ -184,17 +187,17 @@ class CustomerAccount extends StatelessWidget {
                           SizedBox(height: 10),
                           reviewImg != ''
                               ? Image.memory(
-                                  base64Decode(reviewImg),
-                                  width: 200,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                )
+                                base64Decode(reviewImg),
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              )
                               : Container(
-                                  width: 200,
-                                  height: 200,
-                                  color: Colors.grey[200],
-                                  child: Icon(Icons.image_not_supported),
-                                ),
+                                width: 200,
+                                height: 200,
+                                color: Colors.grey[200],
+                                child: Icon(Icons.image_not_supported),
+                              ),
                         ],
                       ),
                     ),
