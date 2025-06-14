@@ -69,24 +69,7 @@ Future<void> informationuserid(String userId) async {
 
 
 
-// 내정보 업데이트
-Future<String> updateUserInformation(UserInformation info) async {
-  final response = await http.put(
-    Uri.parse("$baseUrl/update/user/information"),
-    headers: {"Content-Type": "application/json"},
-    body: jsonEncode(info.toMap()),
-  );
-  if (response.statusCode == 200) {
-    final data = jsonDecode(utf8.decode(response.bodyBytes));
-    if (data['result'] == 'OK') {
-      return '성공';
-    } else {
-      return '실패: ${data['detail']}';
-    }
-  } else {
-    return '서버 오류';
-  }
-}
+// 
 
   //닉네임 중복체크
   Future<dynamic> usernicknamecheck(String nickname)async{
@@ -95,6 +78,8 @@ Future<String> updateUserInformation(UserInformation info) async {
   final data = json.decode(utf8.decode(res.bodyBytes))['data'];
   return nicknameCheck.value = int.parse(data[0]['count'].toString());
 }
+
+
 
   Future<void> fetchUserInfo(String userId) async {
     final response = await http.get(Uri.parse('$baseUrl/user/information/$userId'));
@@ -134,6 +119,25 @@ Future<String> updateUserInformation(UserInformation info) async {
     }
 
     
+
+    // 내정보 업데이트
+// Future<String> updateUserInformation(UserInformation info) async {
+//   final response = await http.put(
+//     Uri.parse("$baseUrl/update/user/information"),
+//     headers: {"Content-Type": "application/json"},
+//     body: jsonEncode(info.toMap()),
+//   );
+//   if (response.statusCode == 200) {
+//     final data = jsonDecode(utf8.decode(response.bodyBytes));
+//     if (data['result'] == 'OK') {
+//       return '성공';
+//     } else {
+//       return '실패: ${data['detail']}';
+//     }
+//   } else {
+//     return '서버 오류';
+//   }
+// }
   }
 
 

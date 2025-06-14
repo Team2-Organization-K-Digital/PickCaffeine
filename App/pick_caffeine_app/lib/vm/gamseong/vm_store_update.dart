@@ -36,6 +36,7 @@ var myreviews = <Map<String, dynamic>>[].obs;
   }
   }
 
+//스토어 업데이트를 내 매장에 업데이트.
 
 Future<String> updateStorelist(StoreHome updated) async {
   try {
