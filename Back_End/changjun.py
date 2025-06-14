@@ -81,6 +81,28 @@ def connect():
 #         print("Error :", e)
 #         return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
+# 1. 사용자의 전체 연별 총 매출 data 를 연도별로 추출하는 함수
+@router.get('/select/Total/{store_id}')
+async def selectChartTotalData(store_id : str):
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT SUM(total_price)
+            FROM purchase_list, selected_menu
+            WHERE purchase_list.purchase_num=selected_menu.purchase_num
+            AND purchase_list.store_id = %s
+            AND purchase_state = '3'
+            """, (store_id,)
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
+# ----------------------------------------------------------------------------------- #
 # 1-1. 사용자의 전체 연별 총 매출 data 를 연도별로 추출하는 함수
 @router.get('/select/year/{store_id}')
 async def selectChartYearData(store_id : str):
@@ -93,7 +115,7 @@ async def selectChartYearData(store_id : str):
             FROM purchase_list, selected_menu
             WHERE purchase_list.purchase_num=selected_menu.purchase_num
             AND purchase_list.store_id = %s
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY hourly
             order BY hourly
             """, (store_id,)
@@ -118,7 +140,7 @@ async def selectChartMonthData(store_id : str, year : str):
             WHERE purchase_list.purchase_num=selected_menu.purchase_num
             AND purchase_list.store_id = %s
             AND YEAR(purchase_date) = %s
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY hourly
             order BY hourly
             """, (store_id,year)
@@ -143,7 +165,7 @@ async def selectChartDayData(store_id : str, year : str, month : str):
             WHERE purchase_list.purchase_num=selected_menu.purchase_num
             AND purchase_list.store_id = %s
             AND YEAR(purchase_date) = %s AND MONTH(purchase_date) = %s
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY hourly
             order BY hourly
             """, (store_id,year,month)
@@ -168,7 +190,7 @@ async def selectChartDayData(store_id : str, year : str, month : str, day : str)
             WHERE purchase_list.purchase_num=selected_menu.purchase_num
             AND purchase_list.store_id = %s
             AND DATE(purchase_date) = '{year}-{month}-{day}'
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY hourly
             order BY hourly
             """, (store_id,)
@@ -180,6 +202,31 @@ async def selectChartDayData(store_id : str, year : str, month : str, day : str)
         print("Error :", e)
         return{'result' : 'Error'}
 
+# ----------------------------------------------------------------------------------- #
+# 2. 매장의 id 의 매장에서 전체 기간 동안 판매 한 각 제품의 제품명, 총 매출액, 판매 수량을 추출하는 함수
+@router.get('/selectProduct/Total/{store_id}')
+async def selectProductMonthData(store_id : str):
+    try:
+        conn = connect()
+        curs = conn.cursor()
+        curs.execute(
+            f"""
+            SELECT menu_name, SUM(total_price)AS total, Sum(selected_quantity) AS quantity
+            FROM purchase_list, selected_menu, menu
+            WHERE purchase_list.purchase_num = selected_menu.purchase_num
+            AND selected_menu.menu_num = menu.menu_num
+            AND purchase_list.store_id = '{store_id}'
+            AND purchase_state = '3'
+            GROUP BY menu_name
+            ORDER BY total AND quantity DESC
+            """
+            )
+        row = curs.fetchall()
+        conn.close()
+        return{'results': row}
+    except Exception as e:
+        print("Error :", e)
+        return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
 # 2-1. 매장의 id 와 선택한 연, 월 값을 통해 해당 월에 매장에서 판매 한 각 제품의 제품명, 총 매출액, 판매 수량을 추출하는 함수
 @router.get('/selectProduct/month/{store_id}/{year}/{month}')
@@ -196,7 +243,7 @@ async def selectProductMonthData(store_id : str, year : str, month : str):
             AND purchase_list.store_id = '{store_id}'
             AND YEAR(purchase_date) = {year}
             AND MONTH(purchase_date) = {month}
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY menu_name
             ORDER BY total AND quantity DESC
             """
@@ -222,7 +269,7 @@ async def selectProductMonthData(store_id : str, year : str):
             AND selected_menu.menu_num = menu.menu_num
             AND purchase_list.store_id = '{store_id}'
             AND YEAR(purchase_date) = {year}
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY menu_name
             ORDER BY total AND quantity DESC
             """
@@ -248,7 +295,7 @@ async def selectProductMonthData(store_id : str, year : str, month : str, day : 
             AND selected_menu.menu_num = menu.menu_num
             AND purchase_list.store_id = '{store_id}'
             AND DATE(purchase_date) = '{year}-{month}-{day}'
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY menu_name
             ORDER BY total AND quantity DESC
             """
@@ -539,7 +586,7 @@ async def selectAdminTotalPrice():
             SELECT SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             """
             )
         row = curs.fetchall()
@@ -560,7 +607,7 @@ async def selectAdminTotalPrice():
             SELECT DATE_FORMAT(purchase_date, '%Y') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             GROUP BY hourly
             ORDER BY hourly
             """
@@ -583,7 +630,7 @@ async def selectAdminYearTotalPrice(year : str):
             SELECT DATE_FORMAT(purchase_date, '%m') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             AND YEAR(purchase_date) = {year}
             GROUP BY hourly
             ORDER BY hourly
@@ -607,7 +654,7 @@ async def selectAdminMonthTotalPrice(year : str, month : str):
             SELECT DATE_FORMAT(purchase_date, '%d') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             AND YEAR(purchase_date) = {year}
             AND MONTH(purchase_date) = {month}
             GROUP BY hourly
@@ -632,7 +679,7 @@ async def selectAdminDayTotalPrice(year : str, month : str, day : str):
             SELECT DATE_FORMAT(purchase_date, '%H') AS hourly, SUM(total_price), Count(selected_quantity)
             FROM selected_menu AS s, purchase_list As p
             WHERE s.purchase_num = p.purchase_num
-            AND purchase_state = '수령완료'
+            AND purchase_state = '3'
             AND DATE(purchase_date) = '{year}-{month}-{day}'
             GROUP BY hourly
             ORDER BY hourly

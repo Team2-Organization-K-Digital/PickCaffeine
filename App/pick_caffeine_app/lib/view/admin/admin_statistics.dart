@@ -21,6 +21,7 @@ import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/changjun/chart_model/admin_total_price.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/widget_class/utility/Ipod_button_brown.dart';
+import 'package:pick_caffeine_app/widget_class/utility/button_light_brown.dart';
 import 'package:pick_caffeine_app/widget_class/utility/ipod_button_light_brown.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -32,6 +33,10 @@ class AdminStatistics extends StatelessWidget {
 // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
+// ----------------------------------------------------------------- //
+chartHandler.fetchAdminDurationList();
+chartHandler.fetchAdminDurationYearList();
+// ----------------------------------------------------------------- //
     return Obx(
       () =>  Scaffold(
         backgroundColor: AppColors.lightpick,
@@ -90,7 +95,7 @@ class AdminStatistics extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IpodButtonLightBrown(text: '기간 별 총 매출', onPressed: () {
+                      IpodButtonLightBrown(text: '매출액', onPressed: () {
                         chartHandler.adminTypeOfChart.value = 'duration';
                       },),
                       // SizedBox(width: 10,),
@@ -98,7 +103,7 @@ class AdminStatistics extends StatelessWidget {
                       //   chartHandler.typeOfChart.value = 'products';
                       // },),
                       SizedBox(width: 30,),
-                      IpodButtonLightBrown(text: '기간 별 거래량', onPressed: () {
+                      IpodButtonLightBrown(text: '거래량', onPressed: () {
                         chartHandler.adminTypeOfChart.value = 'quantity';
                       },),
                     ],
@@ -140,11 +145,19 @@ class AdminStatistics extends StatelessWidget {
                             :0.2,
                         dataLabelSettings: DataLabelSettings(
                           isVisible: true,
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20
+                          )
                         ),
                       ),
                     ],
 // Price Chart : X Axis
                     primaryXAxis: CategoryAxis(
+                      axisLine: AxisLine(
+                        width: 4,
+                        color: AppColors.black
+                      ),
                       title: AxisTitle(
                         text: chartHandler.adminChartType.value == 'yearly'
                         ?'기간 (월)'
@@ -162,6 +175,10 @@ class AdminStatistics extends StatelessWidget {
                     ),
 // Price Chart : Y Axis
                     primaryYAxis: NumericAxis(
+                      axisLine: AxisLine(
+                        width: 4,
+                        color: AppColors.black
+                      ),
                       title: AxisTitle(text: '매출 (원)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                       ),
                       labelStyle: TextStyle(
@@ -234,6 +251,10 @@ class AdminStatistics extends StatelessWidget {
                     ],
 // Quantity Chart : X Axis
                     primaryXAxis: CategoryAxis(
+                      axisLine: AxisLine(
+                        width: 4,
+                        color: AppColors.black
+                      ),
                       title: AxisTitle(
                         text: chartHandler.adminChartType.value == 'yearly'
                         ?'기간 (월)'
@@ -251,6 +272,10 @@ class AdminStatistics extends StatelessWidget {
                     ),
 // Quantity Chart : Y Axis
                     primaryYAxis: NumericAxis(
+                      axisLine: AxisLine(
+                        width: 4,
+                        color: AppColors.black
+                      ),
                       title: AxisTitle(text: '거래량 (회)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                       ),
                       labelStyle: TextStyle(
@@ -289,24 +314,34 @@ class AdminStatistics extends StatelessWidget {
 // ---------- //
 // Button : 선택한 유형의 기간 별 기간 선택 버튼
                   chartHandler.adminChartType.value == 'daily'
-                  ?IpodButtonLightBrown(
+                  ?IpodButtonBrown(
                     onPressed: () => dispDatePicker(context),
                     text: chartHandler.adminSelectedDateDay.value,
                   )
                   :chartHandler.adminChartType.value == 'monthly'
-                  ?IpodButtonLightBrown(
+                  ?IpodButtonBrown(
                     text: chartHandler.adminSelectedDateMonth.value,
                     onPressed: () => _showMonthDialogue(),
                   )
                   :chartHandler.adminChartType.value == 'yearly'
-                  ?IpodButtonLightBrown(
+                  ?IpodButtonBrown(
                     text: chartHandler.adminSelectedDateYear.value,
                     onPressed: () => _showYearDialugoe(),
                   )
-                  :IpodButtonLightBrown(text: '미정', 
-                  onPressed:() {
-                    //
-                    }, 
+                  :Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IpodButtonBrown(text: '전체', 
+                      onPressed:() {
+                        chartHandler.fetchAdminTotalPrice();
+                        }, 
+                      ),
+                      IpodButtonBrown(text: '연도 별', 
+                      onPressed: () {
+                        chartHandler.fetchAdminYearlyTotalPrice();
+                      },
+                      ),
+                    ],
                   )
                   
 
@@ -338,14 +373,111 @@ class AdminStatistics extends StatelessWidget {
     }
   }
 // -------------------------------------------------------------- //
-_showYearDialugoe(){
-  
-}
-// -------------------------------------------------------------- //
-_showMonthDialogue(){
+// ---------------------------------------------------------------------- //
+// 2. 연도 별 chart 에 들어갈 year 를 select 하는 button list 를 보여주는 dialogue
+  _showYearDialugoe() {
+    Get.defaultDialog(
+      backgroundColor: AppColors.brown,
+      title: '연도 선택 리스트',
+      titleStyle: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 25,
+      ),
+      content: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SizedBox(width: 300, height: 200, child: yearButtonList()),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: Text(
+            '취소',
+            style: TextStyle(
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+// ---------------------------------------------------------------------- //
+// 2-1. 연도 별 총 매출 chart 에 들어갈 year 를 select 하는 button list
+  Widget yearButtonList() {
+    return ListView.builder(
+      itemCount: chartHandler.adminDurationYearList.length,
+      itemBuilder: (context, index) {
+        final date = chartHandler.adminDurationYearList[index];
+        return ButtonLightBrown(
+          text: '$date 년',
+          onPressed: () async {
+            chartHandler.adminSelectedChartYear.value = date.toString();
+            chartHandler.adminSelectedDateYear.value = '선택 연도 : ${chartHandler.adminSelectedChartYear.value}';
+            await chartHandler.fetchAdminYearTotalPrice();
+            Get.back();
+          },
+        );
+      },
+    );
+  }
+// ---------------------------------------------------------------------- //
+  //1. 월간 차트를 보는 경우 원하는 월을 선택하기 위해 button list 를 띄워주는 dialogue 함수
+  _showMonthDialogue() async {
+    Get.defaultDialog(
+      backgroundColor: AppColors.brown,
+      title: '월 선택',
+      titleStyle: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 25,
+      ),
+      content: Obx(
+        () => SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: SizedBox(width: 300, height: 200, child: monthButtonList()),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: Text(
+            '취소',
+            style: TextStyle(
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-}
-// -------------------------------------------------------------- //
-// -------------------------------------------------------------- //
-// -------------------------------------------------------------- //
+// --------------------------------------------------------- //
+// 1-1. 2024년 1월을 기준으로 오늘 날짜의 연도와 월 까지의 list data 를 각각 button list 로 return 하는 함수
+  Widget monthButtonList() {
+    return ListView.builder(
+      itemCount: chartHandler.adminDurationList.length,
+      itemBuilder: (context, index) {
+        final store = chartHandler.adminDurationList[index];
+        return ButtonLightBrown(
+          text: "${store.storeYear}년 - ${store.storeMonth}월",
+          onPressed: () async {
+            chartHandler.adminSelectedChartMonthYear.value = store.storeYear.toString();
+            chartHandler.adminSelectedChartMonth.value = store.storeMonth.toString();
+            chartHandler.adminSelectedDateMonth.value = '선택 월 : ${chartHandler.adminSelectedChartMonthYear.value}년 ${chartHandler.adminSelectedChartMonth.value}월';
+            await chartHandler.fetchAdminMonthlyTotalPrice();
+            Get.back();
+          },
+        );
+      },
+    );
+  }
+// ---------------------------------------------------------------------- //
 }// class

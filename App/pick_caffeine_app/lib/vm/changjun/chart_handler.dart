@@ -57,9 +57,35 @@ class ChartHandler extends AccountHandler{
   final RxString adminSelectedDateDay = "일 선택".obs;
 // 선택된 chart 의 state 를 반영할 변수
   final RxString adminChartType = 'daily'.obs;
+// admin chart 에서 연간, 월간 차트에서 사용자가 날짜를 선택하기 위한 버튼에 들어갈 list
+// 기간은 2024-01 ~ 현재 날짜의 연,월 까지.
+  final RxList<StoreDuration> adminDurationList= <StoreDuration>[].obs;
+  final RxList<int> adminDurationYearList= <int>[].obs;
   
 // ---------------------------------------------------------------------------------- //
 // 1. 매장의 전체 매출을 연도 별로 보여주는 chart 에 삽입할 연도 별 매출 data 를 불러오는 함수
+  Future<void> fetchTotalChart()async{
+  String storeId =box.read('loginId');
+    try{
+      chartData.clear();
+      final res = await http.get(Uri.parse("$baseUrl/select/Total/$storeId"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+      final List <ChartData> returnResult =
+          results.map((data) {
+            return ChartData(
+              date: '전체',
+              totalPrice: data[0]
+            );
+          }).toList();
+          chartData.value = returnResult;
+  }catch(e){
+    print("Error : $e");
+    // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 1-1. 매장의 전체 매출을 월 별로 보여주는 chart 에 삽입할 월 별 매출 data 를 불러오는 함수
   Future<void> fetchYearChart()async{
   String storeId =box.read('loginId');
     try{
@@ -81,7 +107,7 @@ class ChartHandler extends AccountHandler{
   }
 }
 // ---------------------------------------------------------------------------------- //
-// 1-1. 매장의 전체 매출을 월 별로 보여주는 chart 에 삽입할 월 별 매출 data 를 불러오는 함수
+// 1-2. 매장의 전체 매출을 월 별로 보여주는 chart 에 삽입할 월 별 매출 data 를 불러오는 함수
   Future<void> fetchYearlyChart()async{
   String storeId =box.read('loginId');
     try{
@@ -103,7 +129,7 @@ class ChartHandler extends AccountHandler{
   }
 }
 // ---------------------------------------------------------------------------------- //
-// 1-2. 매장의 전체 매출을 일 별로 보여주는 chart 에 삽입할 일 별 매출 data 를 불러오는 함수
+// 1-3. 매장의 전체 매출을 일 별로 보여주는 chart 에 삽입할 일 별 매출 data 를 불러오는 함수
   Future<void> fetchMonthlyChart()async{
   String storeId =box.read('loginId');
     try{
@@ -125,7 +151,7 @@ class ChartHandler extends AccountHandler{
   }
 }
 // ---------------------------------------------------------------------------------- //
-// 1-3. 매장의 전체 매출을 시간 별로 보여주는 chart 에 삽입할 시간 별 매출 data 를 불러오는 함수
+// 1-4. 매장의 전체 매출을 시간 별로 보여주는 chart 에 삽입할 시간 별 매출 data 를 불러오는 함수
   Future<void> fetchdailyChart()async{
   String storeId =box.read('loginId');
     try{
@@ -148,11 +174,11 @@ class ChartHandler extends AccountHandler{
 }
 // ---------------------------------------------------------------------------------- //
 // 2. 선택한 연도와 월 값을 통해 해당 일자의 제품 별 매출의 총 합 data 를 추출하는 함수
-  Future<void> fetchProductsMonthlyChart()async{
+  Future<void> fetchProductsTotalChart()async{
   String storeId =box.read('loginId');
     try{
       chartProductData.clear();
-      final res = await http.get(Uri.parse("$baseUrl/selectProduct/month/$storeId/$selectedChartMonthYear/$selectedChartMonth"));
+      final res = await http.get(Uri.parse("$baseUrl/selectProduct/Total/$storeId"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
       final List <ChartProductsList> returnResult =
@@ -176,12 +202,41 @@ class ChartHandler extends AccountHandler{
   }
 }
 // ---------------------------------------------------------------------------------- //
-// 2-2. 선택한 연도 값을 통해 해당 일자의 제품 별 매출의 총 합 data 를 추출하는 함수
+// 2-1. 선택한 연도 값을 통해 해당 일자의 제품 별 매출의 총 합 data 를 추출하는 함수
   Future<void> fetchProductsYearlyChart()async{
   String storeId =box.read('loginId');
     try{
       chartProductData.clear();
       final res = await http.get(Uri.parse("$baseUrl/selectProduct/year/$storeId/$selectedChartYear"));
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      final List results = data['results'];
+      final List <ChartProductsList> returnResult =
+          results.map((data) {
+            // print(data[0].runtimeType);
+            // print(data[1].runtimeType);
+            return ChartProductsList(
+              productName: data[0], 
+              total: data[1], 
+              quantity: data[2]
+            );
+          }).toList();
+          chartProductData.value = returnResult;
+// 제품 별 매출 : total 순으로 정렬 / 제품 별 판매수량 : quantity 순으로 정렬
+          typeOfChart.value == 'products'
+          ? chartProductData.sort((a, b) => b.total.compareTo(a.total))
+          : chartProductData.sort((a, b) => b.quantity!.compareTo(a.quantity!));
+  }catch(e){
+    print("Error : $e");
+    // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 2-2. 선택한 연도와 월 값을 통해 해당 일자의 제품 별 매출의 총 합 data 를 추출하는 함수
+  Future<void> fetchProductsMonthlyChart()async{
+  String storeId =box.read('loginId');
+    try{
+      chartProductData.clear();
+      final res = await http.get(Uri.parse("$baseUrl/selectProduct/month/$storeId/$selectedChartMonthYear/$selectedChartMonth"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
       final List <ChartProductsList> returnResult =
@@ -250,7 +305,7 @@ class ChartHandler extends AccountHandler{
 addDurationList(int storeYear, int storeMonth){
   final int thisYear = DateTime.now().year;
   final int thisMonth = DateTime.now().month;
-
+  durationList.clear();
   for (int year = storeYear; year <= thisYear; year++) {
     if (year == thisYear) {
       for (var month = 1; month <= thisMonth; month++) {
@@ -331,7 +386,7 @@ addDurationYearList(int storeYear){
   Future<void> fetchAdminYearlyTotalPrice()async{
     try{
       chartData.clear();
-      final res = await http.get(Uri.parse("$baseUrl/select/admin/totalPrice/yearly"));
+      final res = await http.get(Uri.parse("$baseUrl/select/admins/totalPrice/yearly"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
       final List <AdminTotalPrice> returnResult =
@@ -412,6 +467,32 @@ addDurationYearList(int storeYear){
   }catch(e){
     print("Error : $e");
     // error = '불러오기 실패: $e';
+  }
+}
+// ---------------------------------------------------------------------------------- //
+// 7. 관리자 차트 페이지에서 연, 월 선택을 위해 list 에 2024 년 1월을 기준으로 현재 날짜의 연, 월을 월 별로 추가한다.
+fetchAdminDurationList(){
+  final int thisYear = DateTime.now().year;
+  final int thisMonth = DateTime.now().month;
+  adminDurationList.clear();
+  for (int year = 2024; year <= thisYear; year++) {
+    if (year == thisYear) {
+      for (int month = 1; month <= thisMonth; month++) {
+        adminDurationList.add(StoreDuration(storeYear: year, storeMonth: month));
+      }
+    } else {
+      for (int month = 1; month <= 12; month++) {
+        adminDurationList.add(StoreDuration(storeYear: year, storeMonth: month));
+      }
+    }
+  }
+}
+// ---------------------------------------------------------------------------------- //
+fetchAdminDurationYearList(){
+  adminDurationYearList.clear();
+  final int thisYear = DateTime.now().year;
+  for (int year = 2024; year <= thisYear; year++) {
+    adminDurationYearList.add(year);
   }
 }
 // ---------------------------------------------------------------------------------- //

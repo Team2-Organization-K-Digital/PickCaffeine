@@ -50,8 +50,6 @@ class StoreChartDuration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ----------------------------------------------------------------- //
-
-    // ----------------------------------------------------------------- //
     return Obx(() {
       return Scaffold(
         backgroundColor: AppColors.lightpick,
@@ -60,6 +58,7 @@ class StoreChartDuration extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
+              
               child: Column(
                 children: [
 // ----------------- //
@@ -72,8 +71,8 @@ class StoreChartDuration extends StatelessWidget {
                         text: '전체 기간',
                         onPressed: () {
                           chartHandler.chartType.value = 'all';
-                          chartHandler.fetchYearChart();
-                          chartHandler.fetchProductsYearlyChart();
+                          chartHandler.fetchTotalChart();
+                          chartHandler.fetchProductsTotalChart();
                         },
                       ),
 // Button : 연간 매출
@@ -132,61 +131,74 @@ class StoreChartDuration extends StatelessWidget {
                         height: 600,
 // ------------------ //
 // Chart : Bar Chart
-                        child: Expanded(
-                          child: SfCartesianChart(
-                            title: ChartTitle(
-                              text: chartHandler.chartType.value == 'yearly'
-                              ?'연간 제품 별 판매액'
-                              :chartHandler.chartType.value == 'monthly'
-                              ?'월간 제품 별 매출'
-                              :chartHandler.chartType.value == 'daily'
-                              ?'일간 제품 별 매출'
-                              :'연도 별 매출',
-                              textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
+                        child: SfCartesianChart(
+                          title: ChartTitle(
+                            text: chartHandler.chartType.value == 'yearly'
+                            ?'연간 제품 별 판매액'
+                            :chartHandler.chartType.value == 'monthly'
+                            ?'월간 제품 별 매출'
+                            :chartHandler.chartType.value == 'daily'
+                            ?'일간 제품 별 매출'
+                            :'전체 기간 제품 별 매출',
+                            textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
+                          ),
+                          tooltipBehavior: tooltipBehavior,
+                          palette: <Color>[AppColors.brown],
+// 가로형 수평 그래프로 변환 - 안해도 되는 상황이라 주석처리
+// isTransposed: true,
+                          series: [
+                            BarSeries<ChartProductsList, String>(
+                              dataSource: chartHandler.chartProductData,
+// Bar Chart : X value
+                              xValueMapper: (ChartProductsList data, _) => data.productName,
+// Bar Chart : Y value
+                              yValueMapper: (ChartProductsList data, _) => data.total,
+                              width: 0.1,
+                              dataLabelSettings: DataLabelSettings(
+                                isVisible: true,
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20
+                                )
+                              ),
+                            )
+                          ],
+// Bar Chart : X Axis
+                          primaryXAxis: CategoryAxis(
+                          axisLine: AxisLine(
+                            width: 4,
+                            color: AppColors.black
+                          ),
+                            isInversed: true,
+                            title: AxisTitle(
+                              text: '제품 명',
+                              textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
                             ),
-                            tooltipBehavior: tooltipBehavior,
-                            palette: <Color>[AppColors.brown],
-                          // 가로형 수평 그래프로 변환 - 안해도 되는 상황이라 주석처리
-                            // isTransposed: true,
-                            series: [
-                              BarSeries<ChartProductsList, String>(
-                                dataSource: chartHandler.chartProductData,
-                          // Bar Chart : X value
-                                xValueMapper: (ChartProductsList data, _) => data.productName,
-                          // Bar Chart : Y value
-                                yValueMapper: (ChartProductsList data, _) => data.total,
-                                dataLabelSettings: DataLabelSettings(isVisible: true),
-                              )
-                            ],
-                          // Bar Chart : X Axis
-                            primaryXAxis: CategoryAxis(
-                              isInversed: true,
-                              title: AxisTitle(
-                                text: '제품 명',
-                                textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
-                              ),
-                              labelStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20
-                              ),
+                            labelStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20
                             ),
-                          // Bar Chart : Y Axis
-                            primaryYAxis: NumericAxis(
-                              title: AxisTitle(text: '매출 (원)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
-                              ),
-                              labelStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20
-                              ),
-                              numberFormat: NumberFormat('#,##0', 'ko_KR'),
-                              interval: chartHandler.chartType.value == 'yearly'
-                              ? 5000000
-                              :chartHandler.chartType.value == 'monthly'
-                              ? 500000
-                              :chartHandler.chartType.value == 'daily'
-                              ? 50000
-                              : 5000000
+                          ),
+// Bar Chart : Y Axis
+                          primaryYAxis: NumericAxis(
+                          axisLine: AxisLine(
+                            width: 4,
+                            color: AppColors.black
+                          ),
+                            title: AxisTitle(text: '매출 (원)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                             ),
+                            labelStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20
+                            ),
+                            numberFormat: NumberFormat('#,##0', 'ko_KR'),
+                            interval: chartHandler.chartType.value == 'yearly'
+                            ? 5000000
+                            :chartHandler.chartType.value == 'monthly'
+                            ? 500000
+                            :chartHandler.chartType.value == 'daily'
+                            ? 50000
+                            : 5000000
                           ),
                         ),
                   )
@@ -196,7 +208,7 @@ class StoreChartDuration extends StatelessWidget {
                         height: 600,
                         child: Center(
                           child: Text(
-                            ' 다른 기간을 선택 해주세요.',
+                            '해당 기간의 data 가 없습니다. 다른 기간을 선택 해주세요.',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30,
@@ -220,30 +232,46 @@ class StoreChartDuration extends StatelessWidget {
                             ?'월간 매출'
                             :chartHandler.chartType.value == 'daily'
                             ?'일간 매출'
-                            :'연도 별 매출',
+                            :'전체 기간 매출',
                             textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                           ),
                           tooltipBehavior: tooltipBehavior,
                           palette: <Color>[AppColors.brown],
 // Line Chart : Series
                           series: [
-                            LineSeries<ChartData, int>(
+                            chartHandler.chartType.value == 'all'
+                            ? ColumnSeries<ChartData, String>(
+                              dataSource: chartHandler.chartData,
+                              xValueMapper: (ChartData date, _) => date.date,
+                              yValueMapper: (ChartData totalPrice, _) =>totalPrice.totalPrice,
+                              dataLabelSettings: DataLabelSettings(
+                                isVisible: true,
+                                textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                              ),
+                              width: 0.3,
+                            )
+                            : LineSeries<ChartData, String>(
                               dataSource: chartHandler.chartData,
 // Line Chart : X value
                               xValueMapper:
-                                  (ChartData date, _) => int.parse(date.date),
+                                  (ChartData date, _) => date.date,
                                   
 // Line Chart : Y value
                               yValueMapper:
                                   (ChartData totalPrice, _) =>totalPrice.totalPrice,
                               dataLabelSettings: DataLabelSettings(
                                 isVisible: true,
+                                textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
                               ),
                               width: 3,
                             ),
                           ],
 // Line Chart : X Axis
                           primaryXAxis: CategoryAxis(
+                            axisLine: AxisLine(
+                              width: 4,
+                              color: AppColors.black
+                            ),
                             title: AxisTitle(
                               text: chartHandler.chartType.value == 'yearly'
                               ?'기간 (월)'
@@ -251,16 +279,20 @@ class StoreChartDuration extends StatelessWidget {
                               ?'기간 (일)' 
                               :chartHandler.chartType.value == 'daily'
                               ?'기간 (시)'
-                              :'',
+                              :'기간 (전체)',
                               textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
                             ),
                             labelStyle: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20
+                              fontSize: 25
                             ),
                           ),
 // Line Chart : Y Axis
                           primaryYAxis: NumericAxis(
+                            axisLine: AxisLine(
+                              width: 4,
+                              color: AppColors.black
+                            ),
                             title: AxisTitle(text: '매출 (원)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                             ),
                             labelStyle: TextStyle(
@@ -300,59 +332,74 @@ class StoreChartDuration extends StatelessWidget {
                         height: 600,
 // ------------------ //
 // Chart : Bar Chart (quantity)
-                        child: SfCartesianChart(
-                          title: ChartTitle(
-                            text: chartHandler.chartType.value == 'yearly'
-                            ?'연간 제품 별 판매수량'
-                            :chartHandler.chartType.value == 'monthly'
-                            ?'월간 제품 별 판매수량'
-                            :chartHandler.chartType.value == 'daily'
-                            ?'일간 제품 별 판매수량'
-                            :'연도 별 판매수량',
-                            textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
-                          ),
-                          tooltipBehavior: tooltipBehavior,
-                          palette: <Color>[AppColors.brown],
-// 가로형 수평 그래프로 변환 - 안해도 되는 상황이라 주석처리
-                          // isTransposed: true,
-                          series: [
-                            BarSeries<ChartProductsList, String>(
-                              dataSource: chartHandler.chartProductData,
-// Bar Chart : X value
-                              xValueMapper: (ChartProductsList data, _) => data.productName,
-// Bar Chart : Y value
-                              yValueMapper: (ChartProductsList data, _) => data.quantity,
-                              dataLabelSettings: DataLabelSettings(isVisible: true),
-                            )
-                          ],
-// Bar Chart : X Axis
-                          primaryXAxis: CategoryAxis(
-                            isInversed: true,
-                            title: AxisTitle(
-                              text: '제품 명',
-                              textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: SfCartesianChart(
+                            title: ChartTitle(
+                              text: chartHandler.chartType.value == 'yearly'
+                              ?'연간 제품 별 판매수량'
+                              :chartHandler.chartType.value == 'monthly'
+                              ?'월간 제품 별 판매수량'
+                              :chartHandler.chartType.value == 'daily'
+                              ?'일간 제품 별 판매수량'
+                              :'연도 별 판매수량',
+                              textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
                             ),
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
+                            tooltipBehavior: tooltipBehavior,
+                            palette: <Color>[AppColors.brown],
+                          // 가로형 수평 그래프로 변환 - 안해도 되는 상황이라 주석처리
+                            // isTransposed: true,
+                            series: [
+                              BarSeries<ChartProductsList, String>(
+                                dataSource: chartHandler.chartProductData,
+                          // Bar Chart : X value
+                                xValueMapper: (ChartProductsList data, _) => data.productName,
+                          // Bar Chart : Y value
+                                yValueMapper: (ChartProductsList data, _) => data.quantity,
+                                width: 0.1,
+                                dataLabelSettings: DataLabelSettings(
+                                  isVisible: true,
+                                  textStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)
+                                ),
+                              )
+                            ],
+                          // Bar Chart : X Axis
+                            primaryXAxis: CategoryAxis(
+                              isInversed: true,
+                              axisLine: AxisLine(
+                                width: 4,
+                                color: AppColors.black
+                              ),
+                              title: AxisTitle(
+                                text: '제품 명',
+                                textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25),
+                              ),
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20
+                              ),
                             ),
-                          ),
-// Bar Chart : Y Axis
-                          primaryYAxis: NumericAxis(
-                            title: AxisTitle(text: '판매수량 (잔)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
+                          // Bar Chart : Y Axis
+                            primaryYAxis: NumericAxis(
+                              axisLine: AxisLine(
+                                width: 4,
+                                color: AppColors.black
+                              ),
+                              title: AxisTitle(text: '판매수량 (잔)',textStyle: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold,fontSize: 25)
+                              ),
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20
+                              ),
+                              numberFormat: NumberFormat('#,##0', 'ko_KR'),
+                              interval: chartHandler.chartType.value == 'yearly'
+                              ? 1000
+                              :chartHandler.chartType.value == 'monthly'
+                              ? 100
+                              :chartHandler.chartType.value == 'daily'
+                              ? 20
+                              : 1000
                             ),
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
-                            ),
-                            numberFormat: NumberFormat('#,##0', 'ko_KR'),
-                            interval: chartHandler.chartType.value == 'yearly'
-                            ? 1000
-                            :chartHandler.chartType.value == 'monthly'
-                            ? 100
-                            :chartHandler.chartType.value == 'daily'
-                            ? 20
-                            : 1000
                           ),
                         ),
                   )
@@ -362,7 +409,7 @@ class StoreChartDuration extends StatelessWidget {
                         height: 600,
                         child: Center(
                           child: Text(
-                            ' 다른 기간을 선택 해주세요.',
+                            '해당 기간의 data 가 없습니다. 다른 기간을 선택 해주세요.',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30,
@@ -373,25 +420,36 @@ class StoreChartDuration extends StatelessWidget {
 // ------------------ //
 // ------------------ //
 // Button : 선택한 유형의 기간 별 기간 선택 버튼
+                  Divider(height: 30,thickness: 3,),
                   chartHandler.chartType.value == 'daily'
-                  ?IpodButtonLightBrown(
+                  ?IpodButtonBrown(
                     onPressed: () => dispDatePicker(context),
                     text: chartHandler.selectedDateDay.value,
                   )
                   :chartHandler.chartType.value == 'monthly'
-                  ?IpodButtonLightBrown(
+                  ?IpodButtonBrown(
                     text: chartHandler.selectedDateMonth.value,
                     onPressed: () => _showMonthDialogue(),
                   )
                   :chartHandler.chartType.value == 'yearly'
-                  ?IpodButtonLightBrown(
+                  ?IpodButtonBrown(
                     text: chartHandler.selectedDateYear.value,
                     onPressed: () => _showYearDialugoe(),
                   )
-                  :IpodButtonLightBrown(text: '미정', 
-                  onPressed:() {
-                    //
-                    }, 
+                  :Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IpodButtonBrown(text: '전체', 
+                      onPressed:() {
+                        chartHandler.fetchTotalChart();
+                        },
+                      ),
+                      IpodButtonBrown(text: '연도 별', 
+                      onPressed:() {
+                        chartHandler.fetchYearChart();
+                        },
+                      ),
+                    ],
                   ),
                   SizedBox(height: 200,)
                 ],
@@ -451,6 +509,7 @@ class StoreChartDuration extends StatelessWidget {
             chartHandler.selectedChartMonth.value = store.storeMonth.toString();
             chartHandler.selectedDateMonth.value = '선택 월 : ${chartHandler.selectedChartMonthYear.value}년 ${chartHandler.selectedChartMonth.value}월';
             await chartHandler.fetchMonthlyChart();
+            await chartHandler.fetchProductsMonthlyChart();
             Get.back();
           },
         );
@@ -540,8 +599,9 @@ class StoreChartDuration extends StatelessWidget {
           text: '$date 년',
           onPressed: () async {
             chartHandler.selectedChartYear.value = date.toString();
-            chartHandler.selectedDateYear.value = '선택 연도 : ${chartHandler.selectedChartYear.value}';
+            chartHandler.selectedDateYear.value = '선택 연도 : ${chartHandler.selectedChartYear.value} 년';
             await chartHandler.fetchYearlyChart();
+            await chartHandler.fetchProductsYearlyChart();
             Get.back();
           },
         );
