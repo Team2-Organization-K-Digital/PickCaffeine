@@ -13,7 +13,7 @@ import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
 import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
 
-class VmGpsHandller extends ImageModel {
+class VmGpsHandller extends ImageModelgamseong {
   final baseUrl = "http://127.0.0.1:8000/seong";
   var latitude = ''.obs;
   var longitude = ''.obs;
