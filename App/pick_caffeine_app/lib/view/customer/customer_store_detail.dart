@@ -35,7 +35,6 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class CustomerStoreDetail extends StatelessWidget {
   CustomerStoreDetail({super.key});
   final handler = Get.find<VmHandlerTemp>();
-  final storeId = "111";
 
   final box = GetStorage();
 
@@ -44,7 +43,7 @@ class CustomerStoreDetail extends StatelessWidget {
     final user_id = box.read('loginId');
     final storeId = box.read('storeId');
     handler.fetchValue.value = false;
-    handler.storeImages.clear();
+
     handler.fetchStore(storeId);
     handler.fetchMyStores(user_id);
 
@@ -208,6 +207,10 @@ class CustomerStoreDetail extends StatelessWidget {
                           children: [StoreHomeInfo(), CustomerStoreReview()],
                         ),
                       ),
+                      IconButton(
+                        onPressed: () => Get.back(),
+                        icon: Icon(Icons.arrow_back_ios),
+                      ),
                       Positioned(
                         top: 0,
                         right: MediaQuery.of(context).size.width * 0.05,
@@ -261,7 +264,7 @@ class CustomerStoreDetail extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   await handler.fetchLastPurchase();
-                                  box.write("storeId", '111');
+                                  box.write("storeId", storeId);
                                   box.write(
                                     "storeName",
                                     handler.loginStore.first.store_name,

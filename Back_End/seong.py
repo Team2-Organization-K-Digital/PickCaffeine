@@ -309,6 +309,20 @@ async def selectstore():
 
     return {"results": result}
 
+
+@router.get("/select/likeStore/{userId}")
+async def selectstore(userId:str):
+    conn = connect()
+    curs = conn.cursor()
+    sql = "select store_id from my_store where user_id=%s"
+    curs.execute(sql,(userId,))
+    rows = curs.fetchall()
+    results = [{'my_store':row[0]}for row in rows]
+    conn.close()
+    return {"results": results }
+
+
+
 # 스토어 업데이트용. 스토어 아이디 Pk값안에있는 내용들을불러옴.
 # 패스워드 네임등 회원가입시만든페이지에 있는 것들은text로 리드온리로표현할것.
 @router.post("/updatestore")

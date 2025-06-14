@@ -166,7 +166,7 @@ class CreateAccountStore extends StatelessWidget {
         store_latitude: 0.0,
         store_longitude: 0.0,
         store_content: "",
-        store_state: false,
+        store_state: -1,
         store_regular_holiday: "",
         store_temporary_holiday: "",
         store_business_hour: "",

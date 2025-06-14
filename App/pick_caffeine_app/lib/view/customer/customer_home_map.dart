@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 class CustomerHomeMap extends StatelessWidget {
@@ -25,44 +26,29 @@ class CustomerHomeMap extends StatelessWidget {
   final vmgpshandleer = Get.find<Vmgamseong>();
   final mapController = MapController();
 
-
-
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      vmgpshandleer.loadStoresAndMarkers();
-      vmgpshandleer.checkLocationPermission();
-      // vmgpshandleer.loadlikeMarkers();
-    });
-
-    return Scaffold(
-      // appBar: AppBar(title: Text('고객용 매장 지도')),
-      body: Obx(() {
-        return FlutterMap(
-          mapController: mapController,
-          options: MapOptions(
-            onTap:(tapPosition, point) {
-          
-          },
-            initialCenter: vmgpshandleer.targetLocation.value ?? LatLng(37.5665, 126.9780),
-            initialZoom: 13,
+    return Obx(() {
+      return FlutterMap(
+        mapController: mapController,
+        options: MapOptions(
+          onTap: (tapPosition, point) {},
+          initialCenter: LatLng(
+            vmgpshandleer.currentlat.value,
+            vmgpshandleer.currentlong.value,
           ),
-          children: [
-            TileLayer(
-              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-              userAgentPackageName: 'com.example.app',
-            ),
-            MarkerLayer(
-              markers: vmgpshandleer.markers,
-            ),
-            // MarkerLayer(markers: vmgpshandleer.loadlikeMarkers,
-            // ),
-          ],
-        );
-      }),
-    );
+          initialZoom: 15,
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            userAgentPackageName: 'com.example.app',
+          ),
+          MarkerLayer(markers: vmgpshandleer.markers),
+          // MarkerLayer(markers: vmgpshandleer.loadlikeMarkers,
+          // ),
+        ],
+      );
+    });
   }
-
-  }
-
-
+}

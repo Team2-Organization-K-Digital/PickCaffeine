@@ -39,7 +39,7 @@ class CustomerProductsList extends StatelessWidget {
     final storeId = box.read("storeId");
     final storeName = box.read("storeName");
     final purchaseNum = box.read('purchaseNum');
-    vmHandler.clickedCategory.value = 0;
+    vmHandler.clickedCategory.value = -1;
 
     vmHandler.fetchMenuInCategory(storeId);
     vmHandler.fetchCategory(storeId);
@@ -85,7 +85,7 @@ class CustomerProductsList extends StatelessWidget {
                           : Expanded(
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: vmHandler.categories!.length + 1,
+                              itemCount: vmHandler.categories.length + 1,
                               itemBuilder: (context, index) {
                                 if (index == 0) {
                                   return Padding(
@@ -289,6 +289,7 @@ class CustomerProductsList extends StatelessWidget {
                                                       children: [
                                                         Text(
                                                           menu.menu_name,
+
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:
@@ -343,11 +344,14 @@ class CustomerProductsList extends StatelessWidget {
                                                   child: SizedBox(
                                                     width: 95,
                                                     height: 95,
-                                                    child: Image.memory(
-                                                      base64Decode(
-                                                        menu.menu_image,
-                                                      ),
-                                                    ),
+                                                    child:
+                                                        menu.menu_image.isEmpty
+                                                            ? null
+                                                            : Image.memory(
+                                                              base64Decode(
+                                                                menu.menu_image,
+                                                              ),
+                                                            ),
                                                   ),
                                                 ),
                                               ],

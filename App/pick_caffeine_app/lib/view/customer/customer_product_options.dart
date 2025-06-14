@@ -58,12 +58,15 @@ class CustomerProductOptions extends StatelessWidget {
                             Center(
                               child: SizedBox(
                                 height: 300,
-                                child: Image.memory(
-                                  base64Decode(
-                                    vmHandler.selectMenu[0].menu_image,
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
+                                child:
+                                    vmHandler.selectMenu[0].menu_image.isEmpty
+                                        ? null
+                                        : Image.memory(
+                                          base64Decode(
+                                            vmHandler.selectMenu[0].menu_image,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
                               ),
                             ),
 

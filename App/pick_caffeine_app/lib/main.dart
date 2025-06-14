@@ -23,7 +23,7 @@ void main() {
   Get.put(DeclarationController());
   Get.put(Order());
   Get.put(VmImageHandler());
-  Get.put(Vmgamseong());
+  Get.put(Vmgamseong()..checkLocationPermission());
 
   runApp(const MyApp());
 }
@@ -47,10 +47,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       //         calender 한글화        //
       // 기본 언어 설정
-      locale: const Locale('ko', 'KR'), 
-      supportedLocales: const [
-        Locale('ko', 'KR'),
-      ],
+      locale: const Locale('ko', 'KR'),
+      supportedLocales: const [Locale('ko', 'KR')],
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -60,7 +58,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: AdminStatistics(),
+      home: Login(),
     );
   }
 }

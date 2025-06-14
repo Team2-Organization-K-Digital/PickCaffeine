@@ -52,6 +52,18 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                     children: [
                       NestedScrollView(
                         headerSliverBuilder: (context, innerBoxIsScrolled) {
+                          if (handler.loginStore[0].store_state == 1) {
+                            handler.openCloseValue.value = true;
+                            handler.closeForeverValue.value = true;
+                          }
+                          if (handler.loginStore[0].store_state == 0) {
+                            handler.openCloseValue.value = false;
+                            handler.closeForeverValue.value = true;
+                          }
+                          if (handler.loginStore[0].store_state == -1) {
+                            handler.openCloseValue.value = false;
+                            handler.closeForeverValue.value = false;
+                          }
                           return [
                             SliverToBoxAdapter(
                               child: Padding(
