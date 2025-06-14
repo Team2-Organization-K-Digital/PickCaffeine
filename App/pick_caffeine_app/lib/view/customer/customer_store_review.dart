@@ -35,7 +35,6 @@ class CustomerStoreReview extends StatelessWidget {
               if (vm.myreviews.isEmpty) {
                 return Center(child: Text('작성된 리뷰가 없습니다.'));
               }
-
               return ListView.builder(
                 itemCount: vm.myreviews.length,
                 itemBuilder: (context, index) {
@@ -56,7 +55,6 @@ class CustomerStoreReview extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('내용: ${review['review_content']}'),
-                          Text('구매일: ${review['purchase_date'] ?? '정보 없음'}'),
                           Text('작성일: ${review['review_date']}'),
                         ],
                       ),

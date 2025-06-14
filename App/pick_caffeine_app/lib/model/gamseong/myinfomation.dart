@@ -1,43 +1,44 @@
-// class Myinfomation {
-//   final user_id;
-//   final user_nickname;
-//   final user_phone;
-//   final user_image;
-//   final List<Review> reviews;
+class Myinfomation { 
+  // 이미지 닉네임 아이디 패스워드 패스워드확인 전화번호 이메일
+  final String user_nickname;
+  final String user_id;
+  final String user_password;
+  final String user_phone;
+  final String user_email;
+  final String user_image;
 
-// Myinfomation({
 
-//   required this.user_id,
-//   required this.user_nickname,
-//   required this.user_phone,
-//   required this.user_image,
-//   required this.reviews,
-// });
+  Myinfomation
+  
+  ({
+    required this.user_image,
+    required this.user_nickname,
+    required this.user_id,
+    required this.user_password,
+    required this.user_phone,
+    required this.user_email,
 
-// factory myinfomation.fromMap(Map<String, dynamic>map)(){
-//   return Myinfomation(
-//     user_id: user_id, 
-//     user_nickname: user_nickname, 
-//     user_phone: user_phone, 
-//     user_image: user_image, 
-//     reviews: (map['reviews'] as List)
-//           .map((e) => Reviews.fromMap(e))
-//           .toList()
-//           );
-// }
-// }
+  });
+  
 
-// class Review{
-//   final review_num;
-//   final review_content;
-//   final review_iamge;
-//   final review_state;
-//   final review_date;
+  factory Myinfomation.fromMap(Map<String, dynamic>map){
+    return Myinfomation(
+      user_image: map['user_image'] ?? '', 
+      user_nickname: map['user_nickname'] ?? '', 
+      user_id: map['user_id'] ?? '', 
+      user_password: map['user_password'] ?? '', 
+      user_phone: map['user_phone'] ?? '', 
+      user_email: map['user_email'] ?? '');
+  }
 
-//   factory Review.fromMap(Map<String, dynamic>map){
-//     return Review(
-//       review_num:map['review_id']
-
-//     )
-//   }
-// }
+  Map<String, dynamic>toMap(){
+    return{
+    'user_image':user_image,
+    'user_nickname':user_nickname,
+    'user_id':user_id,
+    'user_password':user_password,
+    'user_phone':user_phone,
+    'user_email':user_email,
+    };
+  }
+}

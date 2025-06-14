@@ -9,11 +9,11 @@ class Vmgamseong extends VmCreateStore {
   var error = ''.obs;
   var isLoading = false.obs;
   var stores = <StoreHome>[].obs;
-  
-  
-  
+var user = <String, dynamic>{}.obs;   
+var myreviews = <Map<String, dynamic>>[].obs; 
 
   
+
 
   Future<void> createstorelist() async {
     isLoading.value = true;
@@ -36,6 +36,7 @@ class Vmgamseong extends VmCreateStore {
   }
   }
 
+//스토어 업데이트를 내 매장에 업데이트.
 
 Future<String> updateStorelist(StoreHome updated) async {
   try {

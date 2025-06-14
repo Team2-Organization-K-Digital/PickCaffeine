@@ -42,7 +42,7 @@ class CustomerBottomTabbar extends StatelessWidget {
           CustomerHomeTabbar(),
           CustomerPurchaseList(),
           CustomerMyPick(),
-          CustomerAccount(),
+          CustomerAccount()
           ],
       ),
 // bottom tabbar : decoration

@@ -1035,7 +1035,7 @@ Future<void> fetchStores() async {
 
 class InquiryController extends GetxController {
   // =================== 기본 설정 ===================
-  final String baseUrl = 'http://192.168.50.236:8000/kwonhyoung'; // prefix 추가
+  final String baseUrl = 'http://127.0.0.1:8000/kwonhyoung'; // prefix 추가
 
   // =================== 반응형 변수들 ===================
   var inquiryList = <Inquiry>[].obs; // 문의 목록
