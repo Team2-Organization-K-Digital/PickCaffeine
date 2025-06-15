@@ -68,7 +68,7 @@ class CustomerMyPick extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 color: AppColors.white,
-                elevation: 4,
+                elevation: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

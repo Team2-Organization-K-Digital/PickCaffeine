@@ -47,7 +47,12 @@ class CustomerPurchaseList extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(title: Text('주문내역')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        toolbarHeight: 50,
+        title: Text('주문내역', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),),
+        backgroundColor: AppColors.white,
+        ),
       body: Column(
         children: [
           Obx(() {
@@ -55,6 +60,8 @@ class CustomerPurchaseList extends StatelessWidget {
               child:
                   order.index.value < 0
                       ? Center(child: CircularProgressIndicator())
+                      : order.purchase.isEmpty
+                      ? Text('주문내역이 없습니다.')
                       : ListView.builder(
                         itemCount: order.purchase.length,
                         itemBuilder: (context, index) {
@@ -201,7 +208,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                                     : '수령완료',
                                                 style: TextStyle(
                                                   fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w900,
                                                   color: Colors.brown[800],
                                                 ),
                                               ),

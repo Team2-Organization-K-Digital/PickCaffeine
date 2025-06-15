@@ -3,6 +3,7 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:pick_caffeine_app/view/login/login.dart';
+import 'package:pick_caffeine_app/view/store/store_purchase_list.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Login(),
+      home: StorePurchaseList(),
     );
   }
 }

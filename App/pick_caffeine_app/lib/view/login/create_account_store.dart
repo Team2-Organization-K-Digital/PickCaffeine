@@ -15,6 +15,7 @@
 */
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/model/gamseong/create_store.dart';
 import 'package:pick_caffeine_app/model/gamseong/store_home.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
@@ -36,8 +37,9 @@ class CreateAccountStore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("매장 점주등록"),
-      backgroundColor: const Color.fromARGB(255, 134, 69, 46),),
+      appBar: AppBar(title: Text("매장 점주등록", style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),),
+      backgroundColor: AppColors.brown,
+      foregroundColor: AppColors.white,),
       body: SingleChildScrollView(
   child: Padding(
     padding: EdgeInsets.all(16),

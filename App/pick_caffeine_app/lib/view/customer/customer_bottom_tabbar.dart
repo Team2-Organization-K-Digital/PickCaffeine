@@ -52,19 +52,26 @@ class CustomerBottomTabbar extends StatelessWidget {
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             currentIndex: controller.customercurrentIndex.value,
-            backgroundColor: AppColors.brown,
-            unselectedItemColor: AppColors.white,iconSize: 40,
-            selectedItemColor: AppColors.lightbrown,
+            backgroundColor: AppColors.white,
+            unselectedItemColor: AppColors.brown,iconSize: 35,
+            selectedItemColor: AppColors.brown,
+            selectedLabelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontSize: 14
+            ),
 // bottom tabbar : functions
             onTap: (index) {
               controller.customertabController.index = index;
             },
 // bottom tabbar : icon & text
             items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-              BottomNavigationBarItem(icon: Icon(Icons.note), label: '주문내역'),
-              BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'My Pick'),
-              BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: '내 정보'),
+              BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: '홈'),
+              BottomNavigationBarItem(icon: Icon(Icons.menu_rounded), label: '주문내역'),
+              BottomNavigationBarItem(icon: Icon(Icons.bookmark_rounded), label: '저장카페'),
+              BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: '내 정보'),
             ],
           ),
         ),
