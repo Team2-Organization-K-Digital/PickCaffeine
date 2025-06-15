@@ -50,9 +50,23 @@ class Login extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Image.asset('images/logo_image.png'),
-            SizedBox(height: 10,),
-            Text('Pick',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50, color: AppColors.brown)),
-            Text('Caffeine',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40, color: AppColors.brown)),
+            SizedBox(height: 10),
+            Text(
+              'Pick',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 50,
+                color: AppColors.brown,
+              ),
+            ),
+            Text(
+              'Caffeine',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+                color: AppColors.brown,
+              ),
+            ),
           ],
         ),
       ),
@@ -61,46 +75,56 @@ class Login extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
-            children: [ 
-// textfield : id
+            children: [
+              // textfield : id
               SizedBox(height: 60),
-              SizedBox(width: 300, child: CustomTextField(label: "ID", controller: idController)),
-              SizedBox(height: 20,),
-// textfield : pw
-              SizedBox(width: 300, child: CustomTextField(label: "PW", controller: pwController, obscureText: true,)),
-              SizedBox(height: 20,),
-// button : login
-              ButtonBrown(text: '로그인',  
-              onPressed: () async{
-                if (
-                  idController.text.trim().isEmpty||
-                  pwController.text.trim().isEmpty
-                  ) {
-                  Get.snackbar('에러 발생', 'id 혹은 pw 값을 입력 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
-                } else{
-                  await accountHandler.userLoginCheck(
-                    idController.text.trim(), 
-                    pwController.text.trim()
-                  );
-                }
-              }
-            ),
-// create account
+              SizedBox(
+                width: 300,
+                child: CustomTextField(label: "ID", controller: idController),
+              ),
+              SizedBox(height: 20),
+              // textfield : pw
+              SizedBox(
+                width: 300,
+                child: CustomTextField(
+                  label: "PW",
+                  controller: pwController,
+                  obscureText: true,
+                ),
+              ),
+              SizedBox(height: 20),
+              // button : login
+              ButtonBrown(
+                text: '로그인',
+                onPressed: () async {
+                  if (idController.text.trim().isEmpty ||
+                      pwController.text.trim().isEmpty) {
+                    Get.snackbar(
+                      '에러 발생',
+                      'id 혹은 pw 값을 입력 해주세요.',
+                      backgroundColor: AppColors.red,
+                      colorText: AppColors.white,
+                    );
+                  } else {
+                    await accountHandler.userLoginCheck(
+                      idController.text.trim(),
+                      pwController.text.trim(),
+                    );
+                  }
+                },
+              ),
+              // create account
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 170, 0, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('계정이 없으신가요?',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.brown
+                    Text(
+                      '계정이 없으신가요?',
+                      style: TextStyle(fontSize: 12, color: AppColors.brown),
                     ),
-                  ),
-                    SizedBox(
-                      width: 5,
-                    ),
-// button : show create account dialogue
+                    SizedBox(width: 5),
+                    // button : show create account dialogue
                     TextButton(
                       onPressed: () {
                         _showDialogue();
@@ -123,41 +147,63 @@ class Login extends StatelessWidget {
       ),
     );
   }
-// ------------------------------- Functions ------------------------------------ //
-// 고객 및 매장 회원가입 페이지로 이동하기 위한 button 이 나타날 dialogue
-_showDialogue(){
-  Get.defaultDialog(
-    title: '회원가입',
-    backgroundColor: AppColors.white,
-    content: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-          child: Text('가입 유형을 선택 해주세요.'),
+
+  // ------------------------------- Functions ------------------------------------ //
+  // 고객 및 매장 회원가입 페이지로 이동하기 위한 button 이 나타날 dialogue
+  _showDialogue() {
+    Get.defaultDialog(
+      title: '회원가입',
+      backgroundColor: AppColors.white,
+      content: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+            child: Text('가입 유형을 선택 해주세요.'),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // button : go to create account user page
+              SizedBox(
+                height: 40,
+                child: ButtonBrown(
+                  text: '고객 가입',
+                  onPressed: () {
+                    Get.back();
+                    Get.to(() => CreateAccountUser());
+                  },
+                ),
+              ),
+              // button : go to create account store page
+              SizedBox(width: 20),
+              SizedBox(
+                height: 40,
+                child: ButtonBrown(
+                  text: '매장 가입',
+                  onPressed: () {
+                    Get.back();
+                    Get.to(() => CreateAccountStore());
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // button : go back
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: Text(
+            '돌아가기',
+            style: TextStyle(
+              color: AppColors.brown,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-// button : go to create account user page
-          SizedBox(height: 40, child: ButtonBrown(text: '고객 가입', onPressed: () {
-            Get.back();
-            Get.to(()=> CreateAccountUser());
-            
-          },)),
-// button : go to create account store page
-          SizedBox(width: 20),
-          SizedBox(height: 40, child: ButtonBrown(text: '매장 가입', onPressed: () {
-            Get.back();
-            Get.to(()=> CreateAccountStore());
-          },)),
-          ],
-        )
       ],
-    ),
-// button : go back
-    actions: [
-      TextButton(onPressed: () => Get.back(), child: Text('돌아가기',style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold),))
-    ],
-    barrierDismissible: false
-  );
+      barrierDismissible: false,
+    );
+  }
 }
