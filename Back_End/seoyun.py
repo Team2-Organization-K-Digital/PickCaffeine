@@ -207,7 +207,7 @@ async def select_menu(id: str):
 
 # 리뷰 유무
 @router.get("/select/review/{id}")
-async def select_review(id:int):
+async def select_review(id:str):
     # Connection으로 부터 Cursor 생성
     conn = connect()
     curs = conn.cursor()

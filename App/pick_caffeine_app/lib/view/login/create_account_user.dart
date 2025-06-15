@@ -36,17 +36,17 @@ class CreateAccountUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightpick,
       appBar: AppBar(
         backgroundColor: AppColors.brown,
         foregroundColor: AppColors.white,
         title: Text("고객 회원가입", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
 // ----------------------------------------------------------------- //
+      backgroundColor: AppColors.white,
       body:Obx(() => 
 Center(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               SizedBox(height: 30),
@@ -94,6 +94,7 @@ Center(
                           Radio<String>(
                             value: gender,
                             groupValue: accountHandler.selectedgender.value,
+                            activeColor: AppColors.brown, //선택했을 떄 색상
                             onChanged: (value) {
                               if (value != null) {
                                 accountHandler.selectedgender.value = value;

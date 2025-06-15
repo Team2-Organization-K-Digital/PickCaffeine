@@ -37,12 +37,9 @@ class CreateAccountStore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightpick,
-      appBar: AppBar(
-        backgroundColor: AppColors.brown,
-        foregroundColor: AppColors.white,
-        title: Text("매장 회원가입", style: TextStyle(fontWeight: FontWeight.bold)),
-      ),
+      appBar: AppBar(title: Text("매장 점주등록", style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),),
+      backgroundColor: AppColors.brown,
+      foregroundColor: AppColors.white,),
       body: SingleChildScrollView(
   child: Padding(
     padding: EdgeInsets.all(16),
