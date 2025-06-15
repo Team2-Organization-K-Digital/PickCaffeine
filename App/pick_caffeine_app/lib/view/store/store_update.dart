@@ -1,4 +1,4 @@
-// 매장 정보 수정 페이지 
+// 매장 정보 수정 페이지
 /*
 // ----------------------------------------------------------------- //
   - title         : Update Store Page
@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
@@ -28,7 +29,8 @@ class StoreUpdate extends StatelessWidget {
   StoreUpdate({super.key});
 
   final vm = Get.find<Vmgamseong>();
-  final image = Get.find<ImageModelgamseong>();
+  final image = Get.find<Vmgamseong>();
+  final box = GetStorage();
 
   final mapController = MapController();
   final contentController = TextEditingController();
@@ -41,7 +43,7 @@ class StoreUpdate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final store = vm.getStorehome;
+    final store = vm.currentStore[0];
     if (store == null) {
       return Scaffold(body: Center(child: Text('스토어 정보가 없습니다')));
     }
@@ -60,46 +62,49 @@ class StoreUpdate extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Obx(() => SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: image.imageFileList.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index < image.imageFileList.length) {
-                        final file = image.imageFileList[index];
-                        return Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Image.file(
-                            File(file.path),
-                            width: 80,
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      } else {
-                        return GestureDetector(
-                          onTap: () =>
-                              image.getImageFromGallerylist(ImageSource.gallery),
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            color: Colors.grey[300],
-                            child: Icon(Icons.add),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                )),
+            Obx(
+              () => SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: image.imageFileList.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index < image.imageFileList.length) {
+                      final file = image.imageFileList[index];
+                      return Container(
+                        margin: EdgeInsets.only(right: 8),
+                        child: Image.file(
+                          File(file.path),
+                          width: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    } else {
+                      return GestureDetector(
+                        onTap:
+                            () => image.getImageFromGallerylist(
+                              ImageSource.gallery,
+                            ),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.add),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
 
-            Text(store.store_name ?? "",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              store.store_name ?? "",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
 
             const SizedBox(height: 16),
-
-
-
 
             const SizedBox(height: 12),
 
@@ -115,35 +120,41 @@ class StoreUpdate extends StatelessWidget {
             Container(
               height: 250,
               margin: EdgeInsets.symmetric(vertical: 8),
-              child: Obx(() => FlutterMap(
-                    mapController: mapController,
-                    options: MapOptions(
-                      initialCenter: vm.targetLocation.value ??
-                          LatLng(store.store_latitude, store.store_longitude),
-                      initialZoom: 15,
+              child: Obx(
+                () => FlutterMap(
+                  mapController: mapController,
+                  options: MapOptions(
+                    initialCenter:
+                        vm.targetLocation.value ??
+                        LatLng(store.store_latitude, store.store_longitude),
+                    initialZoom: 15,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.app',
                     ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.example.app',
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: vm.targetLocation.value ??
-                                LatLng(store.store_latitude, store.store_longitude),
-                            width: 40,
-                            height: 40,
-                            child:
-                                Icon(Icons.location_on, color: Colors.red),
-                          )
-                        ],
-                      )
-                    ],
-                  )),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point:
+                              vm.targetLocation.value ??
+                              LatLng(
+                                store.store_latitude,
+                                store.store_longitude,
+                              ),
+                          width: 40,
+                          height: 40,
+                          child: Icon(Icons.location_on, color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-                        _buildField("주소", addressController),
+            _buildField("주소", addressController),
             _buildField("상세 주소", addressDetailController),
 
             Row(
@@ -191,56 +202,64 @@ class StoreUpdate extends StatelessWidget {
               children: [
                 Center(
                   child: ElevatedButton(
-                  onPressed: () async {
-                    print('수정 버튼 눌림');
-                
-                    final updated = StoreHome(
-                      store_id: store.store_id,
-                      store_password: store.store_password,
-                      store_name: store.store_name,
-                      store_phone: phoneController.text,
-                      store_business_num: store.store_business_num,
-                      store_address: addressController.text,
-                      store_address_detail: addressDetailController.text,
-                      store_latitude: vm.targetLocation.value?.latitude ?? store.store_latitude,
-                      store_longitude: vm.targetLocation.value?.longitude ?? store.store_longitude,
-                      store_content: contentController.text,
-                      store_state: store.store_state,
-                      store_regular_holiday: regularController.text,
-                      store_temporary_holiday: tempController.text,
-                      store_business_hour: businessnumController.text,
-                    );
-                
-                    try {
-                      final result = await vm.updateStorelist(updated);
-                      print(" 결과: $result");
-                
-                      if (result == 'OK') {
-                        vm.setStore(updated);
-                        Get.snackbar("완료", "정보가 수정되었습니다");
-                        Get.back();
-                      } else {
-                        Get.snackbar("오류", result);
+                    onPressed: () async {
+                      print('수정 버튼 눌림');
+
+                      final updated = StoreHome(
+                        store_id: store.store_id,
+                        store_password: store.store_password,
+                        store_name: store.store_name,
+                        store_phone: phoneController.text,
+                        store_business_num: store.store_business_num,
+                        store_address: addressController.text,
+                        store_address_detail: addressDetailController.text,
+                        store_latitude:
+                            vm.targetLocation.value?.latitude ??
+                            store.store_latitude,
+                        store_longitude:
+                            vm.targetLocation.value?.longitude ??
+                            store.store_longitude,
+                        store_content: contentController.text,
+                        store_state: store.store_state,
+                        store_regular_holiday: regularController.text,
+                        store_temporary_holiday: tempController.text,
+                        store_business_hour: businessnumController.text,
+                      );
+
+                      try {
+                        final result = await vm.updateStorelist(updated);
+                        print(" 결과: $result");
+
+                        if (result == 'OK') {
+                          Get.snackbar("완료", "정보가 수정되었습니다");
+                          Get.back();
+                        } else {
+                          Get.snackbar("오류", result);
+                        }
+                      } catch (e) {
+                        print(" 예외 발생: $e");
                       }
-                    } catch (e) {
-                      print(" 예외 발생: $e");
-                    }
-                  },
-                  child: Text("정보 수정"),
+                    },
+                    child: Text("정보 수정"),
+                  ),
                 ),
-                
-                ),ElevatedButton(
-                  onPressed: () => Get.back(), child: Text("매장으로돌아가기"))
+                ElevatedButton(
+                  onPressed: () => Get.back(),
+                  child: Text("매장으로돌아가기"),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildField(String label, TextEditingController controller,
-      {int maxLines = 1}) {
+  Widget _buildField(
+    String label,
+    TextEditingController controller, {
+    int maxLines = 1,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12),
       child: TextField(
