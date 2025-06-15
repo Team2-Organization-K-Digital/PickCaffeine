@@ -35,6 +35,7 @@ class CustomerHomeList extends StatelessWidget {
   CustomerHomeList({super.key});
   final searchController = TextEditingController();
   final StoreHandler storeHandler = Get.find<JunTemp>();
+
   // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class CustomerHomeList extends StatelessWidget {
                 _buildText('찜이 많은 매장'),
                 // SizedBox(height: 5),
                 _listView(storeHandler.sortedByZzim),
-                SizedBox(height: 350)
+                SizedBox(height: 350),
               ],
             ),
           ),
@@ -159,7 +160,7 @@ class CustomerHomeList extends StatelessWidget {
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
-                                                    color: AppColors.red
+                                                    color: AppColors.red,
                                                   ),
                                                 ),
                                               ],
@@ -189,7 +190,7 @@ class CustomerHomeList extends StatelessWidget {
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
-                                                    color: AppColors.brown
+                                                    color: AppColors.brown,
                                                   ),
                                                 ),
                                               ],
@@ -256,22 +257,21 @@ class CustomerHomeList extends StatelessWidget {
     return SizedBox(
       // width: 170,
       // height: 40,
-      
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        children : [ 
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10,10,0,5),
-          child: Text(
-            content,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 23,
-              color: AppColors.black,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 0, 5),
+            child: Text(
+              content,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 23,
+                color: AppColors.black,
+              ),
             ),
           ),
-        ),
-        ]
+        ],
       ),
     );
   }

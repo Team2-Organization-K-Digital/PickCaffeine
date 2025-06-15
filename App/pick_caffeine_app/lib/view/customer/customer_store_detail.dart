@@ -306,10 +306,10 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   TabPersistentHeaderDelegate();
 
   @override
-  double get minExtent => 110;
+  double get minExtent => 160;
 
   @override
-  double get maxExtent => 110;
+  double get maxExtent => 160;
 
   @override
   Widget build(
@@ -323,6 +323,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
+            SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

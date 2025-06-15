@@ -15,129 +15,140 @@ class CustomerHomeTabbar extends StatelessWidget {
   final tabHandler = Get.find<CustomerTabbar>();
   final storeHandler = Get.find<JunTemp>();
   final TextEditingController searchController = TextEditingController();
+  final gpshandler = Get.find<Vmgamseong>();
 
   @override
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
-
+    gpshandler.loadStoresAndMarkers();
     return Obx(
-      () => storeHandler.isLoading.value
-          ? const Center(child: CircularProgressIndicator())
-          : Scaffold(
-              appBar: AppBar(toolbarHeight: 0,backgroundColor: AppColors.white,),
-              backgroundColor: AppColors.white,
-              body: Column(
-                children: [
-                  const SizedBox(height: 12),
+      () =>
+          storeHandler.isLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : Scaffold(
+                appBar: AppBar(
+                  toolbarHeight: 0,
+                  backgroundColor: AppColors.white,
+                ),
+                backgroundColor: AppColors.white,
+                body: Column(
+                  children: [
+                    const SizedBox(height: 12),
 
-                  // 검색 바 영역
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.brown.shade200),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.brown.withOpacity(0.1),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
+                    // 검색 바 영역
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.brown.shade200,
                                 ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.search, color: AppColors.brown),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: TextField(
-                                    cursorColor: AppColors.brown,
-                                    controller: searchController,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: '매장을 검색해보세요',
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.brown.withOpacity(0.1),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.search,
+                                    color: AppColors.brown,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextField(
+                                      cursorColor: AppColors.brown,
+                                      controller: searchController,
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '매장을 검색해보세요',
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              // 검색 기능
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.brown,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 13,
+                                horizontal: 22,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('검색'),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    // 탭바
+                    TabBar(
+                      controller: tabHandler.customerbodyController,
+                      onTap: (value) {
+                        tabHandler.customerbodyController.index = value;
+                        tabHandler.customerBodyIndex.value = value;
+                      },
+                      labelColor: Colors.brown,
+                      unselectedLabelColor: Colors.grey,
+                      labelStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      indicatorColor: Colors.brown,
+                      indicatorWeight: 3,
+                      tabs: const [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.store),
+                            SizedBox(width: 5),
+                            Tab(text: '매장 리스트'),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // 검색 기능
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.brown,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 13, horizontal: 22),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text('검색'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.map_outlined),
+                            SizedBox(width: 5),
+                            Tab(text: '지도 보기'),
+                          ],
                         ),
                       ],
                     ),
-                  ),
 
-                  const SizedBox(height: 15),
-
-                  // 탭바
-                  TabBar(
-                    controller: tabHandler.customerbodyController,
-                    onTap: (value) {
-                      tabHandler.customerbodyController.index = value;
-                      tabHandler.customerBodyIndex.value = value;
-                    },
-                    labelColor: Colors.brown,
-                    unselectedLabelColor: Colors.grey,
-                    labelStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    indicatorColor: Colors.brown,
-                    indicatorWeight: 3,
-                    tabs: const [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.store),
-                          SizedBox(width: 5),
-                          Tab(text: '매장 리스트'),
-                        ],
+                    // 탭 화면
+                    Expanded(
+                      child: IndexedStack(
+                        index: tabHandler.customerBodyIndex.value,
+                        children: [CustomerHomeList(), CustomerHomeMap()],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.map_outlined),
-                          SizedBox(width: 5),
-                          Tab(text: '지도 보기'),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  // 탭 화면
-                  Expanded(
-                    child: IndexedStack(
-                      index: tabHandler.customerBodyIndex.value,
-                      children: [
-                        CustomerHomeList(),
-                        CustomerHomeMap(),
-                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
     );
   }
 }
