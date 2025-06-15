@@ -377,7 +377,8 @@ class CustomerShoppingCart extends StatelessWidget {
                                     purchase_state: 0,
                                   );
                                   await handler.insertPurhase(purchase);
-                                  Get.to(CustomerStoreDetail());
+                                  Get.back();
+                                  Get.back();
                                 },
                                 child: Text('${handler.finalPrice} 원 주문하기'),
                               ),

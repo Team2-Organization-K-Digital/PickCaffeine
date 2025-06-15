@@ -130,11 +130,9 @@ class StoreHomeInfo extends StatelessWidget {
                 children: [
                   SizedBox(
                     height: 150,
-                    child: Flexible(
-                      child: Text(
-                        vmHandler.loginStore.first.store_content,
-                        style: TextStyle(fontSize: 15),
-                      ),
+                    child: Text(
+                      vmHandler.loginStore.first.store_content,
+                      style: TextStyle(fontSize: 15),
                     ),
                   ),
                   Row(

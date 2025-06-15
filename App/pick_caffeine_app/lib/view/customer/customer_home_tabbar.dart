@@ -19,53 +19,31 @@ class CustomerHomeTabbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
-
+    // vmgpshandleer.checkLocationPermission();
+    vmgpshandleer.loadStoresAndMarkers();
+    // ----------------------------------------------------------------- //
     return Obx(
-      () => storeHandler.isLoading.value
-          ? const Center(child: CircularProgressIndicator())
-          : Scaffold(
-              appBar: AppBar(toolbarHeight: 0,backgroundColor: AppColors.white,),
-              backgroundColor: AppColors.white,
-              body: Column(
-                children: [
-                  const SizedBox(height: 12),
-
-                  // 검색 바 영역
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
+      () =>
+          storeHandler.isLoading.value
+              ? Center(child: CircularProgressIndicator())
+              : Scaffold(
+                appBar: AppBar(toolbarHeight: 0),
+                body: Column(
+                  children: [
+                    // textfield : for searchㅋ
+                    Row(
                       children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.brown.shade200),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.brown.withOpacity(0.1),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
+                        SizedBox(width: 15),
+                        SizedBox(
+                          width: 260,
+                          child: SearchBar(
+                            surfaceTintColor: MaterialStatePropertyAll(
+                              Colors.white,
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.search, color: AppColors.brown),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: TextField(
-                                    cursorColor: AppColors.brown,
-                                    controller: searchController,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: '매장을 검색해보세요',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            shadowColor: MaterialStatePropertyAll(Colors.white),
+                            // onTap: () => Get.to(CustomerHomeMap()),
+                            hintText: '검색',
+                            controller: searchController,
                           ),
                         ),
                         const SizedBox(width: 10),

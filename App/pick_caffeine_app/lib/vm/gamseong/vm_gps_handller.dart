@@ -15,6 +15,7 @@ import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
 
 class VmGpsHandller extends ImageModelgamseong {
   final baseUrl = "http://127.0.0.1:8000/seong";
+  final mapController = MapController();
   var latitude = ''.obs;
   var longitude = ''.obs;
   var currentlat = 0.0.obs;
@@ -28,85 +29,129 @@ class VmGpsHandller extends ImageModelgamseong {
 
   // 전체 매장 목록 빨강색
   Future<void> loadStoresAndMarkers() async {
+    markers.clear();
     final box = GetStorage();
     final userId = box.read('loginId');
 
     try {
-      final response = await http.get(Uri.parse("$baseUrl/selectstore"));
-      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      if (likeStore.value == true) {
+        final response = await http.get(
+          Uri.parse("$baseUrl/selectlikestore/$userId"),
+        );
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
 
-      if (data['results'] != null) {
-        if (likeStore.value) {
-          // await fetchLikeStore(userId);
-          // storeList.value =
-          //     (data['results'] as List)
-          //         .map((e) => StoreHome.fromMap(e)).where((element) {
-          //           element.store_id ==
-          //         },)
-          //         .toList();
-        } else {
+        if (data['results'] != null) {
           storeList.value =
               (data['results'] as List)
                   .map((e) => StoreHome.fromMap(e))
                   .toList();
-        }
 
-        markers.value =
-            storeList.map((store) {
-              return Marker(
-                point: LatLng(store.store_latitude, store.store_longitude),
-                width: 300,
-                height: 200,
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: AppColors.brown,
-                        backgroundColor: AppColors.white,
-                        textStyle: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          overflow: TextOverflow.ellipsis,
-                          inherit: true,
+          markers.value =
+              storeList.map((store) {
+                return Marker(
+                  point: LatLng(store.store_latitude, store.store_longitude),
+                  width: 300,
+                  height: 200,
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: AppColors.brown,
+                          backgroundColor: AppColors.white,
+                          textStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            overflow: TextOverflow.ellipsis,
+                            inherit: true,
+                          ),
+                        ),
+                        onPressed: () async {
+                          await box.write('storeId', store.store_id);
+                          Get.to(CustomerStoreDetail());
+                        },
+                        child: Text(store.store_name),
+                      ),
+                      Tooltip(
+                        message: store.store_name,
+                        child: CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppColors.white,
+                          child: Icon(Icons.coffee, color: AppColors.brown),
                         ),
                       ),
-                      onPressed: () async {
-                        await box.write('storeId', store.store_id);
-                        Get.to(CustomerStoreDetail());
-                      },
-                      child: Text(store.store_name),
-                    ),
-                    Tooltip(
-                      message: store.store_name,
-                      child: CircleAvatar(
-                        radius: 18,
-                        backgroundColor: AppColors.white,
-                        child: Icon(Icons.coffee, color: AppColors.brown),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList();
-
-        markers.add(
-          Marker(
-            point: LatLng(currentlat.value, currentlong.value),
-            width: 100,
-            height: 100,
-            child: Column(
-              children: [
-                Tooltip(
-                  message: '현 위치',
-                  child: Icon(Icons.pin_drop, color: Colors.blue, size: 35),
-                ),
-              ],
-            ),
-          ),
-        );
+                    ],
+                  ),
+                );
+              }).toList();
+        } else {
+          print("'results' 키가 응답에 없음");
+        }
       } else {
-        print("'results' 키가 응답에 없음");
+        final response = await http.get(Uri.parse("$baseUrl/selectstore"));
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        if (data['results'] != null) {
+          storeList.value =
+              (data['results'] as List)
+                  .map((e) => StoreHome.fromMap(e))
+                  .toList();
+
+          markers.value =
+              storeList.map((store) {
+                return Marker(
+                  point: LatLng(store.store_latitude, store.store_longitude),
+                  width: 300,
+                  height: 200,
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: AppColors.brown,
+                          backgroundColor: AppColors.white,
+                          textStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            overflow: TextOverflow.ellipsis,
+                            inherit: true,
+                          ),
+                        ),
+                        onPressed: () async {
+                          await box.write('storeId', store.store_id);
+                          Get.to(CustomerStoreDetail());
+                        },
+                        child: Text(store.store_name),
+                      ),
+                      Tooltip(
+                        message: store.store_name,
+                        child: CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppColors.white,
+                          child: Icon(Icons.coffee, color: AppColors.brown),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList();
+        } else {
+          print("'results' 키가 응답에 없음");
+        }
       }
+      markers.add(
+        Marker(
+          point: LatLng(currentlat.value, currentlong.value),
+          width: 100,
+          height: 100,
+          child: Column(
+            children: [
+              Tooltip(
+                message: '현 위치',
+                child: Icon(Icons.pin_drop, color: Colors.blue, size: 35),
+              ),
+            ],
+          ),
+        ),
+      );
     } catch (e) {
       print(" 오류 발생: $e");
     }
@@ -196,20 +241,6 @@ class VmGpsHandller extends ImageModelgamseong {
       }
     } catch (e) {
       Get.snackbar("오류", "주소변환실패 : $e");
-    }
-  }
-
-  Future<void> fetchLikeStore(String userId) async {
-    likeStores.clear();
-    final res = await http.get(
-      Uri.parse('$baseUrl/select/likeStore/${userId}'),
-    );
-
-    final datas = await json.decode(utf8.decode(res.bodyBytes));
-    final List results = datas['results'];
-
-    for (int i = 0; i < results.length; i++) {
-      likeStores.add(results[i]['my_store']);
     }
   }
 }
