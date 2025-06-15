@@ -129,7 +129,7 @@ class StoreHomeInfo extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 150,
+                    height: 160,
                     child: Text(
                       vmHandler.loginStore.first.store_content,
                       style: TextStyle(fontSize: 15),
