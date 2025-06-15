@@ -23,9 +23,11 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/retry.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/model/changjun/model/stores.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
+import 'package:pick_caffeine_app/view/store/store_update.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -416,9 +418,14 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                     padding: const EdgeInsets.only(right: 20),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(fixedSize: Size(210, 50)),
-                      onPressed: () {
-                        //
-                      },
+                    onPressed: () {
+                          final box = GetStorage();
+                            final store = handler.loginStore.first; 
+                            Get.to(() => StoreUpdate(), arguments: store)?.then((_) {
+                  final storeId = box.read("loginId");
+                  handler.fetchStore(storeId); // 홈으로 돌아온 뒤 DB 최신화
+                        });
+                        },
                       child: Text("가게 정보 수정", style: TextStyle(fontSize: 22)),
                     ),
                   ),

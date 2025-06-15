@@ -57,7 +57,7 @@ class StoreHomeInfo extends StatelessWidget {
                       children: [
                         Text("정기 휴무 : ", style: TextStyle(fontSize: 30)),
                         Text(
-                          vmHandler.loginStore.first.store_regular_hoilday,
+                          vmHandler.loginStore.first.store_regular_holiday,
                           style: TextStyle(fontSize: 30),
                         ),
                       ],
@@ -141,7 +141,7 @@ class StoreHomeInfo extends StatelessWidget {
                     children: [
                       Text("정기 휴무 : ", style: TextStyle(fontSize: 15)),
                       Text(
-                        vmHandler.loginStore.first.store_regular_hoilday,
+                        vmHandler.loginStore.first.store_regular_holiday,
                         style: TextStyle(fontSize: 15),
                       ),
                     ],

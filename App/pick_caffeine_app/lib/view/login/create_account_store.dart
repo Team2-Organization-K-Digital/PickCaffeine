@@ -136,9 +136,7 @@ class CreateAccountStore extends StatelessWidget {
     try {
       businessNum = int.parse(businessnumcontroller.text.trim());
     } catch (e) {
-
       Get.snackbar("오류", "사업자번호는 숫자만 입력하세요");
-      
       return;
     }
 
