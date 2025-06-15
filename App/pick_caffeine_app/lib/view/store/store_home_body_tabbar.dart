@@ -361,6 +361,7 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                   fixedSize: Size(300, 65),
                                 ),
                                 onPressed: () {
+                                  handler.clickedCategory.value = -1;
                                   box.write("storeId", '111');
                                   box.write(
                                     "storeName",
@@ -395,10 +396,10 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   TabPersistentHeaderDelegate();
 
   @override
-  double get minExtent => 150;
+  double get minExtent => 210;
 
   @override
-  double get maxExtent => 150;
+  double get maxExtent => 210;
 
   @override
   Widget build(
@@ -412,6 +413,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
+            SizedBox(height: 60),
             Padding(
               padding: const EdgeInsets.only(top: 3, left: 15, right: 15),
               child: Row(

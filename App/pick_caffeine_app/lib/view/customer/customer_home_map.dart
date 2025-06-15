@@ -70,7 +70,10 @@ class CustomerHomeMap extends StatelessWidget {
               },
               icon: CircleAvatar(
                 backgroundColor: AppColors.brown,
-                foregroundColor: AppColors.lightpick,
+                foregroundColor:
+                    vmgpshandleer.likeStore.value
+                        ? AppColors.lightpick
+                        : AppColors.grey,
                 radius: 20,
                 child: Icon(Icons.favorite),
               ),

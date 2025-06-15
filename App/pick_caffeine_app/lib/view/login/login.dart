@@ -207,4 +207,3 @@ class Login extends StatelessWidget {
     );
   }
 }
-}

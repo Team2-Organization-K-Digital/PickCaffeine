@@ -22,12 +22,14 @@ import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/model/Eunjun/purchase.dart';
 import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/widget_class/utility/custom_text_field.dart';
 import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 
 class CustomerShoppingCart extends StatelessWidget {
   CustomerShoppingCart({super.key});
   final handler = Get.find<VmHandlerTemp>();
   final box = GetStorage();
+  final requestController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +288,14 @@ class CustomerShoppingCart extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 100),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    height: 100,
+                    child: CustomTextField(
+                      label: '요청사항을 입력해주세요',
+                      controller: requestController,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Divider(
@@ -373,7 +382,7 @@ class CustomerShoppingCart extends StatelessWidget {
                                     user_id: userId,
                                     store_id: store,
                                     purchase_date: DateTime.now().toString(),
-                                    purchase_request: "",
+                                    purchase_request: requestController.text,
                                     purchase_state: 0,
                                   );
                                   await handler.insertPurhase(purchase);

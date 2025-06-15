@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/store/store_chart_duration.dart';
 import 'package:pick_caffeine_app/view/store/store_home_body_tabbar.dart';
@@ -27,6 +28,7 @@ import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 class StoreMainBottomTabbar extends StatelessWidget {
   StoreMainBottomTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
+  final box = GetStorage();
   // ----------------------------------------------------- //
   // ChangJun : Chart handler
   final chartHandler = Get.find<JunTemp>();
@@ -60,11 +62,15 @@ class StoreMainBottomTabbar extends StatelessWidget {
                 ],
               ),
               Positioned(
-                top: 50,
+                top: 40,
                 left: 20,
                 child: IconButton(
-                  onPressed: () => Get.back(),
-                  icon: Icon(Icons.arrow_back_ios, size: 50),
+                  onPressed: () {
+                    Get.back();
+                    handler.fetchValue.value = false;
+                  },
+
+                  icon: Icon(Icons.logout_outlined, size: 50),
                 ),
               ),
             ],

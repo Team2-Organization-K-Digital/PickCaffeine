@@ -35,7 +35,6 @@ class CustomerHomeList extends StatelessWidget {
   CustomerHomeList({super.key});
   final searchController = TextEditingController();
   final StoreHandler storeHandler = Get.find<JunTemp>();
-
   // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
