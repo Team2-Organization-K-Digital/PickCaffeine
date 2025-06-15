@@ -5,7 +5,6 @@ import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_map.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
-import 'package:pick_caffeine_app/vm/gamseong/vm_gps_handller.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
 
@@ -16,36 +15,57 @@ class CustomerHomeTabbar extends StatelessWidget {
   final tabHandler = Get.find<CustomerTabbar>();
   final storeHandler = Get.find<JunTemp>();
   final TextEditingController searchController = TextEditingController();
-  final vmgpshandller = Get.find<VmGpsHandller>();
 
   @override
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
-    // vmgpshandleer.checkLocationPermission();
-    vmgpshandller.loadStoresAndMarkers();
-    // ----------------------------------------------------------------- //
+
     return Obx(
-      () =>
-          storeHandler.isLoading.value
-              ? Center(child: CircularProgressIndicator())
-              : Scaffold(
-                appBar: AppBar(toolbarHeight: 0),
-                body: Column(
-                  children: [
-                    // textfield : for search
-                    Row(
+      () => storeHandler.isLoading.value
+          ? const Center(child: CircularProgressIndicator())
+          : Scaffold(
+              appBar: AppBar(toolbarHeight: 0,backgroundColor: AppColors.white,),
+              backgroundColor: AppColors.white,
+              body: Column(
+                children: [
+                  const SizedBox(height: 12),
+
+                  // 검색 바 영역
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
                       children: [
-                        SizedBox(width: 15),
-                        SizedBox(
-                          width: 260,
-                          child: SearchBar(
-                            surfaceTintColor: MaterialStatePropertyAll(
-                              Colors.white,
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.brown.shade200),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.brown.withOpacity(0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
-                            shadowColor: MaterialStatePropertyAll(Colors.white),
-                            // onTap: () => Get.to(CustomerHomeMap()),
-                            hintText: '검색',
-                            controller: searchController,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.search, color: AppColors.brown),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: TextField(
+                                    cursorColor: AppColors.brown,
+                                    controller: searchController,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: '매장을 검색해보세요',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -66,7 +86,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                         ),
                       ],
                     ),
-                  
+                  ),
 
                   const SizedBox(height: 15),
 
@@ -115,9 +135,9 @@ class CustomerHomeTabbar extends StatelessWidget {
                       ],
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
-      )
     );
   }
 }
