@@ -136,6 +136,12 @@ class CustomerHomeList extends StatelessWidget {
                             fontSize: 15,
                           ),
                         ),
+                    SizedBox(
+                      height: 180,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
                         child:
                             imageBytes != null
                                 ? Stack(
@@ -273,8 +279,8 @@ class CustomerHomeList extends StatelessWidget {
                       ],
                     ),
                   ],
-                ),
-              ),
+                ),]
+              ),)
             ),
           );
         },

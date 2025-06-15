@@ -5,6 +5,7 @@ import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_map.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_gps_handller.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
 
@@ -15,12 +16,13 @@ class CustomerHomeTabbar extends StatelessWidget {
   final tabHandler = Get.find<CustomerTabbar>();
   final storeHandler = Get.find<JunTemp>();
   final TextEditingController searchController = TextEditingController();
+  final vmgpshandller = Get.find<VmGpsHandller>();
 
   @override
   Widget build(BuildContext context) {
     storeHandler.fetchStore();
     // vmgpshandleer.checkLocationPermission();
-    vmgpshandleer.loadStoresAndMarkers();
+    vmgpshandller.loadStoresAndMarkers();
     // ----------------------------------------------------------------- //
     return Obx(
       () =>
@@ -30,7 +32,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                 appBar: AppBar(toolbarHeight: 0),
                 body: Column(
                   children: [
-                    // textfield : for searchㅋ
+                    // textfield : for search
                     Row(
                       children: [
                         SizedBox(width: 15),
@@ -64,7 +66,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
+                  
 
                   const SizedBox(height: 15),
 
@@ -113,9 +115,9 @@ class CustomerHomeTabbar extends StatelessWidget {
                       ],
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
+      )
     );
   }
 }
