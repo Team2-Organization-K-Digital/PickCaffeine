@@ -25,12 +25,14 @@ import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
 import 'package:pick_caffeine_app/view/store/store_update.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ----------------------------------------------------------------- //
 class StoreHomeBodyTabbar extends StatelessWidget {
   StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
+  final vm = Get.find<Vmgamseong>();
   final box = GetStorage();
   // ----------------------------------------------------------------- //
   @override
@@ -313,7 +315,12 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                 style: ElevatedButton.styleFrom(
                                                   fixedSize: Size(180, 45),
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  await vm.fetchStoreById(
+                                                    box.read('loginId'),
+                                                  );
+                                                  Get.to(StoreUpdate());
+                                                },
                                                 child: Text(
                                                   '회원정보 수정',
                                                   style: TextStyle(

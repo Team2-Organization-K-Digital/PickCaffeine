@@ -536,6 +536,9 @@ class StoreProductsList extends StatelessWidget {
                                                                 base64Decode(
                                                                   menu.menu_image,
                                                                 ),
+                                                                fit:
+                                                                    BoxFit
+                                                                        .cover,
                                                               ),
                                                     ),
                                                   ),

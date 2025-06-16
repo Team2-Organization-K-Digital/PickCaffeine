@@ -505,7 +505,6 @@ class StoreProductsUpdate extends StatelessWidget {
                                           children: [
                                             Text(
                                               '필수 옵션 : ',
-
                                               style: TextStyle(fontSize: 25),
                                             ),
                                             Obx(

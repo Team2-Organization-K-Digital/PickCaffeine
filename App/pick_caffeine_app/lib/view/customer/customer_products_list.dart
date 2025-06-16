@@ -171,7 +171,6 @@ class CustomerProductsList extends StatelessWidget {
                                                 )
                                                 .toList();
                                         vmHandler.clickedCategory.value = index;
-                                        print(vmHandler.categoriesMenu);
                                       },
                                       child: Text(
                                         category.category_name,
@@ -366,7 +365,7 @@ class CustomerProductsList extends StatelessWidget {
                                   );
                                 },
                               ),
-                          SizedBox(height: 100),
+                          SizedBox(height: 20),
                         ],
                       );
                     },

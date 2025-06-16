@@ -261,7 +261,7 @@ async def createstore(createstore:Createstore):
             0.0,                        # 위도 (기본값)
             0.0,                        # 경도 (기본값)
             '',                         # 매장 설명
-            0,                         # 상태
+            -1,                         # 상태
             '',                         # 정기휴무
             '',                         # 임시휴무
             '',                         # 영업시간
@@ -323,6 +323,36 @@ async def selectstore():
             "store_business_num": row[8],
             "store_id": row[9],
             "store_state": row[10],
+        }
+        for row in rows
+    ]
+
+    return {"results": result}
+
+@router.get("/getstore/{storeId}")
+async def selectstore(storeId:str):
+    conn = connect()
+    curs = conn.cursor()
+    sql = "select store_name, store_content, store_business_hour, store_regular_holiday, store_temporary_holiday, store_phone, store_latitude, store_longitude, store_business_num ,store_id, store_state,store_address,store_address_detail,store_phone from store where store_id = %s"
+    curs.execute(sql,(storeId))
+    rows = curs.fetchall()
+    conn.close()
+    result = [
+        {   
+            "store_name": row[0],
+            "store_content": row[1],
+            "store_business_hour": row[2],
+            "store_regular_holiday": row[3],
+            "store_temporary_holiday": row[4],
+            "store_phone": row[5],
+            "store_latitude": row[6],
+            "store_longitude": row[7],
+            "store_business_num": row[8],
+            "store_id": row[9],
+            "store_state": row[10],
+            "store_address":row[11],
+            "store_address_detail":row[12],
+            "store_phone":row[13]
         }
         for row in rows
     ]
