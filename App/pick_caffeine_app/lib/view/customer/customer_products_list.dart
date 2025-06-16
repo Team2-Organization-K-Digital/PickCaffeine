@@ -44,6 +44,7 @@ class CustomerProductsList extends StatelessWidget {
     vmHandler.fetchCategory(storeId);
     vmHandler.fetchCustomerSelectMenu();
     return Scaffold(
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
           SizedBox(height: 80),

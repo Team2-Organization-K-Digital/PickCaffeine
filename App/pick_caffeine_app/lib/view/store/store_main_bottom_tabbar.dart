@@ -24,10 +24,12 @@ import 'package:pick_caffeine_app/view/store/store_purchase_list.dart';
 import 'package:pick_caffeine_app/vm/changjun/chart_handler.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 
 class StoreMainBottomTabbar extends StatelessWidget {
   StoreMainBottomTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
+  final order = Get.find<Order>();
   final box = GetStorage();
   // ----------------------------------------------------- //
   // ChangJun : Chart handler
@@ -37,6 +39,10 @@ class StoreMainBottomTabbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    order.fetchPurchaseStore(box.read('loginId'));
+    order.fetchUserDetail(box.read('loginId'));
+    order.fetchMenuStore(box.read('loginId'));
+
     // ----------------------------------------------------- //
     // ChangJun : Chart funtions
     // chartHandler.fetchChart();
@@ -68,6 +74,7 @@ class StoreMainBottomTabbar extends StatelessWidget {
                   onPressed: () {
                     Get.back();
                     handler.fetchValue.value = false;
+                    order.menuStore.clear();
                   },
 
                   icon: Icon(Icons.logout_outlined, size: 50),

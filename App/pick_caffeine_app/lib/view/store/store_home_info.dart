@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:get/get.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 
@@ -26,6 +27,7 @@ class StoreHomeInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     if (Device.get().isTablet) {
       return Obx(() {
         return vmHandler.loginStore.isEmpty
@@ -45,7 +47,7 @@ class StoreHomeInfo extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Text("영업시간 : ", style: TextStyle(fontSize: 30)),
+                        Text("영업시간  ", style: TextStyle(fontSize: 30, color: AppColors.grey)),
                         Flexible(
                           child: Text(
                             vmHandler.loginStore.first.store_business_hour,
@@ -57,7 +59,7 @@ class StoreHomeInfo extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Text("정기 휴무 : ", style: TextStyle(fontSize: 30)),
+                        Text("정기 휴무  ", style: TextStyle(fontSize: 30)),
                         Flexible(
                           child: Text(
                             vmHandler.loginStore.first.store_regular_hoilday,
@@ -69,7 +71,7 @@ class StoreHomeInfo extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Text("임시 휴무 : ", style: TextStyle(fontSize: 30)),
+                        Text("임시 휴무  ", style: TextStyle(fontSize: 30)),
                         Flexible(
                           child: Text(
                             vmHandler.loginStore.first.store_temporary_holiday,
@@ -81,7 +83,7 @@ class StoreHomeInfo extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Text("전화번호: ", style: TextStyle(fontSize: 30)),
+                        Text("전화번호  ", style: TextStyle(fontSize: 30)),
                         Flexible(
                           child: Text(
                             vmHandler.loginStore.first.store_phone,
@@ -101,7 +103,7 @@ class StoreHomeInfo extends StatelessWidget {
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Text("사업자 번호 : ", style: TextStyle(fontSize: 30)),
+                        Text("사업자 번호  ", style: TextStyle(fontSize: 30)),
                         Text(
                           vmHandler.loginStore.first.store_business_num
                               .toString(),
@@ -138,7 +140,7 @@ class StoreHomeInfo extends StatelessWidget {
                   Row(
                     children: [
                       Flexible(
-                        child: Text("영업시간 : ", style: TextStyle(fontSize: 15)),
+                        child: Text("영업시간  ", style: TextStyle(fontSize: 17, color: Colors.black45, fontWeight: FontWeight.w500)),
                       ),
                       Flexible(
                         child: Text(
@@ -152,7 +154,7 @@ class StoreHomeInfo extends StatelessWidget {
                   Row(
                     children: [
                       Flexible(
-                        child: Text("정기 휴무 : ", style: TextStyle(fontSize: 15)),
+                        child: Text("정기 휴무  ", style: TextStyle(fontSize: 17, color: Colors.black45, fontWeight: FontWeight.w500)),
                       ),
                       Flexible(
                         child: Text(
@@ -166,7 +168,7 @@ class StoreHomeInfo extends StatelessWidget {
                   Row(
                     children: [
                       Flexible(
-                        child: Text("임시 휴무 : ", style: TextStyle(fontSize: 15)),
+                        child: Text("임시 휴무  ", style: TextStyle(fontSize: 17, color: Colors.black45, fontWeight: FontWeight.w500)),
                       ),
                       Flexible(
                         child: Text(
@@ -179,7 +181,7 @@ class StoreHomeInfo extends StatelessWidget {
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Text("전화번호: ", style: TextStyle(fontSize: 15)),
+                      Text("전화번호  ", style: TextStyle(fontSize: 17, color: Colors.black45, fontWeight: FontWeight.w500)),
                       Text(
                         vmHandler.loginStore.first.store_phone,
                         style: TextStyle(fontSize: 15),
@@ -195,14 +197,17 @@ class StoreHomeInfo extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text("사업자 번호 : "),
-                      Text(
-                        vmHandler.loginStore.first.store_business_num
-                            .toString(),
-                      ),
-                    ],
+                  Container(
+                    color: AppColors.greyopac,
+                    child: Row(
+                      children: [
+                        Text(" 사업자 번호  "),
+                        Text(
+                          vmHandler.loginStore.first.store_business_num
+                              .toString(),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 10),
 
