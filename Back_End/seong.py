@@ -13,7 +13,7 @@ from typing import Optional
 from datetime import datetime
 # -------------------------------- Property  ---------------------------------------- #
 #선언될 ip 권형님 , py 창준님 어드민변경햇음 525
-ip = "127.0.0.1"
+ip = "192.168.50.2"
 router = APIRouter()
 
 # MySQL server host
@@ -21,7 +21,7 @@ def connect():
     return pymysql.connect(
         host=ip,
         user="root",
-        password="qwer1234",
+        password="qwer1234qwer1234",
         db="pick_caffeine",
         charset="utf8"
     )
@@ -224,9 +224,10 @@ async def informationuserid(user_id: str):
     curs = conn.cursor()
     try:
             sql =   """
-            select user_id,user_nickname,user_password,
+            select 
+            user_id,user_nickname,user_password,
             user_phone,user_email,user_state,user_create_date,
-            user_image
+            user_image,
             from users
             where user_id = %s
             """
@@ -295,15 +296,15 @@ async def userreviews(user_id: str):
     curs = conn.cursor()
     try:
         sql = """
-            SELECT r.review_num,
+            select r.review_num,
                 r.review_content,
                 r.review_image,
                 r.review_date,
                 r.review_state,
                 p.store_id
-            FROM review r
-            JOIN purchase_list p ON r.purchase_num = p.purchase_num
-            WHERE p.user_id = %s
+            from review r
+            join purchase_list p ON r.purchase_num = p.purchase_num
+            where p.user_id = %s
         """
         curs.execute(sql, (user_id,))
         rows = curs.fetchall()
@@ -338,6 +339,8 @@ async def informationreview(user_id: str):
     finally:
         conn.close()
 
+
+# 스토어에 보이는리뷰
 @router.get("/stores/reviews")
 async def get_store_reviews(store_id: str):
     conn = connect()
