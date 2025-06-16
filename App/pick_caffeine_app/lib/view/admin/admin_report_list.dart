@@ -4,7 +4,7 @@
 - Description : 관리자 신고 관리 페이지
 - Author : Lee KwonHyoung
 - Created Date : 2025.06.05
-- Last Modified : 2025.06.12
+- Last Modified : 2025.06.16
 - package : get: ^4.7.2
 // ----------------------------------------------------------------- //
 
@@ -12,6 +12,7 @@
 - 2025.06.05 v1.0.0 : 구현된 페이지 첫 작성
 - 2025.06.11 v1.1.0 : 매장 기능 전면 개편
 - 2025.06.12 v1.2.0 : 색상 통일 및 리뷰, 리스트, 이미지 문제 해결
+- 2025.06.16 v1.3.0 : 하단탭바 위젯, 상태 스테이트 스트링에서 인트로 변경
 // ----------------------------------------------------------------- //
 */
 
@@ -23,8 +24,10 @@ import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
 import 'dart:convert';
 import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
+import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart';
 
-// 관리자 매장 관리 페이지 (25.06.12. 수정된 버전)
+
+// 관리자 매장 관리 페이지 (25.06.16. 수정된 버전)
 class AdminReportScreen extends StatelessWidget {
   final DeclarationController controller = Get.put(DeclarationController());
   final DateTime adminTodayDate = DateTime.now();
@@ -45,7 +48,7 @@ class AdminReportScreen extends StatelessWidget {
           _buildStoreUserInfo(), // 이미지 밑 매장/회원 수 정보 표시
           _buildTabBar(), // 상단 탭바
           _buildTabBarView(), // 탭바뷰
-          _buildBottomNavigation(), // 하단 탭바
+          BottomTabbar(selectedIndex: 0) // 하단 탭바
         ],
       ),
     );
@@ -351,7 +354,7 @@ class AdminReportScreen extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStoreStateColor(store['store_state']?.toString()),
+                  color: _getStoreStateColor(store['store_state']()),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -371,13 +374,13 @@ class AdminReportScreen extends StatelessWidget {
   }
 
   // 매장 상태에 따라 색상 반환
-  Color _getStoreStateColor(String? state) {
+  Color _getStoreStateColor(int? state) {
     switch (state) {
-      case '영업중':
+      case 1: //'영업중'
         return AppColors.brown;
-      case '휴무중':
+      case 2: //'휴무중'
         return AppColors.red;
-      case '준비중':
+      case 3: //'준비중'
         return AppColors.lightbrown;
       default:
         return AppColors.grey;
@@ -1342,75 +1345,6 @@ class AdminReportScreen extends StatelessWidget {
     );
   }
 
-  // 하단 네비게이션
-  Widget _buildBottomNavigation() {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: AppColors.brown,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: InkWell(
-              onTap: () {
-                Get.to(() => AdminReportScreen());
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.store, color: AppColors.white, size: 26),
-                  SizedBox(height: 4),
-                  Text(
-                    '매장 관리',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 40,
-            color: AppColors.white.withOpacity(0.3),
-          ),
-          Expanded(
-            child: InkWell(
-              onTap: () {
-                Get.to(() => InquiryReport());
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.question_answer, color: AppColors.white.withOpacity(0.5), size: 26),
-                  SizedBox(height: 4),
-                  Text(
-                    '문의 관리',
-                    style: TextStyle(
-                      color: AppColors.white.withOpacity(0.5),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   // 리뷰 작성일 포맷터
   String _formatReviewDate(dynamic date) {
