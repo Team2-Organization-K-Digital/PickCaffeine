@@ -26,7 +26,7 @@ void main() async{
   Get.put(Order());
   Get.put(VmImageHandler());
   Get.put(Vmgamseong()..checkLocationPermission());
- 
+
   // await GetStorage().initStorage;
 
   runApp(const MyApp());

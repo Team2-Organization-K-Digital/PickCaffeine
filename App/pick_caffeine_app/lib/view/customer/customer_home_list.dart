@@ -117,15 +117,22 @@ class CustomerHomeList extends StatelessWidget {
                                     if (store.storeState == 0)
                                       Positioned.fill(
                                         child: Container(
-                                          color: AppColors.greyopac,
+                                          color: Colors.black45,
                                           alignment: Alignment.center,
-                                          child: Text(
-                                            '준비중 ',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.access_time_filled_rounded, color: AppColors.white,size: 33,),
+                                              SizedBox(height: 5,),
+                                              Text(
+                                                '준비중 ',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),

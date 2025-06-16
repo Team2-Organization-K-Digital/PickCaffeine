@@ -62,7 +62,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                               child: Row(
                                 children: [
                                   const Icon(
-                                    Icons.search,
+                                    Icons.search_sharp,
                                     color: AppColors.brown,
                                   ),
                                   const SizedBox(width: 8),
@@ -96,7 +96,7 @@ class CustomerHomeTabbar extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text('검색'),
+                            child: const Text('검색', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
                           ),
                         ],
                       ),

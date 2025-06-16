@@ -39,7 +39,7 @@ class StorePurchaseList extends StatelessWidget {
     // order.fetchMenuStore('111');
 
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false,),
+      appBar: AppBar(automaticallyImplyLeading: false, leading: null,title: Text('매장 주문내역'),),
       body: Column(
         children: [
           SizedBox(height: 100),

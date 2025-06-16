@@ -278,4 +278,43 @@ class Order extends GetxController {
     }
     print(myStore);
   }
+
+  // 문의 작성 - 고객 / 매장
+  Future<void> saveInquiry({
+    required String user_id,
+    required String inquiry_content,
+    required String inquiry_state,
+  }) async {
+    final uri = Uri.parse('$baseUrl/insert/inquiry');
+    final request = http.MultipartRequest('POST', uri);
+
+    // 필드 추가
+    request.fields['user_id'] = user_id.toString();
+    request.fields['inquiry_content'] = inquiry_content;
+    request.fields['inquiry_state'] = inquiry_state;
+
+    try {
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(responseBody);
+        if (jsonResponse['result'] == 'OK') {
+          print('문의 저장 성공');
+        } else {
+          print('❌ 서버 에러: ${jsonResponse['message']}');
+          Get.snackbar('실패', '서버 에러: ${jsonResponse['message']}');
+          throw Exception('서버 에러: ${jsonResponse['message']}');
+        }
+      } else {
+        print('❌ HTTP 에러 ${response.statusCode}: $responseBody');
+        Get.snackbar('실패', 'HTTP 에러 ${response.statusCode}');
+        throw Exception('HTTP 에러 ${response.statusCode}');
+      }
+    } catch (e) {
+      print('❌ 저장 중 예외 발생: $e');
+      Get.snackbar('에러', '문의 저장 중 오류가 발생했습니다.');
+      rethrow;
+    }
+  }
 }
