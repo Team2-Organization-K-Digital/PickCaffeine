@@ -38,6 +38,7 @@ class CustomerProductsList extends StatelessWidget {
     final storeId = box.read("storeId");
     final storeName = box.read("storeName");
     final purchaseNum = box.read('purchaseNum');
+    final state = box.read('storeState');
     vmHandler.clickedCategory.value = -1;
 
     vmHandler.fetchMenuInCategory(storeId);
@@ -254,20 +255,22 @@ class CustomerProductsList extends StatelessWidget {
                                             behavior:
                                                 HitTestBehavior.translucent,
                                             onTap: () async {
-                                              vmHandler.total.value =
-                                                  menu.menu_price;
+                                              if (state == 1) {
+                                                vmHandler.total.value =
+                                                    menu.menu_price;
 
-                                              await Get.to(
-                                                CustomerProductOptions(),
-                                                arguments: [
-                                                  category.category_name,
-                                                  menu.menu_num!,
-                                                ],
-                                              )!.then(
-                                                (value) =>
-                                                    vmHandler
-                                                        .fetchCustomerSelectMenu(),
-                                              );
+                                                await Get.to(
+                                                  CustomerProductOptions(),
+                                                  arguments: [
+                                                    category.category_name,
+                                                    menu.menu_num!,
+                                                  ],
+                                                )!.then(
+                                                  (value) =>
+                                                      vmHandler
+                                                          .fetchCustomerSelectMenu(),
+                                                );
+                                              }
                                             },
                                             child: Row(
                                               mainAxisAlignment:

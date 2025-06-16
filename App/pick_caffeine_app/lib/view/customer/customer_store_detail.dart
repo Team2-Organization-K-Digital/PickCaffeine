@@ -279,6 +279,10 @@ class CustomerStoreDetail extends StatelessWidget {
                                       'purchaseNum',
                                       handler.purchaseNum.value,
                                     );
+                                    box.write(
+                                      'storeState',
+                                      handler.loginStore[0].store_state,
+                                    );
                                     Get.to(() => CustomerProductsList());
                                   },
                                   child: Text(
