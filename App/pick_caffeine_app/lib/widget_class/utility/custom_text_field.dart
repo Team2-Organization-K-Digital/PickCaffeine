@@ -20,20 +20,24 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
       cursorColor: AppColors.brown,
+      style: TextStyle(color: AppColors.brown),
       decoration: InputDecoration(
         labelText: label,
-        focusColor: AppColors.lightbrown,
-        border: const OutlineInputBorder(),
+        labelStyle: TextStyle(color: AppColors.brown),
+        focusColor: AppColors.brown,
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.brown, width: 2)),
+        // border: const OutlineInputBorder(
+        //   borderSide: BorderSide(color: AppColors.brown, width: 2)
+        // ),
         filled: true,
         fillColor: AppColors.white,
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.lightbrown)
-        )
+          borderSide: BorderSide(color: AppColors.brown, width: 2)
+        ),
       ),
       readOnly: readOnly,
     );

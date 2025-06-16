@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/model/Eunjun/store.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,7 @@ class VmHanderStore extends VmHandlerMenu {
   final RxList<MyStores> myStores = <MyStores>[].obs;
   final RxList<Widget> storeImages = <Widget>[].obs;
   var activeIndex = 0.obs;
-  var fetchValue = false;
+  var fetchValue = false.obs;
 
   Future<void> fetchLoginStore(String storeid) async {
     final res = await http.get(Uri.parse('$baseUrl/select/store/${storeid}'));
@@ -25,18 +26,19 @@ class VmHanderStore extends VmHandlerMenu {
             store_name: data['store_name'],
             store_phone: data['store_phone'],
             store_address: data['store_address'],
-            store_address_detail: data['store_address_detail'],
+            store_addressdetail: data['store_address_detail'],
             store_latitude: data['store_latitude'],
             store_longitude: data['store_longitude'],
             store_content: data['store_content'] ?? '',
             store_state: data['store_state'],
             store_business_num: data['store_business_num'],
-            store_regular_holiday: data['store_regular_holiday'] ?? "",
+            store_regular_hoilday: data['store_regular_holiday'],
             store_temporary_holiday: data['store_temporary_holiday'] ?? "",
             store_business_hour: data['store_business_hour'] ?? '',
             store_created_date: data['store_created_date'],
           );
         }).toList();
+    print(returnResult[0].store_regular_hoilday);
     loginStore.value = returnResult;
   }
 
@@ -46,9 +48,8 @@ class VmHanderStore extends VmHandlerMenu {
     );
     final datas = json.decode(utf8.decode(res.bodyBytes));
 
-    final List results = datas['results'] is List ? datas['results'] : [];
-    
-    
+    final List results = datas['results'][0];
+
     for (int i = 1; i < results.length; i++) {
       if (results[i] == null) {
         return;
@@ -60,12 +61,15 @@ class VmHanderStore extends VmHandlerMenu {
   }
 
   fetchStore(String storeId) async {
-    if (fetchValue) {
+    if (fetchValue.value) {
       return;
     }
+    loginStore.clear();
+    storeImages.clear();
     await fetchStoreImage(storeId);
     await fetchLoginStore(storeId);
-    fetchValue = true;
+    fetchValue.value = true;
+    print(loginStore);
   }
 
   Future<void> fetchMyStores(String user_id) async {

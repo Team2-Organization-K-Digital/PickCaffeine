@@ -18,18 +18,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
+import 'package:pick_caffeine_app/model/Eunjun/options.dart';
 import 'package:pick_caffeine_app/model/Eunjun/purchase.dart';
 import 'package:pick_caffeine_app/view/customer/customer_store_detail.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/widget_class/utility/custom_text_field.dart';
 import 'package:pick_caffeine_app/widget_class/utility/menu_utility.dart';
 
 class CustomerShoppingCart extends StatelessWidget {
   CustomerShoppingCart({super.key});
   final handler = Get.find<VmHandlerTemp>();
   final box = GetStorage();
+  final requestController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final userId = box.read('loginId');
     final store = box.read('storeId');
     final purchaseNum = box.read('purchaseNum');
     handler.fetchShoppingMenus(purchaseNum);
@@ -99,9 +103,43 @@ class CustomerShoppingCart extends StatelessWidget {
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        "${shoppingMenu.total_price} 원",
-                                        style: TextStyle(fontSize: 15),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 150,
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  shoppingMenu
+                                                      .selected_options!
+                                                      .length,
+                                              itemBuilder: (context, i) {
+                                                final optionTitle =
+                                                    shoppingMenu
+                                                        .selected_options!
+                                                        .keys
+                                                        .toList();
+                                                final optionName =
+                                                    shoppingMenu
+                                                        .selected_options!
+                                                        .values
+                                                        .toList();
+
+                                                return Text(
+                                                  '${optionTitle[i]} : ${optionName[i]}',
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          Text(
+                                            "${shoppingMenu.total_price} 원",
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Row(
@@ -250,7 +288,14 @@ class CustomerShoppingCart extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 100),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    height: 100,
+                    child: CustomTextField(
+                      label: '요청사항을 입력해주세요',
+                      controller: requestController,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Divider(
@@ -334,14 +379,15 @@ class CustomerShoppingCart extends StatelessWidget {
                                 onPressed: () async {
                                   final purchase = Purchase(
                                     purchase_num: purchaseNum,
-                                    user_id: 11.toString(),
+                                    user_id: userId,
                                     store_id: store,
                                     purchase_date: DateTime.now().toString(),
-                                    purchase_request: "",
+                                    purchase_request: requestController.text,
                                     purchase_state: 0,
                                   );
                                   await handler.insertPurhase(purchase);
-                                  Get.to(CustomerStoreDetail());
+                                  Get.back();
+                                  Get.back();
                                 },
                                 child: Text('${handler.finalPrice} 원 주문하기'),
                               ),

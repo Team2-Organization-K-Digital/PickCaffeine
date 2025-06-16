@@ -44,8 +44,8 @@ class MenuUtility {
     return FlutterMap(
       options: MapOptions(
         initialCenter: LatLng(
-          hander.loginStore.first.store_latitude,
-          hander.loginStore.first.store_longitude,
+          hander.loginStore[0].store_latitude,
+          hander.loginStore[0].store_longitude,
         ),
         initialZoom: 17.5,
       ),

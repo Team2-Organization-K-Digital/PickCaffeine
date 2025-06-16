@@ -86,13 +86,13 @@ Future<dynamic> userLoginCheck(String id, String pw)async{
     return Get.to(()=>StoreMainBottomTabbar());
   }
 // admin 테이블 대조
-  // loginCheck.value = 0;
-  // final resAdmin = await http.get(Uri.parse("$baseUrl/select/loginStore/$id/$pw"));
-  // final dataAdmin = json.decode(utf8.decode(resAdmin.bodyBytes))['results'];
-  // loginCheck.value = int.parse(dataAdmin[0]['count'].toString());
-  // if (loginCheck.value == 1) {
-  //   return Get.to(()=>AdminReportScreen());
-  // }
+  loginCheck.value = 0;
+  final resAdmin = await http.get(Uri.parse("$baseUrl/select/loginAdmin/$id/$pw"));
+  final dataAdmin = json.decode(utf8.decode(resAdmin.bodyBytes))['results'];
+  loginCheck.value = int.parse(dataAdmin[0]['count'].toString());
+  if (loginCheck.value == 1) {
+    return Get.to(()=>AdminReportScreen());
+  }
 // 일치하는 값이 없는 경우
   return Get.snackbar('로그인 실패', 'id 혹은 pw 값이 틀렸습니다.', backgroundColor: AppColors.red, colorText: AppColors.white);
 }

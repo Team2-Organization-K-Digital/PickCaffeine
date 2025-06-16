@@ -5,12 +5,13 @@
   - Description   : 관리자 문의내역 페이지(탭바 사용으로 한 곳에 코드 구현)
   - Author        : Lee KwonHyoung
   - Created Date  : 2025.06.05
-  - Last Modified : 2025.06.11
+  - Last Modified : 2025.06.12
   - package       : get: ^4.7.2, flutter_slidable: ^4.0.0
 
 // ----------------------------------------------------------------- //
   [Changelog]
-  - 2025.06.11 v1.0.1  : 관리자 문의내역(문의목록 리스트뷰, 답변목록 리스트뷰, 답변수정 기능 추가 중)
+  - 2025.06.05 v1.0.0  : 관리자 문의내역 첫 작성
+  - 2025.06.12 v1.1.0  : 색상 통일 및 UI 개선함
 // ----------------------------------------------------------------- //
 */
 
@@ -18,10 +19,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
+import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart';
 
-
-// 관리자 문의내역 페이지 (25.06.11 수정된 버전2)
+// 관리자 문의내역 페이지 (25.06.12 수정된 버전)
 class InquiryReport extends StatelessWidget {
   InquiryReport({super.key});
 
@@ -40,7 +42,7 @@ class InquiryReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.greyopac,
       body: Column(
         children: [
           _buildTopImageWithText(),     // 상단 이미지 + 제목 텍스트
@@ -52,7 +54,7 @@ class InquiryReport extends StatelessWidget {
                 : _buildAnswerList()    // 답변내역 탭일 때
             ),
           ),
-          // BottomTabbar(selectedIndex: 1), // 하단 네비게이션 탭바 (문의 관리 강조)
+          BottomTabbar(selectedIndex: 1), // 하단 네비게이션 탭바 (문의 관리 강조)
         ],
       ),
     );
@@ -71,16 +73,16 @@ class InquiryReport extends StatelessWidget {
             return Container(
               width: double.infinity,
               height: 300,
-              color: Color(0xFF8B4513),
+              color: AppColors.brown,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.image_not_supported, 
-                         color: Colors.white, size: 60),
+                         color: AppColors.white, size: 60),
                     SizedBox(height: 8),
                     Text('이미지를 불러올 수 없습니다',
-                         style: TextStyle(color: Colors.white)),
+                         style: TextStyle(color: AppColors.white)),
                   ],
                 ),
               ),
@@ -94,7 +96,7 @@ class InquiryReport extends StatelessWidget {
             style: TextStyle(
               fontSize: 20, 
               fontWeight: FontWeight.bold, 
-              color: Color(0xFF8B4513)
+              color: AppColors.brown
             ),
           )),
         )
@@ -111,13 +113,13 @@ class InquiryReport extends StatelessWidget {
           child: TextButton(
             onPressed: () => tabIndex.value = 0,
             style: TextButton.styleFrom(
-              backgroundColor: tabIndex.value == 0 ? Color(0xFF8B4513) : Colors.white,
+              backgroundColor: tabIndex.value == 0 ? AppColors.brown : AppColors.white,
               padding: EdgeInsets.symmetric(vertical: 16),
             ),
             child: Text(
               '문의내역',
               style: TextStyle(
-                color: tabIndex.value == 0 ? Colors.white : Colors.grey[700],
+                color: tabIndex.value == 0 ? AppColors.white : AppColors.grey,
                 fontWeight: FontWeight.w600,
                 fontSize: 20,
               ),
@@ -129,13 +131,13 @@ class InquiryReport extends StatelessWidget {
           child: TextButton(
             onPressed: () => tabIndex.value = 1,
             style: TextButton.styleFrom(
-              backgroundColor: tabIndex.value == 1 ? Color(0xFF8B4513) : Colors.white,
+              backgroundColor: tabIndex.value == 1 ? AppColors.brown : AppColors.white,
               padding: EdgeInsets.symmetric(vertical: 16),
             ),
             child: Text(
               '답변내역',
               style: TextStyle(
-                color: tabIndex.value == 1 ? Colors.white : Colors.grey[700],
+                color: tabIndex.value == 1 ? AppColors.white : AppColors.grey,
                 fontWeight: FontWeight.w600,
                 fontSize: 20,
               ),
@@ -155,13 +157,13 @@ class InquiryReport extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B4513)),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.brown),
               ),
               SizedBox(height: 16),
               Text(
                 '문의 목록을 불러오는 중...',
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: AppColors.grey,
                   fontSize: 15,
                 ),
               ),
@@ -176,7 +178,7 @@ class InquiryReport extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, size: 60, color: Colors.red),
+              Icon(Icons.error_outline, size: 60, color: AppColors.red),
               SizedBox(height: 16),
               Text(
                 '오류가 발생했습니다',
@@ -186,15 +188,15 @@ class InquiryReport extends StatelessWidget {
               Text(
                 controller.errorMessage.value,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey[600]),
+                style: TextStyle(color: AppColors.grey),
               ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => controller.fetchInquiries(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF8B4513),
+                  backgroundColor: AppColors.brown,
                 ),
-                child: Text('다시 시도', style: TextStyle(color: Colors.white)),
+                child: Text('다시 시도', style: TextStyle(color: AppColors.white)),
               ),
             ],
           ),
@@ -211,24 +213,24 @@ class InquiryReport extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.inbox_outlined, size: 80, color: Colors.grey[400]),
+              Icon(Icons.inbox_outlined, size: 80, color: AppColors.grey),
               SizedBox(height: 16),
               Text(
                 '새로운 문의가 없습니다.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 16, color: AppColors.grey),
               ),
               SizedBox(height: 8),
               Text(
                 '모든 문의에 답변이 완료되었습니다.',
-                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                style: TextStyle(fontSize: 14, color: AppColors.grey),
               ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => controller.fetchInquiries(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF8B4513),
+                  backgroundColor: AppColors.brown,
                 ),
-                child: Text('새로고침', style: TextStyle(color: Colors.white)),
+                child: Text('새로고침', style: TextStyle(color: AppColors.white)),
               ),
             ],
           ),
@@ -237,7 +239,7 @@ class InquiryReport extends StatelessWidget {
 
       return RefreshIndicator(
         onRefresh: () async => controller.fetchInquiries(),
-        color: Color(0xFF8B4513),
+        color: AppColors.brown,
         child: ListView.builder(
           padding: EdgeInsets.all(16),
           itemCount: unansweredInquiries.length,
@@ -253,8 +255,8 @@ class InquiryReport extends StatelessWidget {
                   // 슬라이드 시 반려 버튼 노출
                   SlidableAction(
                     onPressed: (_) => _showRejectConfirmDialog(inquiry.inquiryNum),
-                    backgroundColor: Colors.red[400]!,
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.red,
+                    foregroundColor: AppColors.white,
                     icon: Icons.close,
                     label: '반려',
                     borderRadius: BorderRadius.circular(8),
@@ -264,12 +266,12 @@ class InquiryReport extends StatelessWidget {
               child: Container(
                 margin: EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFF8F0),
+                  color: AppColors.lightpick,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Color(0xFF8B4513).withAlpha(20)),
+                  border: Border.all(color: AppColors.lightbrownopac),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withAlpha(20),
+                      color: AppColors.black.withOpacity(0.1),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),
@@ -285,13 +287,13 @@ class InquiryReport extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: inquiry.inquiryState == '답변완료' 
-                              ? Colors.green : Colors.orange,
+                              ? AppColors.brown : AppColors.lightbrown,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           inquiry.inquiryState,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
@@ -305,7 +307,7 @@ class InquiryReport extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20, 
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[800],
+                          color: AppColors.black,
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -316,7 +318,7 @@ class InquiryReport extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: AppColors.greyopac,
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Column(
@@ -325,7 +327,7 @@ class InquiryReport extends StatelessWidget {
                             Text(
                               'ID: ${inquiry.userId}',
                               style: TextStyle(
-                                color: Colors.grey[700], 
+                                color: AppColors.black, 
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -333,7 +335,7 @@ class InquiryReport extends StatelessWidget {
                             Text(
                               '닉네임: ${inquiry.userNickname}',
                               style: TextStyle(
-                                color: Colors.grey[700], 
+                                color: AppColors.black, 
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -341,7 +343,7 @@ class InquiryReport extends StatelessWidget {
                             Text(
                               '작성일: ${_formatDate(inquiry.inquiryDate)}',
                               style: TextStyle(
-                                color: Colors.grey[600], 
+                                color: AppColors.grey, 
                                 fontSize: 15,
                               ),
                             ),
@@ -354,8 +356,8 @@ class InquiryReport extends StatelessWidget {
                   trailing: ElevatedButton(
                     onPressed: () => _showAnswerDialog(inquiry.inquiryNum),
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color(0xFF8B4513),
+                      foregroundColor: AppColors.white,
+                      backgroundColor: AppColors.brown,
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -383,7 +385,7 @@ class InquiryReport extends StatelessWidget {
       if (controller.isLoading.value) {
         return Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B4513)),
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.brown),
           ),
         );
       }
@@ -398,11 +400,11 @@ class InquiryReport extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.question_answer_outlined, size: 80, color: Colors.grey[400]),
+              Icon(Icons.question_answer_outlined, size: 80, color: AppColors.grey),
               SizedBox(height: 16),
               Text(
                 '답변 완료된 내역이 없습니다.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 16, color: AppColors.grey),
               ),
             ],
           ),
@@ -411,7 +413,7 @@ class InquiryReport extends StatelessWidget {
 
       return RefreshIndicator(
         onRefresh: () async => controller.fetchInquiries(),
-        color: Color(0xFF8B4513),
+        color: AppColors.brown,
         child: ListView.builder(
           padding: EdgeInsets.all(16),
           itemCount: answeredInquiries.length,
@@ -421,12 +423,12 @@ class InquiryReport extends StatelessWidget {
             return Container(
               margin: EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Color(0xFFF0F8F0),
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                border: Border.all(color: AppColors.lightbrown.withOpacity(0.3)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: AppColors.black.withOpacity(0.05),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   ),
@@ -445,13 +447,13 @@ class InquiryReport extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: AppColors.brown,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             '답변완료',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
@@ -460,7 +462,7 @@ class InquiryReport extends StatelessWidget {
                         // 답변일 (responseDate가 있으면 사용, 없으면 현재 날짜)
                         Text(
                           '답변일: ${inquiry.responseDate != null ? _formatDate(inquiry.responseDate!) : _formatDate(DateTime.now())}',
-                          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                          style: TextStyle(fontSize: 16, color: AppColors.grey),
                         ),
                       ],
                     ),
@@ -470,20 +472,20 @@ class InquiryReport extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.grey[300]!),
+                        border: Border.all(color: AppColors.greyopac),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.person, size: 18, color: Colors.grey[600]),
+                          Icon(Icons.person, size: 18, color: AppColors.grey),
                           SizedBox(width: 4),
                           Text(
                             'ID: ${inquiry.userId} | 닉네임: ${inquiry.userNickname}',
                             style: TextStyle(
                               fontSize: 22, 
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey[700],
+                              color: AppColors.black,
                             ),
                           ),
                         ],
@@ -496,23 +498,23 @@ class InquiryReport extends StatelessWidget {
                       width: double.infinity,
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                        color: AppColors.lightpick,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue[200]!),
+                        border: Border.all(color: AppColors.lightbrownopac),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.help_outline, size: 16, color: Colors.blue[700]),
+                              Icon(Icons.help_outline, size: 16, color: AppColors.brown),
                               SizedBox(width: 4),
                               Text(
                                 '문의 내용',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.blue[700],
+                                  color: AppColors.brown,
                                 ),
                               ),
                             ],
@@ -523,7 +525,7 @@ class InquiryReport extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 20, 
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey[800],
+                              color: AppColors.black,
                             ),
                           ),
                         ],
@@ -545,7 +547,7 @@ class InquiryReport extends StatelessWidget {
                               ),
                             ),
                           ),
-                          backgroundColor: Colors.amberAccent,
+                          backgroundColor: AppColors.lightbrown,
                           actions: [
                             ElevatedButton(
                               onPressed: () async {
@@ -563,15 +565,15 @@ class InquiryReport extends StatelessWidget {
                                   Get.snackbar(
                                     '오류',
                                     '답변 수정 중 오류가 발생했습니다.',
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
+                                    backgroundColor: AppColors.red,
+                                    colorText: AppColors.white,
                                   );
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white24,
+                                backgroundColor: AppColors.brown,
                               ),
-                              child: Text('수정')
+                              child: Text('수정', style: TextStyle(color: AppColors.white))
                             )
                           ]
                         );
@@ -581,23 +583,23 @@ class InquiryReport extends StatelessWidget {
                         width: double.infinity,
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.green[50],
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.green[200]!),
+                          border: Border.all(color: AppColors.lightbrown),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.reply, size: 16, color: Colors.green[700]),
+                                Icon(Icons.reply, size: 16, color: AppColors.brown),
                                 SizedBox(width: 4),
                                 Text(
                                   '답변 내용',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.green[700],
+                                    color: AppColors.brown,
                                   ),
                                 ),
                               ],
@@ -607,7 +609,7 @@ class InquiryReport extends StatelessWidget {
                               inquiry.response ?? '',
                               style: TextStyle(
                                 fontSize: 20, 
-                                color: Colors.grey[800],
+                                color: AppColors.black,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -631,7 +633,7 @@ class InquiryReport extends StatelessWidget {
       AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.warning, color: Colors.orange),
+            Icon(Icons.warning, color: AppColors.lightbrown),
             SizedBox(width: 8),
             Text(
               '문의 반려',
@@ -651,7 +653,7 @@ class InquiryReport extends StatelessWidget {
             onPressed: () => Get.back(),
             child: Text(
               '취소',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: AppColors.grey),
             ),
           ),
           ElevatedButton(
@@ -660,11 +662,11 @@ class InquiryReport extends StatelessWidget {
               await controller.deleteInquiry(inquiryNum);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.red,
             ),
             child: Text(
               '반려하기',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: AppColors.white),
             ),
           ),
         ],
@@ -681,14 +683,14 @@ class InquiryReport extends StatelessWidget {
       AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.reply, color: Color(0xFF8B4513)),
+            Icon(Icons.reply, color: AppColors.brown),
             SizedBox(width: 8),
             Text(
               '답변 등록',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF8B4513),
+                color: AppColors.brown,
               ),
             ),
           ],
@@ -704,7 +706,7 @@ class InquiryReport extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: AppColors.greyopac,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -715,7 +717,7 @@ class InquiryReport extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
+                          color: AppColors.black,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -757,7 +759,7 @@ class InquiryReport extends StatelessWidget {
             onPressed: () => Get.back(),
             child: Text(
               '취소',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: AppColors.grey),
             ),
           ),
           ElevatedButton(
@@ -770,8 +772,8 @@ class InquiryReport extends StatelessWidget {
                 Get.snackbar(
                   '알림',
                   '답변 내용을 입력해주세요.',
-                  backgroundColor: Colors.orange,
-                  colorText: Colors.white,
+                  backgroundColor: AppColors.lightbrown,
+                  colorText: AppColors.white,
                 );
                 return;
               }
@@ -783,11 +785,11 @@ class InquiryReport extends StatelessWidget {
               Get.back();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF8B4513),
+              backgroundColor: AppColors.brown,
             ),
             child: Text(
               '답변 등록',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: AppColors.white),
             ),
           ),
         ],

@@ -12,7 +12,8 @@
   [Changelog]
   - 2025.06.05 v1.0.0  :
 // ----------------------------------------------------------------- //
-*/import 'dart:convert';
+*/
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,11 +30,10 @@ class CustomerStoreReview extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Obx(() => Text('에러: ${vm.error.value}')), 
           Expanded(
             child: Obx(() {
               if (vm.myreviews.isEmpty) {
-                return Center(child: Text('작성한 리뷰가 없습니다.'));
+                return Center(child: Text('작성된 리뷰가 없습니다.'));
               }
               return ListView.builder(
                 itemCount: vm.myreviews.length,
@@ -41,14 +41,15 @@ class CustomerStoreReview extends StatelessWidget {
                   final review = vm.myreviews[index];
                   return Card(
                     child: ListTile(
-                      leading: review['user_image'] != null
-                          ? Image.memory(
-                              base64Decode(review['user_image']),
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            )
-                          : Icon(Icons.person),
+                      leading:
+                          review['user_image'] != null
+                              ? Image.memory(
+                                base64Decode(review['user_image']),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              )
+                              : Icon(Icons.person),
                       title: Text(review['user_nickname'] ?? ''),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

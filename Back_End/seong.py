@@ -477,6 +477,48 @@ async def selectstore():
 
     return {"results": result}
 
+
+@router.get("/selectlikestore/{userId}")
+async def selectlikestore(userId:str):
+    conn = connect()
+    curs = conn.cursor()
+    sql = "select s.store_name, s.store_content, s.store_business_hour, s.store_regular_holiday, s.store_temporary_holiday, s.store_phone, s.store_latitude, s.store_longitude, s.store_business_num ,s.store_id, s.store_state from store s, my_store ms where s.store_id = ms.store_id and ms.user_id = %s"
+    curs.execute(sql,userId)
+    rows = curs.fetchall()
+    conn.close()
+    result = [
+        {   
+            "store_name": row[0],
+            "store_content": row[1],
+            "store_business_hour": row[2],
+            "store_regular_holiday": row[3],
+            "store_temporary_holiday": row[4],
+            "store_phone": row[5],
+            "store_latitude": row[6],
+            "store_longitude": row[7],
+            "store_business_num": row[8],
+            "store_id": row[9],
+            "store_state": row[10],
+        }
+        for row in rows
+    ]
+
+    return {"results": result}
+
+
+@router.get("/select/likeStore/{userId}")
+async def selectstore(userId:str):
+    conn = connect()
+    curs = conn.cursor()
+    sql = "select store_id from my_store where user_id=%s"
+    curs.execute(sql,(userId,))
+    rows = curs.fetchall()
+    results = [{'my_store':row[0]}for row in rows]
+    conn.close()
+    return {"results": results }
+
+
+
 # 스토어 업데이트용. 스토어 아이디 Pk값안에있는 내용들을불러옴.
 # 패스워드 네임등 회원가입시만든페이지에 있는 것들은text로 리드온리로표현할것.
 @router.put("/updatestore")
