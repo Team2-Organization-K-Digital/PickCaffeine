@@ -77,7 +77,7 @@ Center(
                   await accountHandler.usernicknameDoubleCheck(nickNameController.text.trim().toString());
                   accountHandler.nickDoubleCheck.value == 0
                   ? _showIdDialogue('닉네임', nickNameController.text.trim())
-                  : Get.snackbar('닉네임 중복', '다른 닉네임를 이용 해주세요.');
+                  : Get.snackbar('닉네임 중복', '다른 닉네임를 이용 해주세요.', backgroundColor: AppColors.red, colorText: AppColors.white);
                 }
               },),
               SizedBox(height: 30),

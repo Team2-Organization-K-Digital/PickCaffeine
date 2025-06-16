@@ -23,6 +23,7 @@ import 'package:pick_caffeine_app/view/customer/customer_store_review.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
+import 'package:pick_caffeine_app/view/store/store_update.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -428,7 +429,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(fixedSize: Size(210, 50)),
                       onPressed: () {
-                        //
+                        Get.to(()=>StoreUpdate());
                       },
                       child: Text("가게 정보 수정", style: TextStyle(fontSize: 22)),
                     ),

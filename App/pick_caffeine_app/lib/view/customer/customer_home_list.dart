@@ -72,7 +72,7 @@ class CustomerHomeList extends StatelessWidget {
   Widget _listView(List<Stores> storeList) {
     return SizedBox(
       width: double.infinity,
-      height: 240,
+      height: 260,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: storeList.length > 6 ? 6 : storeList.length,
@@ -83,7 +83,7 @@ class CustomerHomeList extends StatelessWidget {
           return GestureDetector(
             onTap: () async {
               await storeHandler.box.write('storeId', store.storeId);
-              Get.to(() => CustomerStoreDetail());
+              Get.to(() => CustomerStoreDetail())!.then((_)=> storeHandler.fetchStore());
             },
             child: Container(
               width: 200,
@@ -205,7 +205,8 @@ class CustomerHomeList extends StatelessWidget {
                     ),
 
                     // Text : store_name
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -222,7 +223,7 @@ class CustomerHomeList extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
+                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                           child: Row(
                             children: [
                               Icon(
@@ -232,7 +233,7 @@ class CustomerHomeList extends StatelessWidget {
                               ),
                               SizedBox(width: 4),
                               Text(
-                                '${store.distance.toStringAsFixed(1)} km',
+                                '${store.distance.toStringAsFixed(1)} m',
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],

@@ -11,6 +11,7 @@ class StoreHandler extends ChartHandler {
   final RxList<Stores> sortedByDistance = <Stores>[].obs;
   final RxList<Stores> sortedByReview = <Stores>[].obs;
   final RxList<Stores> sortedByZzim = <Stores>[].obs;
+  final RxList<Stores> searchStoreData = <Stores>[].obs;
 // final box = GetStorage();
   final RxBool isLoading = false.obs;
 
@@ -19,6 +20,7 @@ class StoreHandler extends ChartHandler {
 // ---------------------------------------------------------------------------- //
 // 1. 전체 매장을 불러오는 함수
   Future<void> fetchStore() async {
+    storeData.clear();
     isLoading.value = true;
     await getCurrentLocation();
     try {
@@ -30,7 +32,7 @@ class StoreHandler extends ChartHandler {
             double storeLat = data['store_latitude'];
             double storeLng = data['store_longitude'];
             double distanceKm = Distance().as(
-              LengthUnit.Kilometer,
+              LengthUnit.Meter,
               LatLng(storeLat, storeLng),
               LatLng(currentLatitude, currentLongitude),
             );
@@ -44,7 +46,7 @@ class StoreHandler extends ChartHandler {
               storeImage: data['storeimage']
             );
           }).toList();
-          print(returnResult);
+          // print(returnResult);
       storeData.value = returnResult;
       sortAllStoreLists();
     } catch (e, stack) {
@@ -80,6 +82,51 @@ class StoreHandler extends ChartHandler {
       ..sort((a, b) => b.reviewCount.compareTo(a.reviewCount));
     sortedByZzim.value = [...storeData]
       ..sort((a, b) => b.myStoreCount.compareTo(a.myStoreCount));
+  }
+// ---------------------------------------------------------------------------- //
+  Future<void> fetchSearchStore(String searchName) async {
+    // print('start');
+    searchStoreData.clear();
+    isLoading.value = true;
+    await getCurrentLocation();
+    // print('location ok');
+    try {
+      final res = await http.get(Uri.parse("$baseUrl/select/search/store/$searchName"));
+      // print('res ok');
+      final data = json.decode(utf8.decode(res.bodyBytes));
+      // print('data ok');
+      // print(data);
+      final List results = data['results'];
+      // print(results);
+      final List<Stores> returnResult =
+          results.map((data) {
+            double storeLat = data['store_latitude'];
+            double storeLng = data['store_longitude'];
+            double distanceKm = Distance().as(
+              LengthUnit.Meter,
+              LatLng(storeLat, storeLng),
+              LatLng(currentLatitude, currentLongitude),
+            );
+            // print('map ok');
+            return Stores(
+              storeId: data['store_id'],
+              storeName: data['store_name'],
+              myStoreCount: data['zzim'],
+              reviewCount: data['review'],
+              distance: distanceKm,
+              storeState: data['store_state'],
+              storeImage: data['storeimage']
+            );
+          }).toList();
+          //   print('return ok');
+          // print(returnResult);
+      searchStoreData.value = returnResult;
+    } catch (e, stack) {
+      print('Error fetching store: $e');
+      print(stack);
+    } finally {
+      isLoading.value = false;
+    }
   }
 // ---------------------------------------------------------------------------- //
 }// class

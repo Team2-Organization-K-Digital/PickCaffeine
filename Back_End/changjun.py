@@ -457,8 +457,11 @@ async def selectQuantityData(store_id : str, year : str, month : str, menu_num: 
     except Exception as e:
         print("Error :", e)
         return{'result' : 'Error'}
-# ----------------------------------------------------------------------------------- #
-# 6. 고객이 처음 로그인 하였을 때 나타날 매장 data 를 추출하는 함수
+# -------------------------------------------------------------------------------------------- #
+
+
+# ----------------------------- customer_home_list.dart -------------------------------------- #
+# 1. 고객이 처음 로그인 하였을 때 나타날 매장 data 를 추출하는 함수
 @router.get('/select/store')
 async def selectStore():
     try:
@@ -471,18 +474,25 @@ async def selectStore():
             s.store_name,
             s.store_latitude,
             s.store_longitude,
-            COUNT(DISTINCT ms.store_id) AS zzim,
-            COUNT(DISTINCT r.review_num) AS review,
+            COALESCE(z.zzim_count, 0) AS zzim,
+            COALESCE(rv.review_count, 0) AS review,
             s.store_state,
             si.image_1
             FROM store AS s
-            LEFT JOIN my_store AS ms ON s.store_id = ms.store_id
-            LEFT JOIN purchase_list AS p ON s.store_id = p.store_id
-            LEFT JOIN review AS r ON r.purchase_num = p.purchase_num
-            LEFT JOIN store_image AS si ON s.store_id = si.store_id
-            GROUP BY s.store_id
+            LEFT JOIN (
+            SELECT store_id, COUNT(*) AS zzim_count
+            FROM my_store
+            GROUP BY store_id
+            ) AS z ON s.store_id = z.store_id
+            LEFT JOIN (
+            SELECT p.store_id, COUNT(DISTINCT r.review_num) AS review_count
+            FROM purchase_list p
+            JOIN review r ON r.purchase_num = p.purchase_num
+            GROUP BY p.store_id
+            ) AS rv ON s.store_id = rv.store_id
+            LEFT JOIN store_image AS si ON s.store_id = si.store_id;
             """
-            )
+        )
         rows = curs.fetchall()
         
         results = []
@@ -500,6 +510,97 @@ async def selectStore():
         print("Error :", e)
         return{'result' : 'Error'}
 # ----------------------------------------------------------------------------------- #
+
+
+# -------------------------- customer_search.dart ----------------------------------- #
+# 1. 고객이 검색으로 매장을 찾기 위한 함수
+@router.get('/select/search/store/{store_name}')
+async def selectSearchStore(store_name : str):
+    try:
+        conn = connect()
+        curs = conn.cursor()
+
+        if store_name == '전체':
+            query = """
+                SELECT 
+                    s.store_id,
+                    s.store_name,
+                    s.store_latitude,
+                    s.store_longitude,
+                    COALESCE(z.zzim_count, 0) AS zzim,
+                    COALESCE(rv.review_count, 0) AS review,
+                    s.store_state,
+                    si.image_1
+                FROM store AS s
+                LEFT JOIN (
+                    SELECT store_id, COUNT(*) AS zzim_count
+                    FROM my_store
+                    GROUP BY store_id
+                ) AS z ON s.store_id = z.store_id
+                LEFT JOIN (
+                    SELECT p.store_id, COUNT(DISTINCT r.review_num) AS review_count
+                    FROM purchase_list p
+                    JOIN review r ON r.purchase_num = p.purchase_num
+                    GROUP BY p.store_id
+                ) AS rv ON s.store_id = rv.store_id
+                LEFT JOIN store_image AS si ON s.store_id = si.store_id
+                ORDER BY store_name
+            """
+            curs.execute(query)
+        else:
+            query = """
+                SELECT 
+                    s.store_id,
+                    s.store_name,
+                    s.store_latitude,
+                    s.store_longitude,
+                    COALESCE(z.zzim_count, 0) AS zzim,
+                    COALESCE(rv.review_count, 0) AS review,
+                    s.store_state,
+                    si.image_1
+                FROM store AS s
+                LEFT JOIN (
+                    SELECT store_id, COUNT(*) AS zzim_count
+                    FROM my_store
+                    GROUP BY store_id
+                ) AS z ON s.store_id = z.store_id
+                LEFT JOIN (
+                    SELECT p.store_id, COUNT(DISTINCT r.review_num) AS review_count
+                    FROM purchase_list p
+                    JOIN review r ON r.purchase_num = p.purchase_num
+                    GROUP BY p.store_id
+                ) AS rv ON s.store_id = rv.store_id
+                LEFT JOIN store_image AS si ON s.store_id = si.store_id
+                WHERE s.store_name LIKE %s
+                ORDER BY store_name
+            """
+            curs.execute(query, (f"%{store_name}%",))
+
+        rows = curs.fetchall()
+
+        results = []
+        for row in rows:
+            store_id, store_name, store_latitude, store_longitude, zzim, review, store_state, image_1 = row
+            storeimage = base64.b64encode(image_1).decode('utf-8') if image_1 else None
+            results.append({
+                'store_id': store_id,
+                'store_name': store_name,
+                'store_latitude': store_latitude,
+                'store_longitude': store_longitude,
+                'zzim': zzim,
+                'review': review,
+                'store_state': store_state,
+                'storeimage': storeimage
+            })
+
+        conn.close()
+        return {'results': results}
+
+    except Exception as e:
+        print("Error:", e)
+        return {'results': 'Error'}
+# ----------------------------------------------------------------------------------- #
+
 
 # -------------------------- account_handler.dart ----------------------------------- #
 # 1. 사용자가 입력한 값을 database 에 insert 함 으로써 계정을 생성하는 함수

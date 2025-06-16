@@ -60,10 +60,10 @@ Future<dynamic> userIdDoubleCheck(String id)async{
 // ---------------------------------------------------------------------------------- //
 // 3. 고객 회원가입 시 입력한 nickname 값이 database 에 존재하는지 확인하는 함수
 Future<dynamic> usernicknameDoubleCheck(String nickname)async{
-  doubleCheck.value = 0;
-  final res = await http.get(Uri.parse("$baseUrl/select/userid/doubleCheck/$nickname"));
+  nickDoubleCheck.value = 0;
+  final res = await http.get(Uri.parse("$baseUrl/select/usernickname/doubleCheck/$nickname"));
   final data = json.decode(utf8.decode(res.bodyBytes))['results'];
-  return doubleCheck.value = int.parse(data[0]['count'].toString());
+  return nickDoubleCheck.value = int.parse(data[0]['count'].toString());
 }
 // ---------------------------------------------------------------------------------- //
 // 4. 로그인 시 사용자가 입력한 id 와 password 값이 일치하는 data 가 database (users, store, admin) 에 존재하는지 확인하는 함수

@@ -52,7 +52,6 @@ class StoreChartDuration extends StatelessWidget {
     // ----------------------------------------------------------------- //
     return Obx(() {
       return Scaffold(
-        backgroundColor: AppColors.lightpick,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
@@ -451,7 +450,7 @@ class StoreChartDuration extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 200,)
+                  SizedBox(height: 50)
                 ],
               ),
             ),

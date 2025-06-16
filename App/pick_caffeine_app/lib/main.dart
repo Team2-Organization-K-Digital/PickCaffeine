@@ -8,6 +8,7 @@ import 'package:pick_caffeine_app/view/store/store_purchase_list.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
+import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Login(),
+      home: AdminStatistics(),
     );
   }
 }
