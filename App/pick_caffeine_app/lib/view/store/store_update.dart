@@ -29,7 +29,6 @@ import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 import 'package:pick_caffeine_app/widget_class/utility/button_brown.dart';
 
-import '../../vm/Eunjun/vm_handler_temp.dart';
 
 class StoreUpdate extends StatelessWidget {
   StoreUpdate({super.key});
@@ -50,7 +49,7 @@ class StoreUpdate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   final Store store = Get.arguments;
+  final Store store = Get.arguments;
 
     //  handler.fetchStore(storeId);
 
@@ -65,7 +64,7 @@ if (store == null) {
     tempController.text = store.store_temporary_holiday;
     phoneController.text = store.store_phone;
     addressController.text = store.store_address;
-    addressDetailController.text = store.store_address_detail;
+    addressDetailController.text = store.store_addressdetail;
 
     return Scaffold(
       body: SafeArea(
@@ -192,9 +191,8 @@ if (store == null) {
                         };
         
                           await vm.updatestore(updatePayload).then((_) async {
-                            Get.back(result: true);
+                            Get.back(result: true);              
                             });
-        
                       if (image.imageFile.value != null) {
                       final bytes = await image.imageFile.value!.readAsBytes();
                         final imageBase64 = base64Encode(bytes);

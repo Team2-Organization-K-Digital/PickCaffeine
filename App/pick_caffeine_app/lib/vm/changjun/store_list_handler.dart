@@ -35,13 +35,13 @@ class StoreHandler extends ChartHandler {
               LatLng(currentLatitude, currentLongitude),
             );
             return Stores(
-              storeId: data['store_id'],
-              storeName: data['store_name'],
-              myStoreCount: data['zzim'],
-              reviewCount: data['review'],
+              storeId: data['store_id']?? '',
+              storeName: data['store_name']?? '',
+              myStoreCount: data['zzim']?? '',
+              reviewCount: data['review']?? '',
               distance: distanceKm,
-              storeState: data['store_state'],
-              storeImage: data['storeimage']
+              storeState: data['store_state']?? '',
+              storeImage: data['storeimage']?? '',
             );
           }).toList();
           print(returnResult);

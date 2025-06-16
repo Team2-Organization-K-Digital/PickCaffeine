@@ -32,33 +32,39 @@ class VmHanderStore extends VmHandlerMenu {
             store_content: data['store_content'] ?? '',
             store_state: data['store_state'],
             store_business_num: data['store_business_num'],
-            store_regular_hoilday: data['store_regular_holiday'],
+            store_regular_holiday: data['store_regular_holiday'],
             store_temporary_holiday: data['store_temporary_holiday'] ?? "",
             store_business_hour: data['store_business_hour'] ?? '',
             store_created_date: data['store_created_date'],
           );
         }).toList();
-    print(returnResult[0].store_regular_hoilday);
+    print(returnResult[0].store_regular_holiday);
     loginStore.value = returnResult;
   }
 
-  Future<void> fetchStoreImage(String storeId) async {
-    final res = await http.get(
-      Uri.parse('$baseUrl/select/storeImage/${storeId}'),
-    );
-    final datas = json.decode(utf8.decode(res.bodyBytes));
+ Future<void> fetchStoreImage(String storeId) async {
+  final res = await http.get(
+    Uri.parse('$baseUrl/select/storeImage/$storeId'),
+  );
+  final datas = json.decode(utf8.decode(res.bodyBytes));
+
+  if (datas['results'] != null &&
+      datas['results'] is List &&
+      datas['results'].isNotEmpty) {
 
     final List results = datas['results'][0];
 
     for (int i = 1; i < results.length; i++) {
-      if (results[i] == null) {
-        return;
-      }
+      if (results[i] == null) return;
+
       storeImages.add(
         Image.memory(base64Decode(results[i]), fit: BoxFit.cover),
       );
     }
+  } else {
+    print("이미지 결과 없음");
   }
+}
 
   fetchStore(String storeId) async {
     if (fetchValue.value) {

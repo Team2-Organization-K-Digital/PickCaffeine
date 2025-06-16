@@ -4,7 +4,7 @@ class Store {
   final String store_name;
   final String store_phone;
   final String store_address;
-  final String store_address_detail;
+  final String store_addressdetail;
   final double store_latitude;
   final double store_longitude;
   final String store_content;
@@ -21,7 +21,7 @@ class Store {
     required this.store_name,
     required this.store_phone,
     required this.store_address,
-    required this.store_address_detail,
+    required this.store_addressdetail,
     required this.store_latitude,
     required this.store_longitude,
     required this.store_content,
@@ -40,7 +40,7 @@ class Store {
       'store_name': store_name,
       'store_phone': store_phone,
       'store_address': store_address,
-      'store_addressdetail': store_address_detail,
+      'storeaddressdetail': store_addressdetail,
       'store_latitude': store_latitude,
       'store_longitude': store_longitude,
       'store_content': store_content,

@@ -295,11 +295,19 @@ class ChartHandler extends AccountHandler{
       final res = await http.get(Uri.parse("$baseUrl/selectDuration/$storeId"));
       final data = json.decode(utf8.decode(res.bodyBytes))['results'];
       // print(data);
-      int storeYear = data[0]['year'];
-      int storeMonth = data[0]['month'];
-      await addDurationList(storeYear,storeMonth);
-      return "Success";
+
+
+   if (data != null && data is List && data.isNotEmpty) {
+    int storeYear = data[0]['year'] ?? 0;
+    int storeMonth = data[0]['month'] ?? 0;
+    await addDurationList(storeYear, storeMonth);
+    return "Success";
+  } else {
+    // 비어 있을 경우 기본값 처리 또는 예외 처리
+    await addDurationList(0, 0); // 또는 return "No data";
+    return "No data";
   }
+}
 // ---------------------------------------------------------------------------------- //
 // 3-1. 해당 매장의 가입 연도, 월 부터 오늘 날짜의 연도, 월 에 해당하는 list 를 추출하는 함수
 addDurationList(int storeYear, int storeMonth){
@@ -329,10 +337,16 @@ addDurationList(int storeYear, int storeMonth){
       final res = await http.get(Uri.parse("$baseUrl/selectDuration/year/$storeId"));
       final data = json.decode(utf8.decode(res.bodyBytes))['results'];
       // print(data);
-      int storeYear = data[0]['year'];
-      await addDurationYearList(storeYear);
-      return "Success";
+      if (data != null && data is List && data.isNotEmpty) {
+    int storeYear = data[0]['year'] ?? 0;
+    await addDurationYearList(storeYear);
+    return "Success";
+  } else {
+    // 데이터 없을 때 처리
+    await addDurationYearList(0);  // 또는 예외 throw 가능
+    return "No data";
   }
+}
 // ---------------------------------------------------------------------------------- //
 // 4-1. 매장의 생성 연도 부터 오늘 날짜의 연도 까지를 list 에 추가하는 함수
 addDurationYearList(int storeYear){
