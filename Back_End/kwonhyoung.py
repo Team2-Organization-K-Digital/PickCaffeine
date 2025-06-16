@@ -29,20 +29,6 @@ def connect():
     )
 # =================== 로그인 관련 API ===================
 
-from fastapi import APIRouter, Form, HTTPException
-import pymysql
-
-router = APIRouter()
-
-def connect():
-    return pymysql.connect(
-        host='127.0.0.1',
-        user='root',
-        password='qwer1234',
-        db='pick_caffeine',
-        charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor
-    )
 
 @router.post('/admin_login')
 async def admin_login(
