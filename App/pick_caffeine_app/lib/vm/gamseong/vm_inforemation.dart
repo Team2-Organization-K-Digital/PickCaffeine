@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:pick_caffeine_app/model/gamseong/user_information.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_review.dart';
 
 class VmInformation extends VmReview {

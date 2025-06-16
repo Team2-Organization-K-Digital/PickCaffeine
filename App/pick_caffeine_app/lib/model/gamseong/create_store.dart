@@ -6,6 +6,7 @@ class CreateStore {
   final int store_business_num;
   final String store_address;
   final String store_address_detail;
+  final String store_created_date;
 
   CreateStore({
     this.store_id,
@@ -15,6 +16,8 @@ class CreateStore {
     required this.store_business_num,
     required this.store_address,
     required this.store_address_detail,
+    required this.store_created_date,
+    
 
   });
 
@@ -27,6 +30,7 @@ class CreateStore {
       store_business_num: map['store_business_num'],
       store_address: map['store_address'],
       store_address_detail: map['store_address_detail'],
+      store_created_date: map['store_created_date'],
     );
   }
 
@@ -39,6 +43,7 @@ class CreateStore {
       'store_business_num': store_business_num,
       'store_address': store_address,
       'store_address_detail': store_address_detail,
+      'store_created_date': store_created_date,
     };
 
   }

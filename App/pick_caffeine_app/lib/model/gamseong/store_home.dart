@@ -13,6 +13,8 @@ class StoreHome {
   final String store_regular_holiday; //정기휴무
   final String store_temporary_holiday; // 임시휴무
   final String store_business_hour; //영업시간
+    final String store_created_date;
+  
 
 
 
@@ -32,6 +34,7 @@ class StoreHome {
       required this.store_regular_holiday,
       required this.store_temporary_holiday,
       required this.store_business_hour,
+      required this.store_created_date,
     }
   );
 
@@ -46,11 +49,12 @@ factory StoreHome.fromMap(Map<String, dynamic> map) {
     store_latitude: map['store_latitude']?.toDouble() ?? 0.0,
     store_longitude: map['store_longitude']?.toDouble() ?? 0.0,
     store_content: map['store_content'] ?? '',
-    store_state: map['store_state']  ?? '' ,
-    store_business_num: map['store_business_num'] ?? '',
+    store_state: map['store_state']  ?? 0 ,
+    store_business_num: map['store_business_num'] ?? 0,
     store_regular_holiday: map['store_regular_holiday'] ?? '',
     store_temporary_holiday: map['store_temporary_holiday'] ?? '',
     store_business_hour: map['store_business_hour'] ?? '',
+    store_created_date: map['store_created_date'] ?? '',
   );
 }
 
@@ -70,6 +74,7 @@ Map<String, dynamic> toMap() {
     'store_regular_holiday': store_regular_holiday,
     'store_temporary_holiday': store_temporary_holiday,
     'store_business_hour': store_business_hour,
+    'store_created_date': store_created_date,
   };
 }
 

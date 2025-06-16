@@ -13,7 +13,7 @@ from typing import Optional
 from datetime import datetime
 # -------------------------------- Property  ---------------------------------------- #
 #선언될 ip 권형님 , py 창준님 어드민변경햇음 525
-ip = "127.0.0.1"
+ip = "192.168.50.2"
 router = APIRouter()
 
 # MySQL server host
@@ -21,7 +21,7 @@ def connect():
     return pymysql.connect(
         host=ip,
         user="root",
-        password="qwer1234",
+        password="qwer1234qwer1234",
         db="pick_caffeine",
         charset="utf8"
     )
@@ -54,6 +54,7 @@ class StoreHome(BaseModel):
     store_regular_holiday:str
     store_temporary_holiday:str
     store_business_hour:str
+    store_create_date:datetime
 
 # 리뷰 기본 겟 . 리뷰에만 데이터가 잘 들어가는걸 단순히 보는용도
 # 
@@ -96,6 +97,104 @@ class updateinformation(BaseModel):
     user_email: Optional[str] = None
     user_image: Optional[str] = None
 
+
+class updatestoreImage(BaseModel):
+    store_image: str
+    store_id:str
+
+class updatestore(BaseModel):
+    store_name:Optional[str] =None
+    store_phone:Optional[str] =None
+    store_address:Optional[str] =None
+    store_address_detail:Optional[str] =None
+    store_latitude:Optional[float] = None
+    store_longitude:Optional[float] = None
+    store_content:Optional[str] = None
+    store_state:Optional[int] = None
+    store_business_num:Optional[int] = None
+    store_regular_holiday:Optional[str] =None
+    store_temporary_holiday:Optional[str] =None
+    store_business_hour:Optional[str] =None
+    
+
+# 스토어업데이트
+@router.put("/update/store/updatestore/{store_id}")
+async def updatestore(store_id: str,update: updatestore):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        sql = """
+        UPDATE store SET 
+    store_name =%s,
+    store_phone =%s,
+    store_address =%s,
+    store_address_detail =%s,
+    store_latitude =%s,
+    store_longitude =%s,
+    store_content=%s,
+    store_state =%s,
+    store_business_num =%s,
+    store_regular_holiday = %s,
+    store_temporary_holiday =%s,
+    store_business_hour = %s
+        WHERE store_id = %s
+        """
+        curs.execute(sql, (
+            update.store_name,
+            update.store_phone,
+            update.store_address,
+            update.store_address_detail,
+            update.store_latitude,
+            update.store_longitude,
+            update.store_content,
+            update.store_state,
+            update.store_business_num,
+            update.store_regular_holiday,
+            update.store_temporary_holiday,
+            update.store_business_hour,
+            store_id
+        ))
+        conn.commit()
+        return {"result": "ok"}
+    except Exception as e:
+        return {"result": "error", "detail": str(e)}
+    finally:
+        conn.close()
+
+#스토어 이미지 업데이트
+@router.put("/update/storeImage/{storeid}")
+async def updatestoreImage(store_id: str,update: updatestoreImage):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+            sql = "update store_image set store_image =%s where store_id = %s"
+            curs.execute(sql,(
+            update.store_image,
+            store_id
+            ))
+            conn.commit()
+            return {'result': 'ok'}
+    except Exception as e:
+        return {'result': 'error', 'detail': str(e)}
+    finally:
+        conn.close()
+
+# 스토어 이미지보기.
+@router.get("/select/storeImage/{storeId}")
+async def select(storeId : str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT store_image FROM store_image WHERE store_id = %s", (storeId,))
+        rows = curs.fetchall()
+        
+        if not rows:
+            return {"results": []}
+        return {"results": [row[0] for row in rows]}
+    except Exception as e:
+        return {"result": "error", "detail": str(e)}
+    finally:
+        conn.close()
     
 # 유저정보들이 들어있는인포
 @router.get("/user/information")
@@ -125,9 +224,10 @@ async def informationuserid(user_id: str):
     curs = conn.cursor()
     try:
             sql =   """
-            select user_id,user_nickname,user_password,
+            select 
+            user_id,user_nickname,user_password,
             user_phone,user_email,user_state,user_create_date,
-            user_image
+            user_image,
             from users
             where user_id = %s
             """
@@ -139,8 +239,6 @@ async def informationuserid(user_id: str):
     finally:
         conn.close()
     
-
-
 # 업데이틍 유저 정보
 @router.put("/update/user/information")
 async def updateinformation(update: updateinformation):
@@ -191,21 +289,22 @@ async def selectreview():
     finally:
         conn.close()
 
+#유저리뷰
 @router.get("/user/reviews/{user_id}")
 async def userreviews(user_id: str):
     conn = connect()
     curs = conn.cursor()
     try:
         sql = """
-            SELECT r.review_num,
+            select r.review_num,
                 r.review_content,
                 r.review_image,
                 r.review_date,
                 r.review_state,
                 p.store_id
-            FROM review r
-            JOIN purchase_list p ON r.purchase_num = p.purchase_num
-            WHERE p.user_id = %s
+            from review r
+            join purchase_list p ON r.purchase_num = p.purchase_num
+            where p.user_id = %s
         """
         curs.execute(sql, (user_id,))
         rows = curs.fetchall()
@@ -240,16 +339,49 @@ async def informationreview(user_id: str):
     finally:
         conn.close()
 
+
+# 스토어에 보이는리뷰
+@router.get("/stores/reviews")
+async def get_store_reviews(store_id: str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        sql = """
+            SELECT 
+                r.review_num, r.review_content, r.review_image,
+                r.review_date, r.review_state, p.store_id
+            FROM review r
+            JOIN purchase_list p ON r.purchase_num = p.purchase_num
+            WHERE p.store_id = %s
+            ORDER BY r.review_date DESC
+        """
+        curs.execute(sql, (store_id,))
+        rows = curs.fetchall()
+        return {"result": "OK", "data": rows}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+
+
+
 # ** //  새로운스토어만들기 //  **
 # 로그인시 나오는데이터를 기본베이스로 만들어서 Text로만표기햇고. 포스나머지 0.0 '' 등은 
 # sql문에맞춰서 순서만만든것 . 포스트방식이기때문에 기본 null값으로잡고 페이지를 하나만들어서넣음.
 # 빈페이지. 껍데기만있는페이지에 로그인시넣는데이터만들어간상태로 페이지를하나만듬.
 @router.post("/createstore")
-async def createstore(createstore:Createstore):
+async def createstore(createstore: Createstore):
     conn = connect()
     curs = conn.cursor()
     try:
-        sql = "insert into store(store_id,store_password,store_name,store_phone,store_business_num,store_address,store_address_detail,store_latitude, store_longitude, store_content,store_state, store_regular_holiday, store_temporary_holiday, store_business_hour)values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql = """
+            INSERT INTO store(
+                store_id, store_password, store_name, store_phone, store_business_num,
+                store_address, store_address_detail, store_latitude, store_longitude,
+                store_content, store_state, store_regular_holiday, 
+                store_temporary_holiday, store_business_hour, store_created_date
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
         curs.execute(sql, (
             createstore.store_id,
             createstore.store_password,
@@ -258,26 +390,25 @@ async def createstore(createstore:Createstore):
             createstore.store_business_num,
             createstore.store_address,
             createstore.store_address_detail,
-            0.0,                        # 위도 (기본값)
-            0.0,                        # 경도 (기본값)
-            '',                         # 매장 설명
-            -1,                         # 상태
-            '',                         # 정기휴무
-            '',                         # 임시휴무
-            '',                         # 영업시간
-            
+            0.0,
+            0.0,
+            '',
+            0,
+            '',
+            '',
+            '',
+            datetime.now().strftime("%Y-%m-%d")
         ))
         conn.commit()
-        return {'result' : 'OK'}
-    except Exception as ex:
-        print("❗ INSERT 오류:", ex)
-        return {'result': 'Error', 'detail': str(ex)}
+        return {"result": "OK"}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
     finally:
         conn.close()
     
     #매장회원가입할떄 아이디를 Db에있는지 체크하는용도. 중복확인
-@router.get("/checkid/{store_id}")
-def checkid(store_id: str):
+@router.get("/select/store/checkid/{store_id}")
+async def checkid(store_id: str):
     conn = connect()
     curs = conn.cursor()
     try:
@@ -288,19 +419,39 @@ def checkid(store_id: str):
         return {"result": "Error", "detail": str(e)}
     finally:
         conn.close()
+
+        #매장회원가입할떄 매장 네임 이 db에있는지 체크하는용도 . 중복확인
+@router.get('/select/store/nameCheck/{store_name}')
+async def selectstorename(store_name : str):
+    conn = connect()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT * FROM store WHERE store_name =%s", (store_name, ))
+        result = curs.fetchone()
+        return {"exists": bool(result)}
+    except Exception as e:
+        return {"result": "Error", "detail": str(e)}
+    finally:
+        conn.close()
+        
+
+    
+    #유저 닉네임체크
 @router.get('/myinformation/checknickname/{usernickname}')
 async def myinformationchecknickname(usernickname : str):
     conn = connect()
     curs = conn.cursor()
     curs.execute(
-        "SELECT count(*) FROM users where user_nickname =%s", (usernickname, ))
+        "SELECT * FROM users where user_nickname =%s", (usernickname, ))
     rows = curs.fetchall()
     conn.close()
     result = [{'count' : row[0]}for row in rows]
     return {'results' : result}
 
 
-# **//개인db저장용 // **
+
+
+# **// // **
 # 스토어에 있는정보를 순서대로넣기위해서 만든스토어용
 @router.get("/selectstore")
 async def selectstore():
@@ -323,36 +474,6 @@ async def selectstore():
             "store_business_num": row[8],
             "store_id": row[9],
             "store_state": row[10],
-        }
-        for row in rows
-    ]
-
-    return {"results": result}
-
-@router.get("/getstore/{storeId}")
-async def selectstore(storeId:str):
-    conn = connect()
-    curs = conn.cursor()
-    sql = "select store_name, store_content, store_business_hour, store_regular_holiday, store_temporary_holiday, store_phone, store_latitude, store_longitude, store_business_num ,store_id, store_state,store_address,store_address_detail,store_phone from store where store_id = %s"
-    curs.execute(sql,(storeId))
-    rows = curs.fetchall()
-    conn.close()
-    result = [
-        {   
-            "store_name": row[0],
-            "store_content": row[1],
-            "store_business_hour": row[2],
-            "store_regular_holiday": row[3],
-            "store_temporary_holiday": row[4],
-            "store_phone": row[5],
-            "store_latitude": row[6],
-            "store_longitude": row[7],
-            "store_business_num": row[8],
-            "store_id": row[9],
-            "store_state": row[10],
-            "store_address":row[11],
-            "store_address_detail":row[12],
-            "store_phone":row[13]
         }
         for row in rows
     ]
@@ -403,7 +524,7 @@ async def selectstore(userId:str):
 
 # 스토어 업데이트용. 스토어 아이디 Pk값안에있는 내용들을불러옴.
 # 패스워드 네임등 회원가입시만든페이지에 있는 것들은text로 리드온리로표현할것.
-@router.post("/updatestore")
+@router.put("/updatestore")
 async def updatestore(store: StoreHome):
     conn = connect()
     curs = conn.cursor()
@@ -417,20 +538,22 @@ async def updatestore(store: StoreHome):
     finally:
         conn.close()
 
+
+
 # 찜목록모델설정. 모델설정후 찜한목록이 지도예뜨나 확인용
-@router.get("/mystore")
-async def mystore():
-    try:  
-        conn = connect()
-        curs = conn.cursor()
-        sql = "select u.name AS user_name, s.store_name, m.selected_date from my_store m join users u  m.user_id = u.user_id join store s on m.store_id = s.store_id"
-        curs.execute(sql)
-        rows = curs.fetchall()
-        conn.close()
-    except Exception as e:
-        return {"result": "Error", "detail": str(e)}
-    finally:
-        conn.close()
+# @router.get("/mystore")
+# async def mystore():
+#     try:  
+#         conn = connect()
+#         curs = conn.cursor()
+#         sql = "select u.name AS user_name, s.store_name, m.selected_date from my_store m join users u  m.user_id = u.user_id join store s on m.store_id = s.store_id"
+#         curs.execute(sql)
+#         rows = curs.fetchall()
+#         conn.close()
+#     except Exception as e:
+#         return {"result": "Error", "detail": str(e)}
+#     finally:
+#         conn.close()
 
 # @router.get("myinforrmation")
 # async def myinformation():
