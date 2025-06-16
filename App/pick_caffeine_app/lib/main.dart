@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/view/admin/admin_statistics.dart';
 import 'package:pick_caffeine_app/view/login/login.dart';
 import 'package:pick_caffeine_app/view/store/store_purchase_list.dart';
@@ -13,7 +14,7 @@ import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_image_handler.dart';
 
-void main() {
+void main() async{
   // ------------------- //
   // ChangJun : vm Temp & Tabbar
   Get.put(JunTemp());
@@ -25,6 +26,8 @@ void main() {
   Get.put(Order());
   Get.put(VmImageHandler());
   Get.put(Vmgamseong()..checkLocationPermission());
+ 
+  // await GetStorage().initStorage;
 
   runApp(const MyApp());
 }
@@ -59,7 +62,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: StorePurchaseList(),
+      home: Login(),
     );
   }
 }

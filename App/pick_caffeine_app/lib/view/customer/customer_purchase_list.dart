@@ -60,8 +60,8 @@ class CustomerPurchaseList extends StatelessWidget {
               child:
                   order.index.value < 0
                       ? Center(child: CircularProgressIndicator())
-                      : order.purchase.isEmpty
-                      ? Text('주문내역이 없습니다.')
+                      // : order.fetchPurchase('loginId').isNull
+                      // ? Text('주문내역이 없습니다.')
                       : ListView.builder(
                         itemCount: order.purchase.length,
                         itemBuilder: (context, index) {

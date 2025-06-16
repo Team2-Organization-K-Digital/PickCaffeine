@@ -59,7 +59,7 @@ async def select_parchase(id:str):
     curs = conn.cursor()
 
     # SQL 문장
-    sql = "SELECT * FROM purchase_list where store_id = %s"
+    sql = "SELECT * FROM purchase_list where store_id = %s ORDER BY purchase_date DESC"
     curs.execute(sql,(id))
     rows = curs.fetchall()
     conn.close()

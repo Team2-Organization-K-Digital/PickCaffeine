@@ -73,7 +73,7 @@ class CustomerHomeList extends StatelessWidget {
   Widget _listView(List<Stores> storeList) {
     return SizedBox(
       width: double.infinity,
-      height: 240,
+      height: 235,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: storeList.length > 6 ? 6 : storeList.length,
@@ -87,8 +87,8 @@ class CustomerHomeList extends StatelessWidget {
               Get.to(() => CustomerStoreDetail());
             },
             child: Container(
-              width: 200,
-              margin: EdgeInsets.only(right: 12),
+              width: 210,
+              margin: EdgeInsets.only(right: 5),
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
