@@ -64,6 +64,7 @@ class CustomerMyPick extends StatelessWidget {
               mainAxisSpacing: 10, // 전체 간격 아마도..?
               childAspectRatio: 3 / 4, // 가로 세로 비율
             ),
+            
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () async {
