@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_list.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_map.dart';
+import 'package:pick_caffeine_app/view/customer/customer_search.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
 import 'package:pick_caffeine_app/vm/changjun/jun_temp.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
@@ -74,29 +75,15 @@ class CustomerHomeTabbar extends StatelessWidget {
                                         border: InputBorder.none,
                                         hintText: '매장을 검색해보세요',
                                       ),
+                                      onTap: ()async {
+                                        await storeHandler.fetchStore();
+                                        Get.to(()=>CustomerSearch())!.then((_) => storeHandler.fetchStore());
+                                      },
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              // 검색 기능
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.brown,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 13,
-                                horizontal: 22,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text('검색', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
                           ),
                         ],
                       ),
