@@ -261,7 +261,7 @@ async def createstore(createstore:Createstore):
             0.0,                        # 위도 (기본값)
             0.0,                        # 경도 (기본값)
             '',                         # 매장 설명
-            0,                         # 상태
+            -1,                         # 상태
             '',                         # 정기휴무
             '',                         # 임시휴무
             '',                         # 영업시간
