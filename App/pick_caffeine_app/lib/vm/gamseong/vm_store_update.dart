@@ -89,6 +89,8 @@ Future<void> updatestoreImage(String storeId, String imageBase64) async {
       Get.snackbar("서버 오류", "이미지 상태 코드: ${response.statusCode}");
     }
   }
+
+  
 }
 
 

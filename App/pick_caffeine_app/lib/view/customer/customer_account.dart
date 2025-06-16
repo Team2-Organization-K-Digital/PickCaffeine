@@ -84,9 +84,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/customer/customer_update_account.dart';
 import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+import 'package:pick_caffeine_app/widget_class/utility/button_light_brown.dart';
 
 class CustomerAccount extends StatelessWidget {
   CustomerAccount({super.key});
@@ -102,6 +104,7 @@ class CustomerAccount extends StatelessWidget {
     vm.userreviews(); // 리뷰 불러오기
 
     return Scaffold(
+      backgroundColor: AppColors.lightpick,
       body: Obx(() {
         final user = vm.user;
         if (user.isEmpty) return Center(child: CircularProgressIndicator());
@@ -110,6 +113,8 @@ class CustomerAccount extends StatelessWidget {
         return SingleChildScrollView(
           padding: EdgeInsets.all(24),
           child: SafeArea(
+            
+            
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,28 +126,38 @@ class CustomerAccount extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("닉네임: ${user['user_nickname']}",
-                          style: TextStyle(fontWeight: FontWeight.bold),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("전화번호: ${user['user_phone']}",
-                          style: TextStyle(fontWeight: FontWeight.bold),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("이메일: ${user['user_email']}",
-                          style: TextStyle(fontWeight: FontWeight.bold),),
-                        ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
+                    Container(
+  padding: EdgeInsets.all(10),
+  decoration: BoxDecoration(
+    border: Border.all(color: Colors.grey, width: 1),
+    borderRadius: BorderRadius.circular(10), 
+    color: AppColors.grey, 
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("닉네임: ${user['user_nickname']}",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("전화번호: ${user['user_phone']}",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("이메일: ${user['user_email']}",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    ],
+  ),
+),
+                          ButtonLightBrown(text: "정보수정",onPressed: () {
                         image.clearImage(); // 이미지 초기화
                         Get.to(() => CustomerUpdateAccount(), arguments: [
                           user['user_nickname'],
@@ -155,51 +170,66 @@ class CustomerAccount extends StatelessWidget {
                           final id = box.read('loginId');
                           vm.informationuserid(userId); 
                         });
-                      },
-                      child: Text("정보수정"),
-                    ),
+                      },)
                   ],
                 ),
+    
             
                 SizedBox(height: 20),
             
                 // 리뷰 카드
-                Obx(() {
-                  if (vm.review.isEmpty) {
-                    return Text("작성한 리뷰가 없습니다.");
-                  }
-                  final review = vm.review;
-                  final reviewImg = review['review_image'] ?? '';
-                  return Card(
-                    margin: EdgeInsets.all(16),
-                    child: Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("스토어 ID: ${review['store_id']}"),
-                          Text("내용: ${review['review_content']}"),
-                          Text("날짜: ${review['review_date']}"),
-                          Text("상태: ${review['review_state']}"),
-                          SizedBox(height: 10),
-                          reviewImg != ''
-                              ? Image.memory(
-                                  base64Decode(reviewImg),
-                                  width: 200,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  width: 200,
-                                  height: 200,
-                                  color: Colors.grey[200],
-                                  child: Icon(Icons.image_not_supported),
-                                ),
-                        ],
-                      ),
+  // 리뷰 카드
+Obx(() {
+  if (vm.userReviews.isEmpty) {
+    return Text("작성한 리뷰가 없습니다.");
+  }
+
+  return GridView.count(
+    shrinkWrap: true,
+    physics: NeverScrollableScrollPhysics(), // 스크롤 중복 방지
+    crossAxisCount: 2, // 한 줄에 2개
+    childAspectRatio: 0.8, // 카드 세로 비율 조정 (너비:높이)
+    padding: EdgeInsets.all(8),
+    children: vm.userReviews.map((r) {
+      final reviewImg = r['review_image'] ?? '';
+      return Card(
+        margin: EdgeInsets.all(8),
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                r['store_id'] ?? '',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 4),
+              Text(r['review_date'] ?? ''),
+              SizedBox(height: 8),
+              Text(r['review_content'] ?? ''),
+              SizedBox(height: 10),
+              reviewImg != ''
+                  ? Image.memory(
+                      base64Decode(reviewImg),
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      height: 100,
+                      color: Colors.grey[200],
+                      child: Icon(Icons.image_not_supported),
                     ),
-                  );
-                }),
+            ],
+          ),
+        ),
+      );
+    }).toList(),
+  );
+})
+
+
+
               ],
             ),
           ),

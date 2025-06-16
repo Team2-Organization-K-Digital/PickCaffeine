@@ -8,7 +8,11 @@ import 'package:pick_caffeine_app/vm/gamseong/vm_gps_handller.dart';
 
 class VmCreateStore extends VmGpsHandller{
   final baseUrl = "http://127.0.0.1:8000/seong";
+  //아이디중복체크
   final RxBool storeidChecked = false.obs;
+//닉네임중복체크(가게명)
+  final RxBool storenameChecked = false.obs;
+
   Rxn<StoreHome> currentStore = Rxn<StoreHome>();
   void setStore(StoreHome storehome){
     currentStore.value = storehome;
@@ -16,8 +20,8 @@ class VmCreateStore extends VmGpsHandller{
   StoreHome? get getStorehome => currentStore.value;
 
 
-
-Future<String> createStore(CreateStore store) async { // db에스토어넣기
+ // db에스토어넣기
+Future<String> createStore(CreateStore store) async { 
 
   final url = Uri.parse("$baseUrl/createstore");
   try {
@@ -40,12 +44,21 @@ Future<String> createStore(CreateStore store) async { // db에스토어넣기
       return "Error: $e";
   }
 }
-
-  Future<bool> checkstoreid(String id)async{// 아이디중복체크
-    final url = Uri.parse("$baseUrl/checkid/$id");
+ // 아이디중복체크
+  Future<bool> checkstoreid(String id)async{
+    final url = Uri.parse("$baseUrl/select/store/checkid/$id");
     final response = await http.get(url);
     final result = jsonDecode(utf8.decode(response.bodyBytes))['exists'];
     storeidChecked.value = !(result == false);
+    return result == true;
+  }
+
+// 닉네임 중복체크
+  Future<bool> checkstorename(String name)async{
+    final url = Uri.parse("$baseUrl/select/store/nameCheck/$name");
+    final response = await http.get(url);
+    final result = jsonDecode(utf8.decode(response.bodyBytes))['exists'];
+    storenameChecked.value = !(result == false);
     return result == true;
   }
 

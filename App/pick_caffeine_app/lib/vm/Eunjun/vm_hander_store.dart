@@ -46,8 +46,9 @@ class VmHanderStore extends VmHandlerMenu {
     );
     final datas = json.decode(utf8.decode(res.bodyBytes));
 
-    final List results = datas['results'];
-
+    final List results = datas['results'] is List ? datas['results'] : [];
+    
+    
     for (int i = 1; i < results.length; i++) {
       if (results[i] == null) {
         return;
