@@ -35,7 +35,7 @@ class CustomerPurchaseDetail extends StatelessWidget {
       appBar: AppBar(title: Text('주문 상세 정보')),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16,0,16,16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -97,11 +97,11 @@ class CustomerPurchaseDetail extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${item['menu']} (옵션: ${item['option'] ?? '없음'})',
+                                    '${item['menu']} \n 옵션 : ${item['option'] ?? '없음'}',
                                   ),
                                 ),
                                 Text(
-                                  '${item['quantity']}개  |  ${item['price']}원',
+                                  '${item['quantity']}개  •  ${item['price']}원',
                                 ),
                               ],
                             );

@@ -87,7 +87,7 @@ class CustomerHomeList extends StatelessWidget {
               Get.to(() => CustomerStoreDetail())!.then((_)=> storeHandler.fetchStore());
             },
             child: Container(
-              width: 210,
+              width: 200,
               margin: EdgeInsets.only(right: 5),
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -236,13 +236,13 @@ class CustomerHomeList extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.location_on,
-                                size: 14,
+                                size: 20,
                                 color: Colors.grey,
                               ),
                               SizedBox(width: 4),
                               Text(
                                 '${store.distance.toStringAsFixed(1)} m',
-                                style: TextStyle(fontSize: 14),
+                                style: TextStyle(fontSize: 14, color: Colors.black54, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),

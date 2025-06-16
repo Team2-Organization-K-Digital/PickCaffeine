@@ -52,9 +52,11 @@ class CustomerStoreDetail extends StatelessWidget {
       child: PopScope(
         canPop: false,
         child: Scaffold(
+          backgroundColor: AppColors.white,
           appBar: AppBar(
             toolbarHeight: 0,
             notificationPredicate: (notification) => false,
+            backgroundColor: AppColors.white,
           ),
           body: Obx(
             () =>
@@ -136,13 +138,12 @@ class CustomerStoreDetail extends StatelessWidget {
                                                                 dotHeight: 10,
                                                                 dotWidth: 10,
                                                                 activeDotColor:
-                                                                    AppColors
-                                                                        .grey,
-                                                                dotColor: Colors
-                                                                    .white
+                                                                    Colors.white
                                                                     .withOpacity(
-                                                                      0.6,
+                                                                      0.7,
                                                                     ),
+                                                                dotColor: 
+                                                                    Colors.black45
                                                               ),
                                                             ),
                                                           ),
@@ -204,11 +205,12 @@ class CustomerStoreDetail extends StatelessWidget {
                               ),
                             ];
                           },
-
+                          
                           body: TabBarView(
                             controller: handler.storeInfoController,
                             children: [StoreHomeInfo(), CustomerStoreReview()],
                           ),
+                          
                         ),
                         IconButton(
                           onPressed: () => Get.back(),
@@ -216,7 +218,7 @@ class CustomerStoreDetail extends StatelessWidget {
                         ),
                         Positioned(
                           top: 0,
-                          right: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.03,
                           child: IconButton(
                             onPressed: () async {
                               final myStore = handler.myStores.where(
@@ -236,14 +238,14 @@ class CustomerStoreDetail extends StatelessWidget {
                               }
                             },
                             icon: Icon(
-                              Icons.favorite_outline,
+                              Icons.favorite,
                               color:
                                   handler.myStores
                                           .where((ms) => ms.store_id == storeId)
                                           .isEmpty
-                                      ? AppColors.grey
-                                      : AppColors.lightpick,
-                              size: 50,
+                                      ? AppColors.greyopac
+                                      : const Color.fromARGB(255, 254, 115, 115),
+                              size: 40,
                             ),
                           ),
                         ),
@@ -251,7 +253,8 @@ class CustomerStoreDetail extends StatelessWidget {
                           bottom: 0,
                           child: Container(
                             width: MediaQuery.of(context).size.width,
-                            color: Theme.of(context).colorScheme.surface,
+                            // color: Theme.of(context).colorScheme.surface,
+                            color: AppColors.white,
                             child: Column(
                               children: [
                                 Padding(
@@ -281,7 +284,7 @@ class CustomerStoreDetail extends StatelessWidget {
                                   child: Text(
                                     '주문 하기',
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -320,7 +323,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
-        color: Theme.of(context).colorScheme.surface,
+        color: AppColors.white,
         child: Column(
           children: [
             SizedBox(height: 50),
@@ -331,7 +334,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                   padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
                   child: Text(
                     handler.loginStore.first.store_name,
-                    style: TextStyle(fontSize: 30),
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -340,8 +343,18 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
             // TabBar
             TabBar(
               controller: handler.storeInfoController,
+              labelColor: Colors.brown,
+                      unselectedLabelColor: Colors.grey,
+                      labelStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      indicatorColor: Colors.brown,
+                      indicatorWeight: 3,
               tabs: [
+                
                 Tab(
+                  
                   child: Text(
                     '가게 정보',
                     style: TextStyle(color: AppColors.black),

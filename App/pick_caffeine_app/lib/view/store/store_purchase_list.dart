@@ -29,9 +29,9 @@ class StorePurchaseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Order order = Get.find<Order>();
-    order.fetchPurchaseStore(box.read('loginId'));
-    order.fetchUserDetail(box.read('loginId'));
-    order.fetchMenuStore(box.read('loginId'));
+    // order.fetchPurchaseStore(box.read('loginId'));
+    // order.fetchUserDetail(box.read('loginId'));
+    // order.fetchMenuStore(box.read('loginId'));
 
     // order.fetchPurchaseStore('111');
     // order.fetchUserDetail('111');
@@ -53,7 +53,7 @@ class StorePurchaseList extends StatelessWidget {
                 itemCount: order.purchase.length,
                 itemBuilder: (context, index) {
                   final Purchase purchaseList = order.purchase[index];
-                  final state = int.parse(purchaseList.purchase_state);
+                  final state = BigInt.parse(purchaseList.purchase_state);
                   final purchaseNum = purchaseList.purchase_num;
 
                   final userInfo = order.userMap[index];
@@ -236,7 +236,7 @@ class StorePurchaseList extends StatelessWidget {
                                               // await order.fetchPurchaseStore(
                                               //   '111'
                                               // );
-                                              Get.back();
+                                              // Get.back();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(
@@ -267,7 +267,7 @@ class StorePurchaseList extends StatelessWidget {
                                               // await order.fetchPurchaseStore(
                                               //   '111'
                                               // );
-                                              Get.back();
+                                              // Get.back();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(
@@ -298,7 +298,7 @@ class StorePurchaseList extends StatelessWidget {
                                               // await order.fetchPurchaseStore(
                                               //   '111'
                                               // );
-                                              Get.back();
+                                              // Get.back();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(

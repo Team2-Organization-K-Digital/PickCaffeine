@@ -87,6 +87,7 @@ class Order extends GetxController {
 
   /// 주문 내역에 해당하는 유저 정보 불러오기 - 매장
   Future<void> fetchUserDetail(String id) async {
+    userMap.clear();
     try {
       final res = await http.get(
         Uri.parse("$baseUrl/select/purchase_list/userinfo/$id"),
@@ -111,9 +112,15 @@ class Order extends GetxController {
       final List results = data['results'];
 
       for (var item in results) {
+        // 옵션 문자열 → JSON 디코딩
+  List<dynamic> optionList = jsonDecode(item[1]);
+
+  // 옵션값만 추출 (예: 첫 번째 옵션만)
+  String optionValue = optionList.isNotEmpty ? optionList[0]['옵션'] : 'X';
+
         detailMenu.add({
           'menu': item[0],
-          'option': item[1],
+          'option': optionValue,
           'price': item[2],
           'quantity': item[3],
         });
@@ -134,9 +141,14 @@ class Order extends GetxController {
       final List results = data['results'];
 
       for (var item in results) {
+         // 옵션 문자열 → JSON 디코딩
+  List<dynamic> optionList = jsonDecode(item[1]);
+
+  // 옵션값만 추출 (예: 첫 번째 옵션만)
+  String optionValue = optionList.isNotEmpty ? optionList[0]['옵션'] : 'X';
         detailMenuStore.add({
           'menu': item[0],
-          'option': item[1],
+          'option': optionValue,
           'price': item[2],
           'quantity': item[3],
         });
@@ -148,8 +160,8 @@ class Order extends GetxController {
 
   /// 메뉴 정보만 가져오기 (첫 번째 메뉴만) - 고객
   Future<void> fetchMenu(String id) async {
+      // menu.clear(); // menu는 List<Map> 이라고 가정
     try {
-      menu.clear(); // menu는 List<Map> 이라고 가정
       final res = await http.get(Uri.parse("$baseUrl/select/menu/$id"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];
@@ -161,8 +173,9 @@ class Order extends GetxController {
 
   /// 메뉴 정보만 가져오기 (첫 번째 메뉴만) - 매장
   Future<void> fetchMenuStore(String id) async {
+    menuStore.clear();
     try {
-      menuStore.clear(); // menu는 List<Map> 이라고 가정
+      // menuStore.clear(); // menu는 List<Map> 이라고 가정
       final res = await http.get(Uri.parse("$baseUrl/select/menu/store/$id"));
       final data = json.decode(utf8.decode(res.bodyBytes));
       final List results = data['results'];

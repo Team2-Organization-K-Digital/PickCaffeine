@@ -137,7 +137,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                               order.menu.isNotEmpty
                                                   ? menu[0][0].toString()
                                                   : '메뉴 정보 없음',
-                                              style: TextStyle(fontSize: 18),
+                                              style: TextStyle(fontSize: 16),
                                             ),
                                             GestureDetector(
                                               onTap: () {
