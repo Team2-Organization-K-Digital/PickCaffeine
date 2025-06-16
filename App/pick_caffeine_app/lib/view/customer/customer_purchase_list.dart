@@ -50,9 +50,12 @@ class CustomerPurchaseList extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 50,
-        title: Text('주문내역', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),),
-        backgroundColor: AppColors.white,
+        title: Text(
+          '주문내역',
+          style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: AppColors.white,
+      ),
       body: Column(
         children: [
           Obx(() {
@@ -298,8 +301,9 @@ class CustomerPurchaseList extends StatelessWidget {
                                                   AppColors.lightbrown,
                                               minimumSize: Size(320, 45),
                                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
                                             ),
                                             child: Text(
                                               '작성완료',
@@ -387,10 +391,11 @@ class CustomerPurchaseList extends StatelessWidget {
                                               backgroundColor: AppColors.brown,
                                               minimumSize: Size(320, 45),
                                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
                                             ),
-                                            
+
                                             child: Text(
                                               '리뷰 작성하기',
                                               style: TextStyle(

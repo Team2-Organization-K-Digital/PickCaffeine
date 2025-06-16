@@ -14,19 +14,18 @@ from typing import Optional
 import base64
 # -------------------------------- Property  ---------------------------------------- #
 #선언될 ip
-ip = "127.0.0.1"
+ip = "192.168.50.2"
 router = APIRouter()
 
-
-def connect(): 
-    conn = pymysql.connect(
+# MySQL server host
+def connect():
+    return pymysql.connect(
         host=ip,
-        user='root',
-        password='qwer1234',
-        db='pick_caffeine',
-        charset='utf8'
+        user="root",
+        password="qwer1234qwer1234",
+        db="pick_caffeine",
+        charset="utf8"
     )
-    return conn
 
 
 

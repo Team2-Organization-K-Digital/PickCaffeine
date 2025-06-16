@@ -13,20 +13,20 @@ import base64
 from typing import List, Optional
 import json
 
+
+
+ip = "192.168.50.2"
 router = APIRouter()
 
+# MySQL server host
 def connect():
-    """데이터베이스 연결 함수"""
-    conn = pymysql.connect(
-        host='127.0.0.1',
-        user='root',
-        password='qwer1234',
-        db='pick_caffeine',
-        charset='utf8',
-        cursorclass=pymysql.cursors.DictCursor
+    return pymysql.connect(
+        host=ip,
+        user="root",
+        password="qwer1234qwer1234",
+        db="pick_caffeine",
+        charset="utf8"
     )
-    return conn
-
 # =================== 로그인 관련 API ===================
 
 from fastapi import APIRouter, Form, HTTPException

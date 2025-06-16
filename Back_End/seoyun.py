@@ -12,8 +12,18 @@ import pymysql
 import base64
 # -------------------------------- Property  ---------------------------------------- #
 #선언될 ip
-ip = "127.0.0.1"
+ip = "192.168.50.2"
 router = APIRouter()
+
+# MySQL server host
+def connect():
+    return pymysql.connect(
+        host=ip,
+        user="root",
+        password="qwer1234qwer1234",
+        db="pick_caffeine",
+        charset="utf8"
+    )
 
 # Model
 class Order(BaseModel):
@@ -23,17 +33,6 @@ class Order(BaseModel):
     purchase_date: str
     purchase_request: str
     purchase_state: str
-
-
-# MySQL server host
-def connect():
-    return pymysql.connect(
-        host=ip,
-        user="root",
-        password="qwer1234",
-        db="pick_caffeine",
-        charset="utf8"
-    )
 # ----------------------------------------------------------------------------------- #
 # 주문내역 - 고객
 @router.get("/select/purchase_list/{id}")

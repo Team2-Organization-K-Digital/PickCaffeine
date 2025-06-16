@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:intl/date_symbol_data_file.dart';
 import 'package:pick_caffeine_app/model/seoyun/purchase_model.dart';
 import 'package:pick_caffeine_app/view/store/store_purchase_detail.dart';
 import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
@@ -39,7 +38,6 @@ class StorePurchaseList extends StatelessWidget {
     // order.fetchMenuStore('111');
 
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, leading: null,title: Text('매장 주문내역'),),
       body: Column(
         children: [
           SizedBox(height: 100),
@@ -238,7 +236,7 @@ class StorePurchaseList extends StatelessWidget {
                                               // await order.fetchPurchaseStore(
                                               //   '111'
                                               // );
-                                              // Get.back();
+                                              Get.back();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(
@@ -269,7 +267,7 @@ class StorePurchaseList extends StatelessWidget {
                                               // await order.fetchPurchaseStore(
                                               //   '111'
                                               // );
-                                              // Get.back();
+                                              Get.back();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(
@@ -300,7 +298,7 @@ class StorePurchaseList extends StatelessWidget {
                                               // await order.fetchPurchaseStore(
                                               //   '111'
                                               // );
-                                              // Get.back();
+                                              Get.back();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color(

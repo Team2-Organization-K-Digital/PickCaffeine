@@ -170,6 +170,7 @@ class CreateAccountStore extends StatelessWidget {
       store_business_num: businessNum,
       store_address: addresscontroller.text.trim(),
       store_address_detail: addressdetailcontroller.text.trim(),
+      store_created_date: DateTime.now().toString(),
     );
 
     final result = await vm.createStore(store);

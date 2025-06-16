@@ -62,7 +62,7 @@ class Order extends GetxController {
               store_id: data[2],
               purchase_date: data[3],
               purchase_request: data[4] ?? '__', // 요청사항 없을 경우 기본값
-              purchase_state: data[5],
+              purchase_state: data[5].toString(),
             );
           }).toList();
     } catch (e) {

@@ -25,7 +25,6 @@ void main() {
   Get.put(VmImageHandler());
   Get.put(ImageModelgamseong());
   Get.put(Vmgamseong()..checkLocationPermission());
-  
 
   runApp(const MyApp());
 }
@@ -60,7 +59,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: AdminStatistics(),
+      home: Login(),
     );
   }
 }
