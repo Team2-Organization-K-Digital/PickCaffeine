@@ -59,7 +59,7 @@ async def select_parchase(id:str):
     curs = conn.cursor()
 
     # SQL 문장
-    sql = "SELECT * FROM purchase_list where store_id = %s"
+    sql = "SELECT * FROM purchase_list where store_id = %s ORDER BY purchase_date DESC"
     curs.execute(sql,(id))
     rows = curs.fetchall()
     conn.close()
@@ -321,3 +321,37 @@ async def select_mystore(id: str):
         })
 
     return {"results": results}
+
+# 문의 작성
+@router.post("/insert/inquiry")
+async def insert_review(
+    user_id: str = Form(...),
+    inquiry_date: str = Form(None),
+    inquiry_content: str = Form(...), 
+    inquiry_state: str = Form(...)
+):
+    # ✅ 날짜 처리
+    if inquiry_date:
+        try:
+            inquiry_date_parsed = datetime.strptime(inquiry_date, '%Y-%m-%d')
+        except ValueError:
+            return {'result': 'Error', 'message': 'Invalid date format'}
+    else:
+        inquiry_date_parsed = datetime.today()  # 오늘 날짜 자동 입력
+
+    conn = connect()
+    curs = conn.cursor()
+
+    try:
+        sql = '''
+        INSERT INTO inquiry(user_id, inquiry_date, inquiry_content, inquiry_state) 
+        VALUES (%s, %s, %s, %s);
+        '''
+        curs.execute(sql, (user_id, inquiry_date_parsed, inquiry_content, inquiry_state))
+        conn.commit()
+        return {'result': 'OK'}
+    except Exception as ex:
+        print("Error:", ex)
+        return {'result': 'Error', 'message': str(ex)}
+    finally:
+        conn.close()

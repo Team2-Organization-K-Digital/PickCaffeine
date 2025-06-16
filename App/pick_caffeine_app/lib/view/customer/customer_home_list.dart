@@ -35,6 +35,7 @@ class CustomerHomeList extends StatelessWidget {
   CustomerHomeList({super.key});
   final searchController = TextEditingController();
   final StoreHandler storeHandler = Get.find<JunTemp>();
+
   // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
@@ -86,8 +87,8 @@ class CustomerHomeList extends StatelessWidget {
               Get.to(() => CustomerStoreDetail())!.then((_)=> storeHandler.fetchStore());
             },
             child: Container(
-              width: 200,
-              margin: EdgeInsets.only(right: 12),
+              width: 210,
+              margin: EdgeInsets.only(right: 5),
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -116,15 +117,22 @@ class CustomerHomeList extends StatelessWidget {
                                     if (store.storeState == 0)
                                       Positioned.fill(
                                         child: Container(
-                                          color: AppColors.greyopac,
+                                          color: Colors.black45,
                                           alignment: Alignment.center,
-                                          child: Text(
-                                            '준비중 ',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.access_time_filled_rounded, color: AppColors.white,size: 33,),
+                                              SizedBox(height: 5,),
+                                              Text(
+                                                '준비중 ',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),

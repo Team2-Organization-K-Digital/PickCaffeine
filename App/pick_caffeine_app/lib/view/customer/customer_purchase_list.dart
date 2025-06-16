@@ -60,8 +60,8 @@ class CustomerPurchaseList extends StatelessWidget {
               child:
                   order.index.value < 0
                       ? Center(child: CircularProgressIndicator())
-                      : order.purchase.isEmpty
-                      ? Text('주문내역이 없습니다.')
+                      // : order.fetchPurchase('loginId').isNull
+                      // ? Text('주문내역이 없습니다.')
                       : ListView.builder(
                         itemCount: order.purchase.length,
                         itemBuilder: (context, index) {
@@ -193,7 +193,7 @@ class CustomerPurchaseList extends StatelessWidget {
                                                         .lightbrownopac, // 배경색
                                                 borderRadius:
                                                     BorderRadius.circular(
-                                                      15,
+                                                      20,
                                                     ), // 모서리 둥글게
                                               ),
                                               child: Text(
@@ -297,6 +297,9 @@ class CustomerPurchaseList extends StatelessWidget {
                                               backgroundColor:
                                                   AppColors.lightbrown,
                                               minimumSize: Size(320, 45),
+                                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                                             ),
                                             child: Text(
                                               '작성완료',
@@ -383,7 +386,11 @@ class CustomerPurchaseList extends StatelessWidget {
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: AppColors.brown,
                                               minimumSize: Size(320, 45),
+                                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                                             ),
+                                            
                                             child: Text(
                                               '리뷰 작성하기',
                                               style: TextStyle(

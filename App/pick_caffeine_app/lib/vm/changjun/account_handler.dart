@@ -83,6 +83,7 @@ Future<dynamic> userLoginCheck(String id, String pw)async{
   final dataStore = json.decode(utf8.decode(resStore.bodyBytes))['results'];
   loginCheck.value = int.parse(dataStore[0]['count'].toString());
   if (loginCheck.value == 1) {
+    // box.write('loginId', id);
     return Get.to(()=>StoreMainBottomTabbar());
   }
 // admin 테이블 대조

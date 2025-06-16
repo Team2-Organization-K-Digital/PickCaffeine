@@ -23,17 +23,17 @@ import 'package:pick_caffeine_app/view/customer/customer_store_review.dart';
 import 'package:pick_caffeine_app/view/store/store_home_info.dart';
 import 'package:pick_caffeine_app/view/store/store_home_review.dart';
 import 'package:pick_caffeine_app/view/store/store_products_list.dart';
-import 'package:pick_caffeine_app/view/store/store_update.dart';
 import 'package:pick_caffeine_app/vm/eunjun/vm_handler_temp.dart';
-import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ----------------------------------------------------------------- //
 class StoreHomeBodyTabbar extends StatelessWidget {
   StoreHomeBodyTabbar({super.key});
   final handler = Get.find<VmHandlerTemp>();
-  final vm = Get.find<Vmgamseong>();
+  final order = Get.find<Order>();
   final box = GetStorage();
+  final TextEditingController inquiryController = TextEditingController();
   // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
@@ -307,24 +307,184 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
+                //////////////////////// 문의 작성하기 /////////////////////////////
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 right: 20,
                                               ),
                                               child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  fixedSize: Size(180, 45),
+                                                  fixedSize: Size(150, 60),
                                                 ),
-                                                onPressed: () async {
-                                                  await vm.fetchStoreById(
-                                                    box.read('loginId'),
+                                                onPressed: () {
+                                                  Get.defaultDialog(
+                                                    backgroundColor:
+                                                        AppColors.white,
+                                                    title: '문의작성',
+                                                    content: Column(
+                                                      children: [
+                                                        TextField(
+                                                          controller:
+                                                              inquiryController,
+                                                          decoration: InputDecoration(
+                                                            labelText: '문의내용',
+                                                            labelStyle:
+                                                                TextStyle(
+                                                                  color:
+                                                                      AppColors
+                                                                          .brown,
+                                                                ),
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                                  borderSide: BorderSide(
+                                                                    color:
+                                                                        AppColors
+                                                                            .brown,
+                                                                    width: 2,
+                                                                  ),
+                                                                ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                                  borderSide: BorderSide(
+                                                                    color:
+                                                                        AppColors
+                                                                            .brown,
+                                                                    width: 2,
+                                                                  ),
+                                                                ),
+                                                          ),
+                                                          maxLines: 4,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    confirm: ElevatedButton(
+                                                      onPressed: () async {
+                                                        final inquiry_content =
+                                                            inquiryController
+                                                                .text
+                                                                .trim();
+                                                        final inquiry_state =
+                                                            '접수';
+
+                                                            Get.back();
+
+                                                        if (inquiry_content
+                                                            .isEmpty) {
+                                                          Get.snackbar(
+                                                            '오류',
+                                                            '문의 내용을 입력해주세요.',
+                                                            backgroundColor: AppColors.red,
+                                                            colorText: AppColors.white
+                                                          );
+                                                          return;
+                                                        }
+
+                                                        try {
+                                                          await order.saveInquiry(
+                                                            user_id: storeId,
+                                                            inquiry_content:
+                                                                inquiry_content,
+                                                            inquiry_state:
+                                                                inquiry_state,
+                                                          );
+
+                                                          Get.snackbar(
+                                                            '성공',
+                                                            '문의가 접수되었습니다.☺',
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            borderRadius: 12,
+                                                            snackPosition:
+                                                                SnackPosition
+                                                                    .TOP,
+                                                          );
+                                                          
+
+                                                          // UI 상태 갱신
+                                                          inquiryController
+                                                              .clear();
+                                                              
+                                                        } catch (e) {
+                                                          Get.snackbar(
+                                                            '오류',
+                                                            '문의 접수에 실패했습니다.',
+                                                            backgroundColor:
+                                                                AppColors.white,
+                                                            colorText:
+                                                                AppColors.black,
+                                                            snackPosition:
+                                                                SnackPosition
+                                                                    .TOP,
+                                                            borderRadius: 15,
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                  16,
+                                                                ),
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .check_circle,
+                                                              color:
+                                                                  AppColors
+                                                                      .brown,
+                                                            ),
+                                                            shouldIconPulse:
+                                                                false,
+                                                            duration: Duration(
+                                                              seconds: 3,
+                                                            ),
+                                                          );
+                                                        }
+                                                      
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.brown,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              vertical: 10,
+                                                            ),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      child: Text('완료'),
+                                                    ),
+
+                                                    cancel: ElevatedButton(
+                                                      onPressed: () {
+                                                        Get.back();
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.brown,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              vertical: 10,
+                                                            ),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      child: Text('취소'),
+                                                    ),
                                                   );
-                                                  Get.to(StoreUpdate());
                                                 },
                                                 child: Text(
-                                                  '회원정보 수정',
+                                                  '문의하기',
                                                   style: TextStyle(
-                                                    fontSize: 20,
+                                                    fontSize: 25,
                                                   ),
                                                 ),
                                               ),
@@ -369,7 +529,6 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                   fixedSize: Size(300, 65),
                                 ),
                                 onPressed: () {
-                                  handler.clickedCategory.value = -1;
                                   box.write("storeId", '111');
                                   box.write(
                                     "storeName",
@@ -404,10 +563,10 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   TabPersistentHeaderDelegate();
 
   @override
-  double get minExtent => 210;
+  double get minExtent => 150;
 
   @override
-  double get maxExtent => 210;
+  double get maxExtent => 150;
 
   @override
   Widget build(
@@ -421,7 +580,6 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
-            SizedBox(height: 60),
             Padding(
               padding: const EdgeInsets.only(top: 3, left: 15, right: 15),
               child: Row(
@@ -436,7 +594,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(fixedSize: Size(210, 50)),
                       onPressed: () {
-                        Get.to(()=>StoreUpdate());
+                        //
                       },
                       child: Text("가게 정보 수정", style: TextStyle(fontSize: 22)),
                     ),
