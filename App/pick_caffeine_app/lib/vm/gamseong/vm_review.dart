@@ -17,21 +17,23 @@ class VmReview extends GetxController {
 
 
 Future<void> userreviews() async {
-  final userId = box.read('loginId');  // 저장된 사용자 ID
+  final userId = box.read('loginId');
   try {
     final res = await http.get(Uri.parse("$baseUrl/user/reviews/$userId"));
     final decoded = json.decode(utf8.decode(res.bodyBytes));
     print("🔍 서버 응답: $decoded");
 
   if (decoded['result'] == 'OK') {
-      userReviews.value = List<Map<String, dynamic>>.from(decoded['data'].map((e) => {
-        'review_num': e[0],
-        'review_content': e[1],
-        'review_image': e[2],
-        'review_date': e[3],
-        'review_state': e[4],
-        'store_id': e[5],
-      }));
+userReviews.value = List<Map<String, dynamic>>.from(decoded['data'].map((e) => {
+  'review_num': e['review_num'],
+  'review_content': e['review_content'],
+  'review_image': e['review_image'],
+  'review_date': e['review_date'],
+  'review_state': e['review_state'],
+  'store_id': e['store_id'],
+      'user_nickname': e['user_nickname'], 
+    'user_image': e['user_image'],       
+}));
     }
   } catch (e) {
     error.value = "유저 리뷰 로딩 실패: $e";
@@ -46,14 +48,9 @@ Future<void> storereviews(String storeId) async {
     final decoded = json.decode(utf8.decode(res.bodyBytes));
 
     if (decoded['result'] == 'OK') {
-      myreviews.value = List<Map<String, dynamic>>.from(decoded['data'].map((e) => {
-        'review_num': e[0],
-        'review_content': e[1],
-        'review_image': e[2],
-        'review_date': e[3],
-        'review_state': e[4],
-        'store_id': e[5],
-      }));
+      myreviews.value = List<Map<String, dynamic>>.from(decoded['data']);
+    } else {
+      error.value = "리뷰 로딩 실패: 서버 응답 오류";
     }
   } catch (e) {
     error.value = "리뷰 로딩 실패: $e";

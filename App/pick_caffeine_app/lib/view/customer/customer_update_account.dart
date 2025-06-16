@@ -24,6 +24,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pick_caffeine_app/vm/gamseong/image_vm.dart';
 import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
+import 'package:pick_caffeine_app/widget_class/utility/button_light_brown.dart';
 
 class CustomerUpdateAccount extends StatelessWidget {
   CustomerUpdateAccount({super.key});
@@ -69,50 +70,64 @@ class CustomerUpdateAccount extends StatelessWidget {
         final user = vm.user;
         if (user.isEmpty) return Center(child: CircularProgressIndicator());
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Get.back(),
-              ),
-              _buildImagePicker(context, originalImage),
-              SizedBox(height: 10),
-              _buildField("닉네임", nicknameController),
-              _buildField("ID", idController, readOnly: true),
-              _buildField("PW", pwController, obscure: true),
-              _buildField("PW확인", checkPwController, obscure: true),
-              _buildField("전화번호", phoneController),
-              _buildField("이메일", emailController),
-              SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
-                onPressed: () async {
-                  if (pwController.text != checkPwController.text) {
-                    Get.snackbar("오류", "비밀번호가 일치하지 않습니다");
-                    return;
-                  }
+        return SafeArea(
+  child: SingleChildScrollView(
+    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+    child: Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Get.back(),
+          ),
+        ),
+        SizedBox(height: 10),
+        // 중앙 원형 이미지
+        ClipOval(
+          child: image.imageFile.value != null
+              ? Image.file(File(image.imageFile.value!.path), width: 120, height: 120, fit: BoxFit.cover)
+              : originalImage.isNotEmpty
+                  ? Image.memory(originalImage, width: 120, height: 120, fit: BoxFit.cover)
+                  : Icon(Icons.person, size: 120),
+        ),
+        SizedBox(height: 20),
+        _buildField("닉네임", nicknameController),
+        SizedBox(height: 10),
+        Divider(thickness: 2, color: Colors.brown[100]),
+        SizedBox(height: 10),
+        _buildField("ID", idController, readOnly: true),
+        _buildField("PW", pwController, obscure: true),
+        _buildField("PW확인", checkPwController, obscure: true),
+        _buildField("전화번호", phoneController),
+        _buildField("이메일", emailController),
+        SizedBox(height: 20),
+        ButtonLightBrown(text: "정보수정", onPressed: () async {
+                    if (pwController.text != checkPwController.text) {
+                      Get.snackbar("오류", "비밀번호가 일치하지 않습니다");
+                      return;
+                    }
+                    String imageBase64 = user['user_image'] ?? '';
+                    if (image.imageFile.value != null) {
+                      final imageBytes =
+                          await File(image.imageFile.value!.path).readAsBytes();
+                      imageBase64 = base64Encode(imageBytes);
+                    }
+          
+                    vm.updateUserInfo({
+                      "user_id": idController.text,
+                      "user_nickname": nicknameController.text,
+                      "user_password": pwController.text,
+                      "user_phone": phoneController.text,
+                      "user_email": emailController.text,
+                      "user_image": imageBase64,
+                    });
+                  },
+              )
 
-                  String imageBase64 = user['user_image'] ?? '';
-                  if (image.imageFile.value != null) {
-                    final imageBytes =
-                        await File(image.imageFile.value!.path).readAsBytes();
-                    imageBase64 = base64Encode(imageBytes);
-                  }
-
-                  vm.updateUserInfo({
-                    "user_id": idController.text,
-                    "user_nickname": nicknameController.text,
-                    "user_password": pwController.text,
-                    "user_phone": phoneController.text,
-                    "user_email": emailController.text,
-                    "user_image": imageBase64,
-                  });
-                },
-                child: Text("정보수정"),
-              ),
-            ],
+              
+              ],
+            ),
           ),
         );
       }),
