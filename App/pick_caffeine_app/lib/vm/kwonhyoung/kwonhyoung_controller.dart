@@ -12,9 +12,10 @@ import 'dart:typed_data';
 // 신고 및 매장 관리 컨트롤러 (Declaration과 Store 관리 통합) - 이미지, 리뷰, 리스트 갱신 수정
 // =====================================================================================
 
-class DeclarationController extends GetxController with GetSingleTickerProviderStateMixin {
+class DeclarationController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   // =================== 기본 설정 ===================
-  static String baseUrl = 'http://192.168.50.236:8000/kwonhyoung'; // 백엔드 서버 주소
+  static String baseUrl = 'http://127.0.0.1:8000/kwonhyoung'; // 백엔드 서버 주소
 
   // =================== UI 컨트롤러 ===================
   late TabController tabController; // 탭바 컨트롤러 (매장리스트/매장리뷰/제재내역)
@@ -47,7 +48,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
     if (selectedStoreId.value.isEmpty) {
       return reviews; // 매장이 선택되지 않으면 전체 리뷰 반환
     }
-    
+
     // 데이터 타입 안전한 비교
     return reviews.where((review) {
       final reviewStoreId = review['store_id']?.toString() ?? '';
@@ -58,20 +59,23 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
 
   /// 선택된 리뷰들을 반환 (체크박스로 선택된 리뷰들)
   List<Map<String, dynamic>> get selectedReviews {
-    return filteredReviews.where((review) =>
-        selectedReviewNums.contains(review['review_num'])
-    ).toList();
+    return filteredReviews
+        .where((review) => selectedReviewNums.contains(review['review_num']))
+        .toList();
   }
 
   /// 제재 유형에 따라 필터링된 제재 내역을 반환
   List<Declaration> get filteredSanctionedDeclarations {
-    final sanctionedDeclarations = declarations
-        .where((d) => d.sanctionContent != null && d.sanctionContent!.isNotEmpty)
-        .toList();
+    final sanctionedDeclarations =
+        declarations
+            .where(
+              (d) => d.sanctionContent != null && d.sanctionContent!.isNotEmpty,
+            )
+            .toList();
     if (selectedSanctionType.value == '전체') {
       return sanctionedDeclarations;
     }
-    
+
     return sanctionedDeclarations.where((d) {
       final sanctionContent = d.sanctionContent?.toLowerCase() ?? '';
       if (selectedSanctionType.value == '1차 제재') {
@@ -97,13 +101,13 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   Future<void> _initializeDataSequentially() async {
     try {
       isLoading.value = true;
-      
+
       // 통계는 병렬로 처리
       fetchStats();
-      
+
       // 매장 데이터를 먼저 확실하게 로드
       await fetchStores();
-      
+
       // 매장 로드 완료 후 나머지 데이터 로드
       if (stores.isNotEmpty) {
         await Future.wait([
@@ -112,7 +116,6 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
           fetchSanctionedUsers(),
         ]);
       }
-      
     } catch (e) {
       _showErrorSnackbar('데이터 로딩 중 오류가 발생했습니다.');
     } finally {
@@ -170,7 +173,7 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       // 제재 내용 생성
       final sanctionContent = '$sanctionLevel: $sanctionReason';
       final today = DateTime.now().toIso8601String().split('T')[0];
-      
+
       // 성공/실패 추적
       List<String> successList = [];
       List<String> failedList = [];
@@ -224,8 +227,10 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
       if (newDeclarations.isNotEmpty) {
         for (Declaration newDecl in newDeclarations) {
           // 중복 제거 후 추가
-          declarations.removeWhere((d) =>
-              d.userId == newDecl.userId && d.reviewNum == newDecl.reviewNum);
+          declarations.removeWhere(
+            (d) =>
+                d.userId == newDecl.userId && d.reviewNum == newDecl.reviewNum,
+          );
           declarations.add(newDecl);
         }
         declarations.refresh();
@@ -239,7 +244,6 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
         await Future.delayed(Duration(milliseconds: 500)); // UI 업데이트 시간 확보
         await _refreshAllData();
       }
-
     } catch (e) {
       Get.snackbar(
         '오류',
@@ -278,7 +282,11 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   }
 
   /// 제재 결과 메시지 표시 (내부 메서드)
-  Future<void> _showSanctionResult(List<String> successList, List<String> failedList, String sanctionLevel) async {
+  Future<void> _showSanctionResult(
+    List<String> successList,
+    List<String> failedList,
+    String sanctionLevel,
+  ) async {
     if (successList.isNotEmpty && failedList.isEmpty) {
       // 모든 제재 성공
       Get.snackbar(
@@ -350,66 +358,73 @@ class DeclarationController extends GetxController with GetSingleTickerProviderS
   }
 
   /// 매장 목록을 서버에서 가져옵니다 (수정된 버전)
-Future<void> fetchStores() async {
-  try {
-    // 로딩 상태 유지 (값 초기화 제거)
-    
-    final response = await http.get(
-      Uri.parse('$baseUrl/stores'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ).timeout(Duration(seconds: 15)); // 타임아웃 증가
+  Future<void> fetchStores() async {
+    try {
+      // 로딩 상태 유지 (값 초기화 제거)
 
-    if (response.statusCode == 200) {
-      final result = json.decode(utf8.decode(response.bodyBytes));
-      
-      if (result['status'] == 'success' && result['data'] != null) {
-        final rawStores = List<Map<String, dynamic>>.from(result['data']);
-        
-        List<Map<String, dynamic>> processedStores = [];
-        for (var store in rawStores) {
-          try {
-            Map<String, dynamic> processedStore = {
-              'store_id': store['store_id']?.toString() ?? '',
-              'store_name': store['store_name']?.toString() ?? '매장명 없음',
-              'store_business_num': store['store_business_num']?.toString() ?? '정보 없음',
-              'store_address': store['store_address']?.toString() ?? '주소 정보 없음',
-              'store_addressdetail': store['store_addressdetail']?.toString() ?? '',
-              'store_phone': store['store_phone']?.toString(),
-              'store_content': store['store_content']?.toString() ?? '',
-              'store_state': store['store_state']?.toString() ?? '연결 안됨',
-              'review_count': store['review_count'] ?? 0,
-            };
-            
-            _processStoreImage(processedStore, store);
-            processedStores.add(processedStore);
-          } catch (e) {
-            continue;
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/stores'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          )
+          .timeout(Duration(seconds: 15)); // 타임아웃 증가
+
+      if (response.statusCode == 200) {
+        final result = json.decode(utf8.decode(response.bodyBytes));
+
+        if (result['status'] == 'success' && result['data'] != null) {
+          final rawStores = List<Map<String, dynamic>>.from(result['data']);
+
+          List<Map<String, dynamic>> processedStores = [];
+          for (var store in rawStores) {
+            try {
+              Map<String, dynamic> processedStore = {
+                'store_id': store['store_id']?.toString() ?? '',
+                'store_name': store['store_name']?.toString() ?? '매장명 없음',
+                'store_business_num':
+                    store['store_business_num']?.toString() ?? '정보 없음',
+                'store_address':
+                    store['store_address']?.toString() ?? '주소 정보 없음',
+                'store_addressdetail':
+                    store['store_addressdetail']?.toString() ?? '',
+                'store_phone': store['store_phone']?.toString(),
+                'store_content': store['store_content']?.toString() ?? '',
+                'store_state': store['store_state']?.toString() ?? '연결 안됨',
+                'review_count': store['review_count'] ?? 0,
+              };
+
+              _processStoreImage(processedStore, store);
+              processedStores.add(processedStore);
+            } catch (e) {
+              continue;
+            }
           }
+
+          // 리스트 업데이트 보장
+          stores.assignAll(processedStores);
+          storeCount.value = processedStores.length;
+        } else {
+          stores.clear();
         }
-        
-        // 리스트 업데이트 보장
-        stores.assignAll(processedStores);
-        storeCount.value = processedStores.length;
-        
       } else {
         stores.clear();
+        _showErrorSnackbar('서버 연결 실패: ${response.statusCode}');
       }
-    } else {
+    } catch (e) {
       stores.clear();
-      _showErrorSnackbar('서버 연결 실패: ${response.statusCode}');
+      _showErrorSnackbar('매장 목록 로딩 실패');
     }
-    
-  } catch (e) {
-    stores.clear();
-    _showErrorSnackbar('매장 목록 로딩 실패');
   }
-}
 
   /// 이미지를 표시하기 위한 위젯 반환 메서드
-  Widget getStoreImageWidget(Map<String, dynamic> store, {double? width, double? height}) {
+  Widget getStoreImageWidget(
+    Map<String, dynamic> store, {
+    double? width,
+    double? height,
+  }) {
     final imageData = store['store_image_base64'];
     if (imageData != null && imageData.toString().isNotEmpty) {
       try {
@@ -469,7 +484,7 @@ Future<void> fetchStores() async {
         final result = json.decode(utf8.decode(response.bodyBytes));
         if (result['status'] == 'success' && result['data'] != null) {
           final reviewData = List<Map<String, dynamic>>.from(result['data']);
-          
+
           // 데이터 안전성 검증 및 정리
           List<Map<String, dynamic>> validReviews = [];
           for (var review in reviewData) {
@@ -484,7 +499,8 @@ Future<void> fetchStores() async {
                 'review_state': review['review_state']?.toString() ?? '정상',
                 'user_id': review['user_id']?.toString() ?? 'unknown',
                 'store_id': review['store_id']?.toString() ?? 'unknown',
-                'user_nickname': review['user_nickname']?.toString() ?? 'unknown',
+                'user_nickname':
+                    review['user_nickname']?.toString() ?? 'unknown',
                 'user_image': review['user_image']?.toString(),
                 'user_state': review['user_state']?.toString() ?? 'unknown',
                 'store_name': review['store_name']?.toString() ?? 'unknown',
@@ -492,7 +508,8 @@ Future<void> fetchStores() async {
                 'sanction_content': review['sanction_content']?.toString(),
                 'sanction_date': review['sanction_date']?.toString(),
                 'declaration_state': review['declaration_state']?.toString(),
-                'current_sanction_status': review['current_sanction_status']?.toString() ?? 'normal'
+                'current_sanction_status':
+                    review['current_sanction_status']?.toString() ?? 'normal',
               };
               validReviews.add(validReview);
             } catch (e) {
@@ -525,12 +542,15 @@ Future<void> fetchStores() async {
       if (response.statusCode == 200) {
         final result = json.decode(utf8.decode(response.bodyBytes));
         if (result['status'] == 'success' && result['data'] != null) {
-          List<Map<String, dynamic>> storeReviews = List<Map<String, dynamic>>.from(result['data']);
-          
+          List<Map<String, dynamic>> storeReviews =
+              List<Map<String, dynamic>>.from(result['data']);
+
           // 기존 리뷰에서 해당 매장 리뷰 제거 후 새 데이터 추가
-          reviews.removeWhere((review) => review['store_id']?.toString() == storeId);
+          reviews.removeWhere(
+            (review) => review['store_id']?.toString() == storeId,
+          );
           reviews.addAll(storeReviews);
-          
+
           // UI 새로고침
           reviews.refresh();
         }
@@ -564,7 +584,7 @@ Future<void> fetchStores() async {
 
           // declarations 업데이트
           declarations.value = declarationList;
-          
+
           // UI 강제 새로고침
           declarations.refresh();
         }
@@ -668,7 +688,9 @@ Future<void> fetchStores() async {
         final data = json.decode(utf8.decode(response.bodyBytes));
         if (data['status'] == 'success') {
           // 1. 로컬 declarations에서 해당 사용자의 제재 내용 즉시 제거
-          declarations.removeWhere((d) => d.userId == userId && d.sanctionContent != null);
+          declarations.removeWhere(
+            (d) => d.userId == userId && d.sanctionContent != null,
+          );
           sanctionedUsers.removeWhere((d) => d.userId == userId);
 
           // 2. 로컬 reviews에서 해당 사용자의 리뷰 상태를 '정상'으로 즉시 업데이트
@@ -827,24 +849,23 @@ Future<void> fetchStores() async {
   Future refreshData() async {
     try {
       isLoading.value = true;
-      
+
       // 순차적으로 데이터 새로고침
       await fetchStats();
       await fetchStores();
-      
+
       // 나머지 데이터는 병렬로 처리
       await Future.wait([
         fetchReviews(),
         fetchDeclarations(),
         fetchSanctionedUsers(),
       ]);
-      
+
       // 모든 옵저버블 강제 새로고침
       stores.refresh();
       reviews.refresh();
       declarations.refresh();
       sanctionedUsers.refresh();
-      
     } catch (e) {
       _showErrorSnackbar('데이터 새로고침 중 오류가 발생했습니다');
     } finally {
@@ -889,8 +910,10 @@ Future<void> fetchStores() async {
           // UI에 결과 표시
           Get.dialog(
             AlertDialog(
-              title: Text('store_image 테이블 현황',
-                  style: TextStyle(color: AppColors.brown)),
+              title: Text(
+                'store_image 테이블 현황',
+                style: TextStyle(color: AppColors.brown),
+              ),
               content: SizedBox(
                 width: double.maxFinite,
                 height: 300,
@@ -904,13 +927,25 @@ Future<void> fetchStores() async {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('매장 ID: ${row['store_id']}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text('이미지1: ${row['has_image_1']} (${row['image_1_size']} bytes)'),
-                            Text('이미지2: ${row['has_image_2']} (${row['image_2_size']} bytes)'),
-                            Text('이미지3: ${row['has_image_3']} (${row['image_3_size']} bytes)'),
-                            Text('이미지4: ${row['has_image_4']} (${row['image_4_size']} bytes)'),
-                            Text('이미지5: ${row['has_image_5']} (${row['image_5_size']} bytes)'),
+                            Text(
+                              '매장 ID: ${row['store_id']}',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              '이미지1: ${row['has_image_1']} (${row['image_1_size']} bytes)',
+                            ),
+                            Text(
+                              '이미지2: ${row['has_image_2']} (${row['image_2_size']} bytes)',
+                            ),
+                            Text(
+                              '이미지3: ${row['has_image_3']} (${row['image_3_size']} bytes)',
+                            ),
+                            Text(
+                              '이미지4: ${row['has_image_4']} (${row['image_4_size']} bytes)',
+                            ),
+                            Text(
+                              '이미지5: ${row['has_image_5']} (${row['image_5_size']} bytes)',
+                            ),
                           ],
                         ),
                       ),
@@ -957,7 +992,10 @@ Future<void> fetchStores() async {
   }
 
   /// 매장 이미지 데이터 처리 (내부 메서드)
-  void _processStoreImage(Map<String, dynamic> processedStore, Map<String, dynamic> rawStore) {
+  void _processStoreImage(
+    Map<String, dynamic> processedStore,
+    Map<String, dynamic> rawStore,
+  ) {
     try {
       // 기본값 설정
       processedStore['store_image'] = null;
@@ -965,7 +1003,8 @@ Future<void> fetchStores() async {
       processedStore['store_image_display'] = null;
 
       // store_image 또는 store_image_base64 필드에서 이미지 데이터 추출
-      final imageData = rawStore['store_image'] ?? rawStore['store_image_base64'];
+      final imageData =
+          rawStore['store_image'] ?? rawStore['store_image_base64'];
 
       if (imageData != null && imageData.toString().isNotEmpty) {
         String base64Data = imageData.toString();
@@ -982,7 +1021,8 @@ Future<void> fetchStores() async {
         if (_isValidBase64(base64Data)) {
           processedStore['store_image_base64'] = base64Data;
           processedStore['store_image'] = base64Data;
-          processedStore['store_image_display'] = 'data:image/jpeg;base64,$base64Data';
+          processedStore['store_image_display'] =
+              'data:image/jpeg;base64,$base64Data';
         }
       }
     } catch (e) {
@@ -994,7 +1034,7 @@ Future<void> fetchStores() async {
   bool _isValidBase64(String base64String) {
     try {
       if (base64String.isEmpty) return false;
-      
+
       // 길이 체크 (base64는 4의 배수여야 함)
       if (base64String.length % 4 != 0) {
         // 패딩 추가 시도
@@ -1061,7 +1101,8 @@ class InquiryController extends GetxController {
       if (response.statusCode == 200) {
         final result = json.decode(utf8.decode(response.bodyBytes));
         if (result['status'] == 'success' && result['data'] != null) {
-          inquiryList.value = result['data'].map<Inquiry>((e) => Inquiry.fromJson(e)).toList();
+          inquiryList.value =
+              result['data'].map<Inquiry>((e) => Inquiry.fromJson(e)).toList();
         } else {
           errorMessage.value = '데이터가 없습니다';
         }
@@ -1176,11 +1217,15 @@ class InquiryController extends GetxController {
   /// @param inquiryNum 문의 번호
   /// @param responseText 답변 내용
   /// @param responseDate 답변 날짜
-  Future updateResponse(int inquiryNum, String responseText, DateTime? responseDate) async {
+  Future updateResponse(
+    int inquiryNum,
+    String responseText,
+    DateTime? responseDate,
+  ) async {
     int index = inquiryList.indexWhere((i) => i.inquiryNum == inquiryNum);
     if (index != -1) {
       final old = inquiryList[index];
-      
+
       // 서버에 업데이트 요청
       bool success = await updateInquiry(
         inquiryNum: inquiryNum,
@@ -1192,7 +1237,7 @@ class InquiryController extends GetxController {
         responseDate: responseDate?.toIso8601String().split('T')[0],
       );
 
-      if(responseText.isEmpty){
+      if (responseText.isEmpty) {
         Get.snackbar(
           '오류',
           '내용을 입력하세요.',
@@ -1255,7 +1300,9 @@ class InquiryController extends GetxController {
 
   /// 선택된 문의 객체를 반환하는 getter
   Inquiry? get selectedInquiry {
-    return inquiryList.firstWhereOrNull((i) => i.inquiryNum == selectedInquiryNum.value);
+    return inquiryList.firstWhereOrNull(
+      (i) => i.inquiryNum == selectedInquiryNum.value,
+    );
   }
 
   // --------------------추가-------------------------
