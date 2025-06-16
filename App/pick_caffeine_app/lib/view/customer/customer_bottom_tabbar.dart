@@ -21,19 +21,27 @@
 // ----------------------------------------------------------------- //
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/customer/customer_account.dart';
 import 'package:pick_caffeine_app/view/customer/customer_home_tabbar.dart';
 import 'package:pick_caffeine_app/view/customer/customer_my_pick.dart';
 import 'package:pick_caffeine_app/view/customer/customer_purchase_list.dart';
 import 'package:pick_caffeine_app/vm/changjun/customer_tabbar.dart';
+import 'package:pick_caffeine_app/vm/seoyun/vm_handler.dart';
 // ----------------------------------------------------------------- //
 class CustomerBottomTabbar extends StatelessWidget {
   CustomerBottomTabbar({super.key});
   final CustomerTabbar controller = Get.find<CustomerTabbar>();
+  final order = Get.find<Order>();
+  final box = GetStorage();
 // ----------------------------------------------------------------- //
   @override
   Widget build(BuildContext context) {
+    order.fetchPurchase(box.read('loginId'));
+    order.fetchStore(box.read('loginId'));
+    order.fetchReview(box.read('loginId'));
+    order.fetchMenu(box.read('loginId'));
     return Scaffold(
       body: TabBarView(
         controller: controller.customertabController,

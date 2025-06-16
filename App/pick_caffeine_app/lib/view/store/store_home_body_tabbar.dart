@@ -308,7 +308,7 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                //////////////////////// 문의 작성하기 /////////////////////////////
+                                            //////////////////////// 문의 작성하기 /////////////////////////////
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 right: 20,
@@ -369,15 +369,17 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                         final inquiry_state =
                                                             '접수';
 
-                                                            Get.back();
+                                                        Get.back();
 
                                                         if (inquiry_content
                                                             .isEmpty) {
                                                           Get.snackbar(
                                                             '오류',
                                                             '문의 내용을 입력해주세요.',
-                                                            backgroundColor: AppColors.red,
-                                                            colorText: AppColors.white
+                                                            backgroundColor:
+                                                                AppColors.red,
+                                                            colorText:
+                                                                AppColors.white,
                                                           );
                                                           return;
                                                         }
@@ -401,12 +403,10 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                                 SnackPosition
                                                                     .TOP,
                                                           );
-                                                          
 
                                                           // UI 상태 갱신
                                                           inquiryController
                                                               .clear();
-                                                              
                                                         } catch (e) {
                                                           Get.snackbar(
                                                             '오류',
@@ -437,7 +437,6 @@ class StoreHomeBodyTabbar extends StatelessWidget {
                                                             ),
                                                           );
                                                         }
-                                                      
                                                       },
                                                       style: ElevatedButton.styleFrom(
                                                         backgroundColor:
@@ -564,10 +563,10 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   TabPersistentHeaderDelegate();
 
   @override
-  double get minExtent => 150;
+  double get minExtent => 230;
 
   @override
-  double get maxExtent => 150;
+  double get maxExtent => 2300;
 
   @override
   Widget build(
@@ -581,6 +580,7 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
         color: Theme.of(context).colorScheme.surface,
         child: Column(
           children: [
+            SizedBox(height: 70),
             Padding(
               padding: const EdgeInsets.only(top: 3, left: 15, right: 15),
               child: Row(
@@ -595,14 +595,16 @@ class TabPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(fixedSize: Size(210, 50)),
                       onPressed: () {
-                          final box = GetStorage();
-                  final store = handler.loginStore.first; 
-                  Get.to(() => StoreUpdate(), arguments: store)?.then((_) {
-                  final storeId = box.read("loginId");
-                  handler.fetchStore(storeId);
-                   // 홈으로 돌아온 뒤 DB 최신화
+                        final box = GetStorage();
+                        final store = handler.loginStore.first;
+                        Get.to(() => StoreUpdate(), arguments: store)?.then((
+                          _,
+                        ) {
+                          final storeId = box.read("loginId");
+                          handler.fetchStore(storeId);
+                          // 홈으로 돌아온 뒤 DB 최신화
                         });
-                        },
+                      },
                       child: Text("가게 정보 수정", style: TextStyle(fontSize: 22)),
                     ),
                   ),
