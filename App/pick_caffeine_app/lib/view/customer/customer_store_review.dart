@@ -22,8 +22,7 @@ import 'package:pick_caffeine_app/vm/gamseong/vm_store_update.dart';
 
 class CustomerStoreReview extends StatelessWidget {
   CustomerStoreReview({super.key});
-
-    final vm = Get.find<Vmgamseong>();
+  final vm = Get.find<Vmgamseong>();
   final box = GetStorage(); // GetStorage 사용 추가
 
   @override
@@ -41,56 +40,29 @@ class CustomerStoreReview extends StatelessWidget {
       }
 
       return ListView.builder(
-  itemCount: vm.myreviews.length,
-  itemBuilder: (context, index) {
-    final r = vm.myreviews[index];
-    final image = r['review_image'];
+        itemCount: vm.myreviews.length,
+        itemBuilder: (context, index) {
+          final r = vm.myreviews[index];
+          final image = r['review_image'];
 
-    Widget imageWidget;
-    try {
-      if (image != null && image.isNotEmpty) {
-        imageWidget = Image.memory(
-          base64Decode(image),
-          width: 80,
-          height: 80,
-          fit: BoxFit.cover,
-        );
-      } else {
-        imageWidget = Icon(Icons.image_not_supported, size: 50);
-      }
-    } catch (e) {
-      imageWidget = Icon(Icons.broken_image, size: 50);
-    }
-
-return Card(
-  margin: EdgeInsets.all(12),
-  child: ListTile(
-    contentPadding: EdgeInsets.all(12),
-    leading: ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: imageWidget,
-    ),
-    title: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          r['user_nickname'] ?? '익명 사용자',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        SizedBox(height: 4),
-        Text(
-          r['review_content'] ?? '내용 없음',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    ),
-    subtitle: Text(
-      "날짜: ${r['review_date'] ?? '-'}\n상태: ${r['review_state'] ?? '-'}",
-    ),
-  ),
-);
-
-  },
-);
-    },);}}
+          return Card(
+            margin: EdgeInsets.all(12),
+            child: ListTile(
+              title: Text(r['review_content']),
+              subtitle:
+                  Text("날짜: ${r['review_date']} / 상태: ${r['review_state']}"),
+              leading: image != null && image != ''
+                  ? Image.memory(
+                      base64Decode(image),
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    )
+                  : Icon(Icons.image_not_supported),
+            ),
+          );
+        },
+      );
+    });
+  }
+}

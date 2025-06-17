@@ -50,7 +50,7 @@ class CustomerUpdateAccount extends StatelessWidget {
       try {
         originalImage = base64Decode(args[5]);
       } catch (e) {
-        print("❗ base64 디코딩 오류: $e");
+        print("!base64 디코딩 오류: $e");
       }
     }
 
@@ -84,13 +84,19 @@ class CustomerUpdateAccount extends StatelessWidget {
         ),
         SizedBox(height: 10),
         // 중앙 원형 이미지
-        ClipOval(
-          child: image.imageFile.value != null
-              ? Image.file(File(image.imageFile.value!.path), width: 120, height: 120, fit: BoxFit.cover)
-              : originalImage.isNotEmpty
-                  ? Image.memory(originalImage, width: 120, height: 120, fit: BoxFit.cover)
-                  : Icon(Icons.person, size: 120),
+        GestureDetector(onTap: () async{
+          await image.getImageFromGallery(ImageSource.gallery);
+        },
+          child: ClipOval(
+            child: image.imageFile.value != null
+                ? Image.file(File(image.imageFile.value!.path), width: 120, height: 120, fit: BoxFit.cover)
+                : originalImage.isNotEmpty
+                    ? Image.memory(originalImage, width: 120, height: 120, fit: BoxFit.cover)
+                    : Icon(Icons.person, size: 120),
+          ),
         ),
+        SizedBox(height: 20,),
+        
         SizedBox(height: 20),
         _buildField("닉네임", nicknameController),
         SizedBox(height: 10),
