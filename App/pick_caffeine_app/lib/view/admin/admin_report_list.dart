@@ -23,8 +23,10 @@ import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
 import 'dart:convert';
 import 'package:pick_caffeine_app/vm/kwonhyoung/kwonhyoung_controller.dart';
+import 'package:pick_caffeine_app/widget_class/utility/admin_tabbar.dart';
 
-// 관리자 매장 관리 페이지 (25.06.12. 수정된 버전)
+
+// 관리자 매장 관리 페이지 (25.06.16. 수정된 버전)
 class AdminReportScreen extends StatelessWidget {
   final DeclarationController controller = Get.put(DeclarationController());
   final DateTime adminTodayDate = DateTime.now();
@@ -45,7 +47,7 @@ class AdminReportScreen extends StatelessWidget {
           _buildStoreUserInfo(), // 이미지 밑 매장/회원 수 정보 표시
           _buildTabBar(), // 상단 탭바
           _buildTabBarView(), // 탭바뷰
-          _buildBottomNavigation(), // 하단 탭바
+          BottomTabbar(selectedIndex: 0) // 하단 탭바
         ],
       ),
     );

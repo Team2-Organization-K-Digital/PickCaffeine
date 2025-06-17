@@ -1,9 +1,11 @@
-// 관리자 페이지 바텀 탭바 (25.06.11)
+// 관리자 페이지 바텀 탭바 (25.06.16)
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pick_caffeine_app/app_colors.dart';
 import 'package:pick_caffeine_app/view/admin/admin_inquiry_list.dart';
 import 'package:pick_caffeine_app/view/admin/admin_report_list.dart';
+import 'package:pick_caffeine_app/view/admin/admin_statistics.dart';
 
 // 관리자 하단 네비게이션 위젯
 class BottomTabbar extends StatelessWidget {
@@ -16,10 +18,10 @@ class BottomTabbar extends StatelessWidget {
     return Container(
       height: 70,
       decoration: BoxDecoration(
-        color: Color(0xFF8B4513),
+        color: AppColors.brown,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(25),
+            color: AppColors.black.withAlpha(25),
             blurRadius: 8,
             offset: Offset(0, -2),
           ),
@@ -40,25 +42,22 @@ class BottomTabbar extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.store,
-                    color:
-                        selectedIndex == 0
-                            ? Colors.white
-                            : Colors.white.withAlpha(150),
+                    color: selectedIndex == 0 
+                        ? AppColors.white 
+                        : AppColors.white.withAlpha(150),
                     size: 26,
                   ),
                   SizedBox(height: 4),
                   Text(
                     '매장 관리',
                     style: TextStyle(
-                      color:
-                          selectedIndex == 0
-                              ? Colors.white
-                              : Colors.white.withAlpha(150),
+                      color: selectedIndex == 0 
+                          ? AppColors.white 
+                          : AppColors.white.withAlpha(150),
                       fontSize: 12,
-                      fontWeight:
-                          selectedIndex == 0
-                              ? FontWeight.w600
-                              : FontWeight.w400,
+                      fontWeight: selectedIndex == 0 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
                     ),
                   ),
                 ],
@@ -67,7 +66,11 @@ class BottomTabbar extends StatelessWidget {
           ),
 
           // 구분선
-          Container(width: 1, height: 40, color: Colors.white.withAlpha(25)),
+          Container(
+            width: 1, 
+            height: 40, 
+            color: AppColors.white.withAlpha(25)
+          ),
 
           // 문의 관리 탭
           Expanded(
@@ -82,25 +85,65 @@ class BottomTabbar extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.question_answer,
-                    color:
-                        selectedIndex == 1
-                            ? Colors.white
-                            : Colors.white.withAlpha(150),
+                    color: selectedIndex == 1 
+                        ? AppColors.white 
+                        : AppColors.white.withAlpha(150),
                     size: 26,
                   ),
                   SizedBox(height: 4),
                   Text(
                     '문의 관리',
                     style: TextStyle(
-                      color:
-                          selectedIndex == 1
-                              ? Colors.white
-                              : Colors.white.withAlpha(150),
+                      color: selectedIndex == 1 
+                          ? AppColors.white 
+                          : AppColors.white.withAlpha(150),
                       fontSize: 12,
-                      fontWeight:
-                          selectedIndex == 1
-                              ? FontWeight.w600
-                              : FontWeight.w400,
+                      fontWeight: selectedIndex == 1 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 구분선
+          Container(
+            width: 1, 
+            height: 40, 
+            color: AppColors.white.withAlpha(25)
+          ),
+
+          // 통계 탭
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                if (selectedIndex != 2) {
+                  Get.off(() => AdminStatistics());
+                }
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.bar_chart,
+                    color: selectedIndex == 2 
+                        ? AppColors.white 
+                        : AppColors.white.withAlpha(150),
+                    size: 26,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '통계',
+                    style: TextStyle(
+                      color: selectedIndex == 2 
+                          ? AppColors.white 
+                          : AppColors.white.withAlpha(150),
+                      fontSize: 12,
+                      fontWeight: selectedIndex == 2 
+                          ? FontWeight.w600 
+                          : FontWeight.w400,
                     ),
                   ),
                 ],

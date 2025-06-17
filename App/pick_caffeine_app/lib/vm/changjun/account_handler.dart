@@ -8,7 +8,7 @@ import 'package:pick_caffeine_app/view/customer/customer_bottom_tabbar.dart';
 import 'package:pick_caffeine_app/view/store/store_main_bottom_tabbar.dart';
 
 class AccountHandler extends GetxController{
-  final String baseUrl = "http://127.0.0.1:8000/changjun";
+  final String baseUrl = "http://192.168.20.26:8000/changjun";
 // 회원가입 아이디 중복 확인
   final RxInt doubleCheck = 0.obs;
   final RxBool idReadOnly = false.obs;
