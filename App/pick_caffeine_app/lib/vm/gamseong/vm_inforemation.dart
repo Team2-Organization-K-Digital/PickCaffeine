@@ -7,7 +7,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:pick_caffeine_app/vm/gamseong/vm_review.dart';
 
@@ -16,7 +16,6 @@ class VmInformation extends VmReview {
   final RxInt nicknameCheck = 0.obs;
   final RxBool nickReadOnly = false.obs;
   final user = <String, dynamic>{}.obs;
-  final box = GetStorage();
 
   // 유저들의 개인정보
   Future<void> information() async {
@@ -122,4 +121,10 @@ class VmInformation extends VmReview {
   //     return '서버 오류';
   //   }
   // }
+
+
+
+
+
+
 }

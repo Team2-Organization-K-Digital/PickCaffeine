@@ -5,7 +5,7 @@ from kwonhyoung import router as kwonhyoung_router
 from seong import router as seong_router
 from seoyun import router as seoyun_router
 
-ip = "192.168.20.26"
+ip = "127.0.0.1"
 
 
 app = FastAPI() 

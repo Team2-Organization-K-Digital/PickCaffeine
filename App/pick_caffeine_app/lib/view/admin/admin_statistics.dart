@@ -246,6 +246,11 @@ chartHandler.fetchAdminDurationYearList();
                             : 0.1,
                         dataLabelSettings: DataLabelSettings(
                           isVisible: true,
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20
+                            
+                          )
                         ),
                       ),
                     ],

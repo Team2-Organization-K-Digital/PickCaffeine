@@ -11,9 +11,10 @@ import json
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+import base64
 # -------------------------------- Property  ---------------------------------------- #
 #선언될 ip 권형님 , py 창준님 어드민변경햇음 525
-ip = "192.168.50.2"
+ip = "127.0.0.1"
 router = APIRouter()
 
 # MySQL server host
@@ -21,7 +22,7 @@ def connect():
     return pymysql.connect(
         host=ip,
         user="root",
-        password="qwer1234qwer1234",
+        password="qwer1234",
         db="pick_caffeine",
         charset="utf8"
     )
@@ -90,7 +91,7 @@ class information(BaseModel):
 
 #업데이트 유저정보
 class updateinformation(BaseModel):
-    user_id: str #리드온리
+    user_id: str #리드온리ß
     user_nickname: Optional[str] = None
     user_password: Optional[str] = None
     user_phone: Optional[str] = None
@@ -98,9 +99,54 @@ class updateinformation(BaseModel):
     user_image: Optional[str] = None
 
 
+
+
+# 기본스토어 이미지 정보.
 class updatestoreImage(BaseModel):
-    store_image: str
     store_id:str
+    image1: str
+    image2: str
+    image3: str
+    image4: str
+    image5: str
+
+
+# 스토어 이미지를 업데이트하는것.
+class updatestoreImageall(BaseModel):
+    store_id:str
+    image1: Optional[str]
+    image2: Optional[str]
+    image3: Optional[str]
+    image4: Optional[str]
+    image5: Optional[str]
+
+
+
+# 스토어 이미지보는함수
+    @router.get("/select/store/images")
+    async def selectstoreimages(storeId : str):
+        try:
+            conn = connect()
+            curs = conn.cursor()
+            sql = "select store_id, image_1, image_2, image_3, image_4,image_5 from store_images where store_id = %s"
+            curs.execute(sql)
+            rows = curs.fetchall()
+            for row in rows:
+                for key in ["image1", "image2", " image3", "image4","image5"]:
+                    if row[key] is not None and isinstance(row[key], bytes):
+                        row[key] = base64.b64encode(row[key]).decode('utf-8')
+                return {"result": "OK", "data": rows}
+        except Exception as e:
+            return {"result": "Error", "detail": str(e)}
+        finally:
+            conn.close()
+
+
+
+
+
+
+
 
 class updatestore(BaseModel):
     store_name:Optional[str] =None
@@ -182,19 +228,43 @@ async def updatestoreImage(store_id: str,update: updatestoreImage):
 # 스토어 이미지보기.
 @router.get("/select/storeImage/{storeId}")
 async def select(storeId : str):
+    # Connection으로 부터 Cursor 생성
     conn = connect()
     curs = conn.cursor()
-    try:
-        curs.execute("SELECT store_image FROM store_image WHERE store_id = %s", (storeId,))
-        rows = curs.fetchall()
-        
-        if not rows:
-            return {"results": []}
-        return {"results": [row[0] for row in rows]}
-    except Exception as e:
-        return {"result": "error", "detail": str(e)}
-    finally:
-        conn.close()
+
+    # SQL 문장
+    sql = "SELECT * from store_image where store_id = %s"
+    curs.execute(sql,(storeId,))
+    rows = curs.fetchall()
+    
+    results = []
+    for row in rows:
+            store_id,image_1,image_2,image_3,image_4,image_5 = row
+            # image_1이 있다면 base64로 인코딩
+            if image_1:
+                store_image_1 = base64.b64encode(image_1).decode('utf-8')
+            else:
+                store_image_1 = None
+            if image_2:
+                store_image_2 = base64.b64encode(image_2).decode('utf-8')
+            else:
+                store_image_2 = None
+            if image_3:
+                store_image_3 = base64.b64encode(image_3).decode('utf-8')
+            else:
+                store_image_3 = None
+            if image_4:
+                store_image_4 = base64.b64encode(image_4).decode('utf-8')
+            else:
+                store_image_4 = None
+            if image_5:
+                store_image_5 = base64.b64encode(image_5).decode('utf-8')
+            else:
+                store_image_5 = None
+            
+            results.append([store_id,store_image_1,store_image_2,store_image_3,store_image_4,store_image_5])
+    conn.close()
+    return {'results': results}
     
 # 유저정보들이 들어있는인포
 @router.get("/user/information")
@@ -223,14 +293,13 @@ async def informationuserid(user_id: str):
     conn = connect()
     curs = conn.cursor()
     try:
-            sql =   """
-            select 
-            user_id,user_nickname,user_password,
-            user_phone,user_email,user_state,user_create_date,
-            user_image,
-            from users
-            where user_id = %s
-            """
+            sql = """
+            SELECT user_id, user_nickname, user_password,
+            user_phone, user_email, user_state, user_create_date,
+            user_image
+                        FROM users
+                WHERE user_id = %s
+                    """
             curs.execute(sql, (user_id,))
             rows = curs.fetchall()
             return {"result": "OK", "data": rows}
@@ -308,7 +377,26 @@ async def userreviews(user_id: str):
         """
         curs.execute(sql, (user_id,))
         rows = curs.fetchall()
-        return {"result": "OK", "data": rows}
+
+        results = []
+        for row in rows:
+            review_num, content, image, date, state, store_id = row
+            if image:
+                image_base64 = base64.b64encode(image).decode('utf-8')
+            else:
+                image_base64 = ''
+                        
+            results.append({
+                "review_num": review_num,
+                "review_content": content,
+                "review_image": image_base64,
+                "review_date": str(date),
+                "review_state": state,
+                "store_id": store_id
+            })
+
+        return {"result": "OK", "data": results}
+
     except Exception as e:
         return {"result": "Error", "detail": str(e)}
     finally:
@@ -341,6 +429,7 @@ async def informationreview(user_id: str):
 
 
 # 스토어에 보이는리뷰
+# 스토어에 보이는 리뷰 (유저 정보 포함)
 @router.get("/stores/reviews")
 async def get_store_reviews(store_id: str):
     conn = connect()
@@ -349,19 +438,49 @@ async def get_store_reviews(store_id: str):
         sql = """
             SELECT 
                 r.review_num, r.review_content, r.review_image,
-                r.review_date, r.review_state, p.store_id
+                r.review_date, r.review_state, p.store_id,
+                u.user_nickname, u.user_image
             FROM review r
             JOIN purchase_list p ON r.purchase_num = p.purchase_num
+            JOIN users u ON p.user_id = u.user_id
             WHERE p.store_id = %s
             ORDER BY r.review_date DESC
         """
         curs.execute(sql, (store_id,))
         rows = curs.fetchall()
-        return {"result": "OK", "data": rows}
+
+        results = []
+        for row in rows:
+            review_num, content, image, date, state, store_id, user_nickname, user_image = row
+
+            # 리뷰 이미지 처리
+            image_base64 = base64.b64encode(image).decode('utf-8') if image else ''
+
+            # 유저 이미지 처리
+            user_image_base64 = base64.b64encode(user_image).decode('utf-8') if user_image else ''
+
+            results.append({
+                "review_num": review_num,
+                "review_content": content,
+                "review_image": image_base64,
+                "review_date": str(date),
+                "review_state": state,
+                "store_id": store_id,
+                "user_nickname": user_nickname,
+                "user_image": user_image_base64,
+            })
+
+        return {"result": "OK", "data": results}
+
     except Exception as e:
         return {"result": "Error", "detail": str(e)}
     finally:
         conn.close()
+
+
+
+#유저 리뷰에쓰는 이미지
+
 
 
 
