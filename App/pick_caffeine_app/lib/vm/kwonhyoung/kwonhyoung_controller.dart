@@ -7,7 +7,7 @@ import 'package:pick_caffeine_app/model/kwonhyoung/declaration_model.dart';
 import 'package:pick_caffeine_app/model/kwonhyoung/inquiry_model.dart';
 import 'dart:typed_data';
 
-// 개선된 버전(25.06.12.) - 수정 버전3
+// 개선된 버전(25.06.16.) - 수정 버전4
 // =====================================================================================
 // 신고 및 매장 관리 컨트롤러 (Declaration과 Store 관리 통합) - 이미지, 리뷰, 리스트 갱신 수정
 // =====================================================================================
@@ -15,7 +15,7 @@ import 'dart:typed_data';
 class DeclarationController extends GetxController
     with GetSingleTickerProviderStateMixin {
   // =================== 기본 설정 ===================
-  static String baseUrl = 'http://192.168.20.26:8000/kwonhyoung'; // 백엔드 서버 주소
+  static String baseUrl = 'http://192.168.50.2:8000/kwonhyoung'; // 백엔드 서버 주소
 
   // =================== UI 컨트롤러 ===================
   late TabController tabController; // 탭바 컨트롤러 (매장리스트/매장리뷰/제재내역)
@@ -874,19 +874,18 @@ class DeclarationController extends GetxController
   }
 
   /// 상태에 따른 색상을 반환합니다
-  Color getStatusColor(String status) {
+  Color getStatusColor(int status) {
     switch (status) {
-      case '접수완료':
-      case '접수':
+      case 1: // '접수완료'
+      case 2: // '접수'
         return AppColors.lightbrown;
-      case '처리중':
+      case 3: // '처리중'
         return AppColors.lightbrown;
-      case '완료':
-      case '처리완료':
+      case 4: // '처리완료'
         return AppColors.brown;
-      case '제재중':
+      case 5: // '제재중'
         return AppColors.red;
-      case '선택됨':
+      case 6: // '선택됨'
         return AppColors.brown;
       default:
         return AppColors.grey;
